@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.3)
+project(STDCR_monitor)
+
+set(CMAKE_PREFIX_PATH c:/qt/4.8.6)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+
+find_package(Qt4 4.4.3 REQUIRED QtGui QtXml)
+
+
+set(SOURCE_FILES stdcr_monitor/main.cpp stdcr_monitor/params.cpp stdcr_monitor/main_window.cpp)
+add_executable(STDCR_monitor WIN32 ${SOURCE_FILES})
+
+target_link_libraries(STDCR_monitor Qt4::QtGui)
