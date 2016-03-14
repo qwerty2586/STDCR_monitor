@@ -5,8 +5,6 @@
 #include "experiment.h"
 
 
-#include <QPushButton>
-#include <QLabel>
 
 
 
@@ -23,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     windowLayout = NULL;
     initMenuItems();
     windowLayout = new QVBoxLayout();
+    this->setLayout(windowLayout);
 
     activeExperiment = Experiment::NO_EXPERIMENT;
     showMenu();
@@ -33,9 +32,13 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 void MainWindow::initMenuItems() {
 
     captionLabel = new QLabel(QString::fromUtf8("MAIN MENU"));
+    captionLabel->setAlignment(Qt::AlignHCenter);
 
     for (int i = 0; i < EXPERIMENTS_COUNT; i++) {
         menuButtons[i] = new QPushButton(experiments[i]);
+        menuButtons[i]->setStyleSheet("Text-align:left; padding: 3px 15px;");
+
+
         QObject::connect(menuButtons[i], SIGNAL(released()), this, SLOT(menuButtonClick()));
     }
 
@@ -43,7 +46,9 @@ void MainWindow::initMenuItems() {
 
 void MainWindow::showMenu() {
 
+
     windowLayout->addWidget(this->captionLabel);
+    windowLayout->setContentsMargins(MAIN_WIDTH / 6, -1, MAIN_WIDTH / 6, -1);
 
 
     for (int i = 0; i < EXPERIMENTS_COUNT; i++) {
@@ -51,7 +56,7 @@ void MainWindow::showMenu() {
 
     }
     windowLayout->addStretch();
-    this->setLayout(windowLayout);
+
 }
 
 void MainWindow::menuButtonClick() {
