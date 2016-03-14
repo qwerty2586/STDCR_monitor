@@ -1,17 +1,6 @@
-
-
 #include "main_window.h"
 #include "params.h"
 #include "experiment.h"
-
-
-
-
-
-
-
-
-
 
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
@@ -23,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     windowLayout = new QVBoxLayout();
     this->setLayout(windowLayout);
 
-    activeExperiment = Experiment::NO_EXPERIMENT;
-    showMenu();
+
+    changeExpreriment(Experiment::NO_EXPERIMENT);
 
 
 };
@@ -35,9 +24,8 @@ void MainWindow::initMenuItems() {
     captionLabel->setAlignment(Qt::AlignHCenter);
 
     for (int i = 0; i < EXPERIMENTS_COUNT; i++) {
-        menuButtons[i] = new QPushButton(experiments[i]);
+        menuButtons.push_back(new QPushButton(experiments[i]));
         menuButtons[i]->setStyleSheet("Text-align:left; padding: 3px 15px;");
-
 
         QObject::connect(menuButtons[i], SIGNAL(released()), this, SLOT(menuButtonClick()));
     }
@@ -45,7 +33,6 @@ void MainWindow::initMenuItems() {
 }
 
 void MainWindow::showMenu() {
-
 
     windowLayout->addWidget(this->captionLabel);
     windowLayout->setContentsMargins(MAIN_WIDTH / 6, -1, MAIN_WIDTH / 6, -1);
@@ -59,6 +46,16 @@ void MainWindow::showMenu() {
 
 }
 
+void MainWindow::hideMenu() {
+    windowLayout->removeWidget(this->captionLabel);
+    for (int i = 0; i < EXPERIMENTS_COUNT; i++) {
+        windowLayout->removeWidget(menuButtons[i]);
+    }
+    windowLayout->setContentsMargins(-1, -1, -1, -1);
+
+}
+
+
 void MainWindow::menuButtonClick() {
     QPushButton *sender = (QPushButton *) QObject::sender();
     for (int i = 0; i < EXPERIMENTS_COUNT; i++) {
@@ -67,5 +64,14 @@ void MainWindow::menuButtonClick() {
 
     }
 
+
+}
+
+void MainWindow::changeExpreriment(const int experiment) {
+    if (Experiment::NO_EXPERIMENT) {
+        showMenu();
+    } else {
+
+    }
 
 }
