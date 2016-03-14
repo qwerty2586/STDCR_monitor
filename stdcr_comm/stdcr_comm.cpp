@@ -1,6 +1,3 @@
-//
-// Created by qwerty on 04.03.2016.
-//
 
 #include "stdcr_comm.h"
 
