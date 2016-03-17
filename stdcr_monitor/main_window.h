@@ -8,10 +8,9 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QLabel>
+#include "experiment.h"
 
 #define EXPERIMENTS_COUNT 6
-static const QString experiments[] = {"ERP", "BCI", "REACTION EXPERIMENT", "AUTOSTIMULATION", "BIOSENSOR LOGGER",
-                                      "TEST MODE"};
 
 
 class MainWindow : public QWidget {
@@ -30,6 +29,8 @@ private:
     QHBoxLayout *experimentButtonsLayout;
     QWidget *experimentButtonsWidget;
 
+
+    std::vector<Experiment *> experiments;
 
     int activeExperiment;
 
@@ -53,6 +54,7 @@ public slots:
 
     void startStopClick();
 
+    void initExperiments();
 };
 
 

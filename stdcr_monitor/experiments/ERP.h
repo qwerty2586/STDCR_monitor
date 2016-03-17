@@ -13,7 +13,11 @@ Q_OBJECT
 public:
     explicit ERP(QWidget *parent = 0);
 
+    QString getName() override;
 
+    bool isImplemented();
 };
+
+//QString ERP::NAME = "ERP";
 
 #endif //STDCR_MONITOR_ERP_H
