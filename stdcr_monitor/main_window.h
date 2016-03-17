@@ -10,7 +10,6 @@
 #include <QLabel>
 #include "experiment.h"
 
-#define EXPERIMENTS_COUNT 6
 
 
 class MainWindow : public QWidget {

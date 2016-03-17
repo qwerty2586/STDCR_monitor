@@ -1,6 +1,5 @@
 #include "main_window.h"
 #include "params.h"
-#include "experiment.h"
 #include "experiments/ERP.h"
 
 
@@ -123,6 +122,7 @@ void MainWindow::menuButtonClick() {
 
 
 void MainWindow::changeExperiment(const int experiment) {
+
     if (experiment == Experiment::NO_EXPERIMENT) {
         clearLayout();
         showMenu();
@@ -130,6 +130,7 @@ void MainWindow::changeExperiment(const int experiment) {
         clearLayout();
         showExperiment(experiment);
     }
+    activeExperiment = experiment;
 
 }
 

@@ -9,11 +9,6 @@ ERP::ERP(QWidget *parent) : Experiment(parent) {
 };
 
 
-QString ERP::getName() {
-    return QString::fromUtf8("ERP");
-};
-
-
 void ERP::initItems() {
     QVBoxLayout *l = new QVBoxLayout();
 

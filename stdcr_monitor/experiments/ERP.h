@@ -13,7 +13,7 @@ public:
 
     explicit ERP(QWidget *parent = 0);
 
-    QString getName() override;
+    QString getName() override { return QString::fromUtf8("ERP"); };
 
     bool isImplemented() override { return true; };
 
