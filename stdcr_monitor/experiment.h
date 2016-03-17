@@ -13,9 +13,11 @@ public:
     explicit Experiment(QWidget *parent = 0);
 
     static const int NO_EXPERIMENT = -1;
+    static const QString EXPERIMENT_NAME;
 
 
 private:
+
 
 };
 

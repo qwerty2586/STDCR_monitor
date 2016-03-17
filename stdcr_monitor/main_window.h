@@ -25,14 +25,23 @@ private:
 
     QVBoxLayout *windowLayout;
     std::vector<QPushButton *> menuButtons;
-    QLabel *captionLabel;
+    QLabel *captionLabel, *experimentNameLabel;
+    QPushButton *backButton, *startStopButton;
+    QHBoxLayout *experimentButtonsLayout;
+    QWidget *experimentButtonsWidget;
+
+
     int activeExperiment;
 
-    void initMenuItems();
+    void initItems();
 
     void showMenu();
 
-    void hideMenu();
+    void changeExperiment(const int experiment);
+
+    void showExperiment(const int experiment);
+
+    void clearLayout();
 
 
 
@@ -40,7 +49,10 @@ public slots:
 
     void menuButtonClick();
 
-    void changeExpreriment(const int experiment);
+    void backClick();
+
+    void startStopClick();
+
 };
 
 
