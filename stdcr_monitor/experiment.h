@@ -25,6 +25,5 @@ private:
 
 };
 
-//Experiment::NAME = QString:"";
 
 #endif //STDCR_MONITOR_EXPERIMENT_H

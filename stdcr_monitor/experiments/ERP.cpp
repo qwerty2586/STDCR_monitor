@@ -3,9 +3,10 @@
 //
 
 #include "ERP.h"
-//ERP::NAME = QString::fromUtf8("ERP");
+#include <QVBoxLayout>
 
 ERP::ERP(QWidget *parent) : Experiment(parent) {
+    initItems();
 
 
 };
@@ -17,4 +18,18 @@ QString ERP::getName() {
 
 bool ERP::isImplemented() {
     return true;
+}
+
+void ERP::initItems() {
+    QVBoxLayout *l = new QVBoxLayout();
+
+
+    tabs = new QTabWidget();
+    tabs->addTab(new QWidget(), "SYNC SETUP");
+    tabs->addTab(new QWidget(), "LED SETUP");
+    tabs->addTab(new QWidget(), "SCHEMA");
+    l->addWidget(tabs);
+    this->setLayout(l);
+
+
 }
