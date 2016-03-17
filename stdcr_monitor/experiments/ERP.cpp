@@ -1,6 +1,3 @@
-//
-// Created by qwerty on 16. 3. 2016.
-//
 
 #include "ERP.h"
 #include <QVBoxLayout>
@@ -16,9 +13,6 @@ QString ERP::getName() {
     return QString::fromUtf8("ERP");
 };
 
-bool ERP::isImplemented() {
-    return true;
-}
 
 void ERP::initItems() {
     QVBoxLayout *l = new QVBoxLayout();

@@ -1,6 +1,4 @@
-//
-// Created by qwerty on 11.03.2016.
-//
+
 
 #include "params.h"
 

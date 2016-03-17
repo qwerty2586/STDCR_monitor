@@ -1,6 +1,3 @@
-//
-// Created by qwerty on 16. 3. 2016.
-//
 
 #ifndef STDCR_MONITOR_ERP_H
 #define STDCR_MONITOR_ERP_H
@@ -18,7 +15,7 @@ public:
 
     QString getName() override;
 
-    bool isImplemented();
+    bool isImplemented() override { return true; };
 
 private:
 
