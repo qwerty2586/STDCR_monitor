@@ -3,13 +3,15 @@
 #define STDCR_MONITOR_ERP_H
 
 #include "../experiment.h"
+#include <QSpinBox>
 #include <QTabWidget>
+#include <QRadioButton>
 
 class ERP : public Experiment {
 Q_OBJECT
 
 public:
-    QTabWidget *tabs;
+
 
     explicit ERP(QWidget *parent = 0);
 
@@ -18,8 +20,17 @@ public:
     bool isImplemented() override { return true; };
 
 private:
+    QTabWidget *tabs;
+    QSpinBox *q_out, *q_wait;
+    QRadioButton *q_edge_up, *q_edge_down;
+    QRadioButton *q_rand_none, *q_rand_plus, *q_rand_minus, *q_rand_plusminus;
+
+
+
 
     void initItems();
+
+
 };
 
 #endif //STDCR_MONITOR_ERP_H
