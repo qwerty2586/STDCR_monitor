@@ -103,6 +103,12 @@ void ERP::initItems() {
     ledSetupLayout->addWidget(q_add_led, 2, 0);
     connect(q_add_led, SIGNAL(released()), this, SLOT(addLed()));
 
+    q_clear_leds = new QPushButton("CLEAR");
+    ledSetupLayout->addWidget(q_clear_leds, 0, 0);
+    connect(q_clear_leds, SIGNAL(released()), this, SLOT(clearLeds()));
+    connect(q_clear_leds, SIGNAL(released()), this, SLOT(addLed())); //a pridame prvni led
+    q_clear_leds->hide();
+
     addLed(); // prepare first led
 
 
@@ -143,5 +149,35 @@ void ERP::addLed() {
         q_add_led->show();
     }
 
+    // show clear button
+    if (row > 0) {
+        q_clear_leds->show();
+    }
+}
+
+
+void ERP::clearLeds() {
+    QGridLayout *ledSetupLayout = (QGridLayout *) tabs->widget(1)->layout();
+    ledSetupLayout->removeWidget(q_add_led);
+
+
+    for (int i = 0; i < leds.size(); i++) {
+
+        delete ledSetupLayout->itemAtPosition(i + 2, 0)->widget();
+        delete ledSetupLayout->itemAtPosition(i + 2, 1)->layout();
+        delete ledSetupLayout->itemAtPosition(i + 2, 2)->layout();
+
+        delete leds[i]->pulse_up;
+        delete leds[i]->pulse_down;
+        delete leds[i]->dist_value;
+        delete leds[i]->dist_delay;
+
+        delete leds[i]->brightness;
+
+    }
+    leds.clear();
+    ledSetupLayout->addWidget(q_add_led, 2, 0);
+
+    q_clear_leds->hide(); // hide button for clearing leds
 
 }

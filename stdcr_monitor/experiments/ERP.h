@@ -32,7 +32,7 @@ private:
         QSpinBox *pulse_up, *pulse_down, *dist_value, *dist_delay, *brightness;
     };
     std::vector<Led *> leds;
-    QPushButton *q_add_led;
+    QPushButton *q_add_led, *q_clear_leds;
 
 
 
@@ -41,6 +41,8 @@ private:
 private slots:
 
     void addLed();
+
+    void clearLeds();
 
 
 
