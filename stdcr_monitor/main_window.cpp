@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "params.h"
 #include "experiments/ERP.h"
+#include "experiments/AUTOSTIMULATION.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
@@ -58,7 +59,8 @@ void MainWindow::initExperiments() {
     experiments.push_back(erp);
     experiments.push_back(erp);
     experiments.push_back(erp);
-    experiments.push_back(erp);
+    AUTOSTIMULATION *autostimulation = new AUTOSTIMULATION();
+    experiments.push_back(autostimulation);
     experiments.push_back(erp);
     experiments.push_back(erp);
 }
