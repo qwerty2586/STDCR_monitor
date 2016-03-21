@@ -72,6 +72,7 @@ void ERP::initItems() {
     qhBoxLayout->addWidget(q_rand_minus);
     qhBoxLayout->addWidget(q_rand_plusminus);
     syncSetupLayout->addLayout(qhBoxLayout, 3, 1, Qt::AlignLeft);
+    syncSetupLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 4, 0, 3, 1);
 
     // 2nd tab
 
@@ -110,6 +111,12 @@ void ERP::initItems() {
     q_clear_leds->hide();
 
     addLed(); // prepare first led
+
+    // 3rd tab
+    QGridLayout *schemeLayout = new QGridLayout();
+    tabs->widget(2)->setLayout(schemeLayout);
+
+
 
 
 }
