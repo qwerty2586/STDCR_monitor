@@ -2,7 +2,7 @@
 #include "params.h"
 #include "experiments/ERP.h"
 #include "experiments/AUTOSTIMULATION.h"
-
+#include "experiments/BIOSENSOR_LOGGER.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
@@ -61,7 +61,8 @@ void MainWindow::initExperiments() {
     experiments.push_back(erp);
     AUTOSTIMULATION *autostimulation = new AUTOSTIMULATION();
     experiments.push_back(autostimulation);
-    experiments.push_back(erp);
+    BIOSENSOR_LOGGER *biosensor_logger = new BIOSENSOR_LOGGER();
+    experiments.push_back(biosensor_logger);
     experiments.push_back(erp);
 }
 

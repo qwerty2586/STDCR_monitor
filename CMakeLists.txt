@@ -12,7 +12,8 @@ find_package(Qt4 4.4.3 REQUIRED QtGui QtXml)
 
 
 set(SOURCE_FILES stdcr_monitor/main.cpp stdcr_monitor/params.cpp stdcr_monitor/main_window.cpp
-        stdcr_monitor/experiment.cpp stdcr_monitor/experiments/ERP.cpp stdcr_monitor/experiments/AUTOSTIMULATION.h stdcr_monitor/widgets/qcheckgrid.cpp stdcr_monitor/widgets/qcheckgrid.h)
+        stdcr_monitor/experiment.cpp stdcr_monitor/experiments/ERP.cpp stdcr_monitor/experiments/AUTOSTIMULATION.h
+        stdcr_monitor/widgets/qcheckgrid.cpp stdcr_monitor/widgets/qcheckgrid.h stdcr_monitor/experiments/BIOSENSOR_LOGGER.h)
 add_executable(STDCR_monitor ${SOURCE_FILES})
 
 target_link_libraries(STDCR_monitor Qt4::QtGui)
