@@ -3,6 +3,7 @@
 #include "experiments/ERP.h"
 #include "experiments/AUTOSTIMULATION.h"
 #include "experiments/BIOSENSOR_LOGGER.h"
+#include "experiments/TEST_MODE.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
@@ -63,7 +64,8 @@ void MainWindow::initExperiments() {
     experiments.push_back(autostimulation);
     BIOSENSOR_LOGGER *biosensor_logger = new BIOSENSOR_LOGGER();
     experiments.push_back(biosensor_logger);
-    experiments.push_back(erp);
+    TEST_MODE *test_mode = new TEST_MODE();
+    experiments.push_back(test_mode);
 }
 
 

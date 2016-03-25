@@ -14,7 +14,7 @@ public:
 
     explicit BIOSENSOR_LOGGER(QWidget *parent = 0) { };
 
-    QString getName() override { return QString::fromUtf8("BIOSENSOR_LOGGER"); };
+    QString getName() override { return QString::fromUtf8("BIOSENSOR LOGGER"); };
 
     bool isImplemented() override { return false; };
 
