@@ -11,7 +11,13 @@ Q_OBJECT
 public:
 
 
-    explicit QCheckGrid(int w, int h, QWidget *parent = 0);
+    explicit QCheckGrid(int rows, int columns, QWidget *parent = 0);
+
+    std::vector<bool> value();
+
+signals:
+
+    void valueChanged();
 
 private:
     int width, height;

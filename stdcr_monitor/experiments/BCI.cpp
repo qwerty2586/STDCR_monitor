@@ -1,14 +1,15 @@
 
+
 #include "BCI.h"
-#include <QLabel>
+#include <QBoxLayout>
+
 
 BCI::BCI(QWidget *parent) : Experiment(parent) {
     initItems();
-
 };
 
-
 void BCI::initItems() {
+
     QVBoxLayout *l = new QVBoxLayout();
 
 
@@ -19,51 +20,70 @@ void BCI::initItems() {
     l->addWidget(tabs);
     this->setLayout(l);
 
-    // F-VEP
 
+    // c-vep
 
+    QGridLayout *cvepLayout = new QGridLayout();
+    tabs->widget(2)->setLayout(cvepLayout);
 
-    // C-VEP
-    QGridLayout *c_vepLayout = new QGridLayout();
-    tabs->widget(2)->setLayout(c_vepLayout);
+    cvepLayout->setColumnStretch(0, 2);
+    cvepLayout->setColumnStretch(1, 1);
+    cvepLayout->setColumnStretch(2, 1);
 
-    c_vepLayout->setColumnStretch(0, 2);
-    c_vepLayout->setColumnStretch(1, 1);
-    c_vepLayout->setColumnStretch(2, 1);
+    cvepLayout->addWidget(new QLabel("STIMULI COUNT"), 0, 0);
+    q_stimuli_count = new QSpinBox();
+    cvepLayout->addWidget(q_stimuli_count, 0, 1);
 
-    c_vepLayout->addWidget(new QLabel("Stimuli count"), 0, 0);
-    stimuli_count = new QSpinBox();
-    stimuli_count->setRange(0, 8);
-    c_vepLayout->addWidget(stimuli_count, 0, 1);
+    cvepLayout->addWidget(new QLabel("PATTERN"), 1, 0);
+    q_pattern = new QCheckGrid(2, 16);
+    cvepLayout->addWidget(q_pattern, 2, 0, 1, 3);  // zapotrebi roztahnout prez vicero sloupku
+    connect(q_pattern, SIGNAL(valueChanged()), this, SLOT(patternChanged()));
 
-    c_vepLayout->addWidget(new QLabel("Pattern"), 1, 0);
-    pattern = new QCheckGrid(2, 16, 0);
-    c_vepLayout->addWidget(pattern, 2, 0);
+    QHBoxLayout *qhBoxLayout = new QHBoxLayout();
+    qhBoxLayout->addWidget(new QLabel("TARGET BIN      ")); // potrebujeme trosku odsadit
+    q_target_bin = new QLabel("");
+    qhBoxLayout->addWidget(q_target_bin);
+    cvepLayout->addLayout(qhBoxLayout, 3, 0, 1, 3, Qt::AlignLeft);
 
-    c_vepLayout->addWidget(new QLabel("Target bin"), 3, 0);
-    target_bin = new QLineEdit();
-    target_bin->setText("0000 0000 0000 0000 0000 0000 0000 0000");
-    target_bin->setFixedWidth(225);
-    target_bin->setMaxLength(39);
-    c_vepLayout->addWidget(target_bin, 4, 0);
+    cvepLayout->addWidget(new QLabel("TARGET WAVEFORM"), 4, 0);
+    q_target_wave = new QWaveForm(32);
+    cvepLayout->addWidget(q_target_wave, 5, 0, 1, 3);
 
-    c_vepLayout->addWidget(new QLabel("Pulse length"), 5, 0);
-    pulse_length = new QSpinBox();
-    pulse_length->setRange(0, 30000);
-    c_vepLayout->addWidget(pulse_length, 5, 1);
-    c_vepLayout->addWidget(new QLabel("[ms]"), 5, 2);
+    patternChanged(); // nastavime target bin a target wave
 
-    c_vepLayout->addWidget(new QLabel("Pulse skew"), 6, 0);
-    pulse_skew = new QSpinBox();
-    pulse_skew->setRange(0, 30000);
-    c_vepLayout->addWidget(pulse_skew, 6, 1);
-    c_vepLayout->addWidget(new QLabel("[ms]"), 6, 2);
+    cvepLayout->addWidget(new QLabel("PULSE LENGTH"), 6, 0);
+    q_pulse_length = new QSpinBox();
+    cvepLayout->addWidget(q_pulse_length, 6, 1);
+    cvepLayout->addWidget(new QLabel("[ms]"), 6, 2);
 
-    c_vepLayout->addWidget(new QLabel("Brightness"), 7, 0);
-    brightness = new QSpinBox();
-    brightness->setRange(0, 100);
-    c_vepLayout->addWidget(brightness, 7, 1);
-    c_vepLayout->addWidget(new QLabel("[%]"), 7, 2);
+    cvepLayout->addWidget(new QLabel("PULSE SKEW"), 7, 0);
+    q_pulse_skew = new QSpinBox();
+    cvepLayout->addWidget(q_pulse_skew, 7, 1);
+    cvepLayout->addWidget(new QLabel("[ms]"), 7, 2);
+
+    cvepLayout->addWidget(new QLabel("BRIGHTNESS"), 8, 0);
+    q_brightness = new QSpinBox();
+    q_brightness->setRange(0, 100);
+    cvepLayout->addWidget(q_brightness, 8, 1);
+    cvepLayout->addWidget(new QLabel("[%]"), 8, 2);
 
 
 }
+
+
+void BCI::patternChanged() {
+    std::vector<bool> pattern = q_pattern->value();
+    QString *pattern_bin = new QString("");
+    for (int i = 0; i < pattern.size(); ++i) {
+        if (pattern[i]) pattern_bin->append("1");
+        else pattern_bin->append("0");
+        if ((i + 1) % 4 == 0) pattern_bin->append(" ");
+    }
+    q_target_bin->setText(pattern_bin->toAscii());
+
+    q_target_wave->setValue(pattern);
+
+
+}
+
+

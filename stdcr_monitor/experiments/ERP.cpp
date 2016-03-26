@@ -2,6 +2,7 @@
 #include "ERP.h"
 #include <QVBoxLayout>
 #include <QLabel>
+#include <stdcr_monitor/widgets/qcheckgrid.h>
 
 
 const static QString ERP_MS = "[ms]";
@@ -74,6 +75,8 @@ void ERP::initItems() {
     syncSetupLayout->addLayout(qhBoxLayout, 3, 1, Qt::AlignLeft);
     syncSetupLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 4, 0, 3, 1);
 
+    syncSetupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Ignored, QSizePolicy::Ignored), 4, 0, 3, 0);
+
     // 2nd tab
 
     QGridLayout *ledSetupLayout = new QGridLayout();
@@ -116,8 +119,13 @@ void ERP::initItems() {
     QGridLayout *schemeLayout = new QGridLayout();
     tabs->widget(2)->setLayout(schemeLayout);
 
+    QCheckGrid *qCheckGrid = new QCheckGrid(3, 16);
+    schemeLayout->addWidget(qCheckGrid, 0, 0);
+    qCheckGrid = new QCheckGrid(3, 16);
+    schemeLayout->addWidget(qCheckGrid, 1, 0);
 
-
+    qCheckGrid = new QCheckGrid(3, 16);
+    schemeLayout->addWidget(qCheckGrid, 2, 0);
 
 }
 

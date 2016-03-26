@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "params.h"
 #include "experiments/ERP.h"
+#include "experiments/BCI.h"
 #include "experiments/AUTOSTIMULATION.h"
 #include "experiments/BIOSENSOR_LOGGER.h"
 #include "experiments/TEST_MODE.h"

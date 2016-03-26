@@ -1,5 +1,9 @@
 #include "qcheckgrid.h"
 
+
+const static int QCHECKGRID_MARGIN = 3;
+
+
 QCheckGrid::QCheckGrid(int rows, int columns, QWidget *parent) {
     int count = columns * rows;
     layout = new QGridLayout();
@@ -15,6 +19,8 @@ QCheckGrid::QCheckGrid(int rows, int columns, QWidget *parent) {
     }
     layout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 0, columns, rows, 1);
     layout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), rows, 0, 1, columns);
+    layout->setMargin(QCHECKGRID_MARGIN);
+
 
 }
 
@@ -31,6 +37,11 @@ void QCheckGrid::boxChange() {
             m_value[i] = boxes[i]->isChecked();
         }
     }
-
-
+    emit valueChanged();
 }
+
+std::vector<bool> QCheckGrid::value() {
+    return m_value;
+}
+
+
