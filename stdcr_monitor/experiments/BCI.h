@@ -28,11 +28,16 @@ private:
     QWaveForm *q_target_wave;
     QLabel *q_target_bin;
 
+    QTabWidget *f_tabs, *t_tabs;
+
 
     struct FLed {
 
+
     };
     struct TLed {
+        QCheckGrid *pattern;
+        QCheckGrid *target_wave;
 
     };
     std::vector<FLed *> fleds;
@@ -42,12 +47,16 @@ private:
 
 private slots:
 
-/*
     void addFLed();
     void clearFLeds();
-    void addTLed();
-    void clearTLeds();
-*/
+
+    /*
+
+     void addTLed();
+     void clearTLeds();
+ */
+
+    void fCurrentChanged(int index);
     void patternChanged();
 
 

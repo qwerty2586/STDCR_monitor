@@ -2,6 +2,7 @@
 
 #include "BCI.h"
 #include <QBoxLayout>
+#include <QToolButton>
 
 
 BCI::BCI(QWidget *parent) : Experiment(parent) {
@@ -14,11 +15,26 @@ void BCI::initItems() {
 
 
     tabs = new QTabWidget();
-    tabs->addTab(new QWidget(), "F-VEP");
+    f_tabs = new QTabWidget();
+    tabs->addTab(f_tabs, "F-VEP");
     tabs->addTab(new QWidget(), "T-VEP");
     tabs->addTab(new QWidget(), "C-VEP");
     l->addWidget(tabs);
     this->setLayout(l);
+
+    // f-vep
+    QToolButton *qToolButton = new QToolButton(f_tabs);
+    qToolButton->setText("+");
+    f_tabs->setCornerWidget(qToolButton, Qt::TopLeftCorner);
+    qToolButton = new QToolButton(f_tabs);
+    qToolButton->setText("CLEAR");
+    f_tabs->setCornerWidget(qToolButton, Qt::TopRightCorner);
+    f_tabs->addTab(new QWidget, "LED0");
+
+    connect(f_tabs, SIGNAL(currentChanged(int)), this, SLOT(fCurrentChanged(int)));
+
+
+
 
 
     // c-vep
@@ -85,5 +101,25 @@ void BCI::patternChanged() {
 
 
 }
+
+void BCI::fCurrentChanged(int index) {
+    if (index >= fleds.size()) {
+        addFLed();
+    }
+}
+
+void BCI::addFLed() {
+
+}
+
+void BCI::clearFLeds() {
+
+}
+
+
+
+
+
+
 
 
