@@ -1,6 +1,3 @@
-//
-// Created by Mike on 25.3.2016.
-//
 
 
 #include "TEST_MODE.h"

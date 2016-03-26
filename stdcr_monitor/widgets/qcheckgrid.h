@@ -15,8 +15,8 @@ public:
 
 private:
     int width, height;
-    std::vector<bool> m_value;
     std::vector<QCheckBox *> boxes;
+    std::vector<bool> m_value;
     QGridLayout *layout;
 
     void setBox(int box, bool b);

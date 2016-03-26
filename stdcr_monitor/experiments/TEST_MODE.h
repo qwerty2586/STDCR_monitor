@@ -1,6 +1,3 @@
-//
-// Created by Mike on 25.3.2016.
-//
 
 #ifndef STDCR_MONITOR_TEST_MODE_H
 #define STDCR_MONITOR_TEST_MODE_H

@@ -4,6 +4,7 @@
 #include "experiments/AUTOSTIMULATION.h"
 #include "experiments/BIOSENSOR_LOGGER.h"
 #include "experiments/TEST_MODE.h"
+#include "experiments/BCI.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
@@ -58,7 +59,8 @@ void MainWindow::initItems() {
 void MainWindow::initExperiments() {
     ERP *erp = new ERP();
     experiments.push_back(erp);
-    experiments.push_back(erp);
+    BCI *bci = new BCI();
+    experiments.push_back(bci);
     experiments.push_back(erp);
     AUTOSTIMULATION *autostimulation = new AUTOSTIMULATION();
     experiments.push_back(autostimulation);

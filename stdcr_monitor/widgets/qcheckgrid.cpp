@@ -32,4 +32,5 @@ void QCheckGrid::boxChange() {
         }
     }
 
+
 }
