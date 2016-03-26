@@ -1,6 +1,3 @@
-//
-// Created by qwerty on 26. 3. 2016.
-//
 
 #include <QPainter>
 #include "qwaveform.h"

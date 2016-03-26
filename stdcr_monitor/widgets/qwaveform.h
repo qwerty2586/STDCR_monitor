@@ -1,6 +1,3 @@
-//
-// Created by qwerty on 26. 3. 2016.
-//
 
 #ifndef STDCR_MONITOR_QWAVEFORM_H
 #define STDCR_MONITOR_QWAVEFORM_H

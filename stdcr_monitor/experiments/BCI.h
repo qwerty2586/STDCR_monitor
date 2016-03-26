@@ -35,8 +35,9 @@ private:
 
 
     struct FLed {
-
-
+        QLabel *label1, *label2, *label3, *label4, *label5;
+        QLabel *label1p, *label2p, *label3p, *label4p, *label5p;
+        QSpinBox *time_on, *time_off, *frequency, *duty_cycle, *brightness;
     };
     struct TLed {
         QCheckGrid *pattern;
