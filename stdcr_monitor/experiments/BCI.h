@@ -5,6 +5,7 @@
 #include <QTabWidget>
 #include <QSpinBox>
 #include <QLabel>
+#include <QToolButton>
 #include "../widgets/qwaveform.h"
 #include "../widgets/qcheckgrid.h"
 
@@ -29,6 +30,8 @@ private:
     QLabel *q_target_bin;
 
     QTabWidget *f_tabs, *t_tabs;
+    QToolButton *f_add_led, *f_clear_leds;
+    QToolButton *t_add_led, *t_clear_leds;
 
 
     struct FLed {
@@ -55,8 +58,6 @@ private slots:
      void addTLed();
      void clearTLeds();
  */
-
-    void fCurrentChanged(int index);
     void patternChanged();
 
 

@@ -23,15 +23,22 @@ void BCI::initItems() {
     this->setLayout(l);
 
     // f-vep
-    QToolButton *qToolButton = new QToolButton(f_tabs);
-    qToolButton->setText("+");
-    f_tabs->setCornerWidget(qToolButton, Qt::TopLeftCorner);
-    qToolButton = new QToolButton(f_tabs);
-    qToolButton->setText("CLEAR");
-    f_tabs->setCornerWidget(qToolButton, Qt::TopRightCorner);
-    f_tabs->addTab(new QWidget, "LED0");
 
-    connect(f_tabs, SIGNAL(currentChanged(int)), this, SLOT(fCurrentChanged(int)));
+
+    f_add_led = new QToolButton(f_tabs);
+    f_add_led->setText("+");
+    f_tabs->setCornerWidget(f_add_led, Qt::TopLeftCorner);
+    f_clear_leds = new QToolButton(f_tabs);
+    f_clear_leds->setText("CLEAR");
+    f_tabs->setCornerWidget(f_clear_leds, Qt::TopRightCorner);
+
+    connect(f_add_led, SIGNAL(released()), this, SLOT(addFLed()));
+    connect(f_clear_leds, SIGNAL(released()), this, SLOT(clearFLeds()));
+    connect(f_clear_leds, SIGNAL(released()), this, SLOT(addFLed()));
+
+    addFLed();
+
+
 
 
 
@@ -99,21 +106,15 @@ void BCI::patternChanged() {
 
     q_target_wave->setValue(pattern);
 
-
-}
-
-void BCI::fCurrentChanged(int index) {
-    if (index >= fleds.size()) {
-        addFLed();
-    }
 }
 
 void BCI::addFLed() {
+    f_tabs->addTab(new QWidget, QString::number(f_tabs->count()));
 
 }
 
 void BCI::clearFLeds() {
-
+    f_tabs->clear();
 }
 
 
