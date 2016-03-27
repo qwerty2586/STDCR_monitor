@@ -1,8 +1,10 @@
 
 
 #include "BCI.h"
-#include <QBoxLayout>
 
+const int MAX_LEDS = 8;
+const int DEFAULT_LENGTH = 8;
+const int MAX_LENGTH = 32;
 
 BCI::BCI(QWidget *parent) : Experiment(parent) {
     initItems();
@@ -16,7 +18,8 @@ void BCI::initItems() {
     tabs = new QTabWidget();
     f_tabs = new QTabWidget();
     tabs->addTab(f_tabs, "F-VEP");
-    tabs->addTab(new QWidget(), "T-VEP");
+    t_tabs = new QTabWidget();
+    tabs->addTab(t_tabs, "T-VEP");
     tabs->addTab(new QWidget(), "C-VEP");
     l->addWidget(tabs);
     this->setLayout(l);
@@ -37,11 +40,20 @@ void BCI::initItems() {
 
     addFLed();
 
+    // t-vep
 
+    t_add_led = new QToolButton(t_tabs);
+    t_add_led->setText("+");
+    t_tabs->setCornerWidget(t_add_led, Qt::TopLeftCorner);
+    t_clear_leds = new QToolButton(t_tabs);
+    t_clear_leds->setText("CLEAR");
+    t_tabs->setCornerWidget(t_clear_leds, Qt::TopRightCorner);
 
+    connect(t_add_led, SIGNAL(released()), this, SLOT(addTLed()));
+    connect(t_clear_leds, SIGNAL(released()), this, SLOT(clearTLeds()));
+    connect(t_clear_leds, SIGNAL(released()), this, SLOT(addTLed()));
 
-
-
+    addTLed();
 
     // c-vep
 
@@ -94,21 +106,16 @@ void BCI::initItems() {
 
 
 void BCI::patternChanged() {
-    std::vector<bool> pattern = q_pattern->value();
-    QString *pattern_bin = new QString("");
-    for (int i = 0; i < pattern.size(); ++i) {
-        if (pattern[i]) pattern_bin->append("1");
-        else pattern_bin->append("0");
-        if ((i + 1) % 4 == 0) pattern_bin->append(" ");
-    }
-    q_target_bin->setText(pattern_bin->toAscii());
 
-    q_target_wave->setValue(pattern);
+    q_target_bin->setText(q_pattern->toNiceString()->toAscii());
+    q_target_wave->setValue(q_pattern->value());
 
 }
 
 void BCI::addFLed() {
     int index = fleds.size();
+    if (index >= MAX_LEDS)
+        return;;
 
     f_tabs->addTab(new QWidget, QString::fromUtf8("LED") + QString::number(index));
     QGridLayout *fLedLayout = new QGridLayout();
@@ -117,7 +124,6 @@ void BCI::addFLed() {
     fLedLayout->setColumnStretch(0, 2);
     fLedLayout->setColumnStretch(1, 1);
     fLedLayout->setColumnStretch(2, 1);
-
 
     fleds.push_back(new FLed());
 
@@ -187,11 +193,157 @@ void BCI::clearFLeds() {
         delete l->duty_cycle;
         delete l->brightness;
 
-        delete f_tabs->layout();
+
     }
     fleds.clear();
     f_tabs->clear();
 }
+
+void BCI::addTLed() {
+    int index = tleds.size();
+    if (index >= MAX_LEDS)
+        return;;
+
+    t_tabs->addTab(new QWidget, QString::fromUtf8("LED") + QString::number(index));
+    QGridLayout *tLedLayout = new QGridLayout();
+    t_tabs->widget(index)->setLayout(tLedLayout);
+
+    tLedLayout->setColumnStretch(0, 2);
+    tLedLayout->setColumnStretch(1, 1);
+    tLedLayout->setColumnStretch(2, 1);
+
+
+    tleds.push_back(new TLed());
+
+    TLed *l = tleds[index]; // zkraceni zapisu
+
+    l->label_pattern = new QLabel("PATERN");
+    tLedLayout->addWidget(l->label_pattern, 0, 0);
+    l->pattern = new QCheckGrid(1, DEFAULT_LENGTH);
+    tLedLayout->addWidget(l->pattern, 1, 0, 1, 3);
+
+    l->bin_layout = new QHBoxLayout();
+    l->label_bin = new QLabel("TARGET BIN      ");
+    l->bin_layout->addWidget(l->label_bin);
+    l->bin = new QLabel(l->pattern->toNiceString()->toAscii());
+    l->bin_layout->addWidget(l->bin);
+    tLedLayout->addLayout(l->bin_layout, 2, 0, 1, 3, Qt::AlignLeft);
+
+    l->label_wave = new QLabel("TARGET WAVEFORM");
+    tLedLayout->addWidget(l->label_wave, 4, 0);
+    l->waveform = new QWaveForm(DEFAULT_LENGTH);
+    tLedLayout->addWidget(l->waveform, 5, 0, 1, 3);
+    connect(l->pattern, SIGNAL(valueChanged()), this, SLOT(tPatternChanged()));
+
+    l->label1 = new QLabel("PATTERN LENGTH");
+    tLedLayout->addWidget(l->label1, 6, 0);
+    l->pattern_length = new QSpinBox();
+    l->pattern_length->setRange(0, MAX_LENGTH);
+    l->pattern_length->setValue(DEFAULT_LENGTH);
+    tLedLayout->addWidget(l->pattern_length, 6, 1);
+    connect(l->pattern_length, SIGNAL(valueChanged(int)), this, SLOT(tLengthChanged()));
+    connect(l->pattern_length, SIGNAL(valueChanged(int)), l->waveform, SLOT(resizeLength(int)));
+
+    l->label2 = new QLabel("PULSE LENGTH");
+    tLedLayout->addWidget(l->label2, 7, 0);
+    l->pulse_length = new QSpinBox();
+    l->pulse_length->setRange(0, 30000);
+    tLedLayout->addWidget(l->pulse_length, 7, 1);
+    l->label2p = new QLabel("[ms]");
+    tLedLayout->addWidget(l->label2p, 7, 2);
+
+    l->label3 = new QLabel("PULSE SKEW");
+    tLedLayout->addWidget(l->label3, 8, 0);
+    l->pulse_skew = new QSpinBox();
+    l->pulse_skew->setRange(0, 30000);
+    tLedLayout->addWidget(l->pulse_skew, 8, 1);
+    l->label3p = new QLabel("[ms]");
+    tLedLayout->addWidget(l->label3p, 8, 2);
+
+
+    l->label4 = new QLabel("BRIGHTNESS");
+    tLedLayout->addWidget(l->label4, 9, 0);
+    l->brightness = new QSpinBox();
+    l->brightness->setRange(0, 100);
+    tLedLayout->addWidget(l->brightness, 9, 1);
+    l->label4p = new QLabel("[\%]");
+    tLedLayout->addWidget(l->label4p, 9, 2);
+
+
+}
+
+void BCI::clearTLeds() {
+    TLed *l;
+    for (int i = 0; i < tleds.size(); ++i) {
+        l = tleds[i];
+        delete l->label_pattern;
+        delete l->pattern;
+        delete l->label_bin;
+        delete l->bin;
+        delete l->label_wave;
+        delete l->waveform;
+        delete l->bin_layout;
+
+        delete l->label1;
+        delete l->label2;
+        delete l->label3;
+        delete l->label4;
+
+        delete l->label2p;
+        delete l->label3p;
+        delete l->label4p;
+
+        l->pattern_length->disconnect();
+        delete l->pattern_length;
+        delete l->pulse_length;
+        delete l->pulse_skew;
+        delete l->brightness;
+
+
+    }
+    tleds.clear();
+    t_tabs->clear();
+
+}
+
+void BCI::tPatternChanged() {
+    int index = -1;
+    for (int i = 0; i < tleds.size(); ++i) {
+        if (sender() == tleds[i]->pattern) {
+            index = i;
+            break;
+        }
+
+    }
+
+    tleds[index]->bin->setText(tleds[index]->pattern->toNiceString()->toAscii());
+
+    tleds[index]->waveform->setValue(tleds[index]->pattern->value());
+
+}
+
+void BCI::tLengthChanged() {
+    int index = -1;
+    for (int i = 0; i < tleds.size(); ++i) {
+        if (sender() == tleds[i]->pattern_length) {
+            index = i;
+            break;
+        }
+    }
+
+
+    tleds[index]->pattern->patternResize(1, tleds[index]->pattern_length->value());
+
+
+}
+
+
+
+
+
+
+
+
 
 
 

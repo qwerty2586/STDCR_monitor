@@ -7,7 +7,7 @@ QWaveForm::QWaveForm(int length, QWidget *parent) {
     this->setParent(parent);
     m_length = length;
     this->resize(HEIGHT * length, HEIGHT);
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     for (int i = 0; i < length; ++i) {
         m_value.push_back(false);
     }
@@ -41,6 +41,27 @@ void QWaveForm::paintEvent(QPaintEvent *event) {
         }
 
     }
+}
+
+void QWaveForm::resizeLength(int length) {
+    if (length > m_value.size()) { //pridavame
+        while (length != m_value.size()) {
+            m_value.push_back(false);
+        }
+        this->resize(HEIGHT * length, HEIGHT);
+        update();
+    }
+
+    if (length < m_length) { //ubirame
+        while (length != m_value.size()) {
+            m_value.pop_back();
+        }
+        this->resize(HEIGHT * length, HEIGHT);
+        update();
+    }
+    m_length = length;
+
+
 };
 
 

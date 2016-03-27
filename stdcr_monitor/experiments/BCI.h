@@ -40,8 +40,14 @@ private:
         QSpinBox *time_on, *time_off, *frequency, *duty_cycle, *brightness;
     };
     struct TLed {
+        QLabel *label_pattern, *label_wave, *label_bin;
+        QHBoxLayout *bin_layout;
         QCheckGrid *pattern;
-        QCheckGrid *target_wave;
+        QWaveForm *waveform;
+        QLabel *bin;
+        QLabel *label1, *label2, *label3, *label4;
+        QLabel *label2p, *label3p, *label4p;
+        QSpinBox *pattern_length, *pulse_length, *pulse_skew, *brightness;
 
     };
     std::vector<FLed *> fleds;
@@ -54,13 +60,17 @@ private slots:
     void addFLed();
     void clearFLeds();
 
-    /*
 
-     void addTLed();
-     void clearTLeds();
- */
+    void addTLed();
+
+    void clearTLeds();
+
+    void tPatternChanged();
+
+    void tLengthChanged();
+
+
     void patternChanged();
-
 
 
 };

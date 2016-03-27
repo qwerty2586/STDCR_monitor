@@ -15,6 +15,7 @@ public:
 
     static const int HEIGHT = 10;
 
+
     QSize sizeHint() const { return QSize(HEIGHT * m_length, HEIGHT); }
 
     QSize minimumSizeHint() const { return QSize(HEIGHT * m_length, HEIGHT); }
@@ -22,6 +23,8 @@ public:
 public slots:
 
     void setValue(std::vector<bool> value);
+
+    void resizeLength(int length);
 
 protected:
     void paintEvent(QPaintEvent *event);

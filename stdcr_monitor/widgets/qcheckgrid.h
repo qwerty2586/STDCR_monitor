@@ -8,12 +8,17 @@
 class QCheckGrid : public QWidget {
 Q_OBJECT
 
+
 public:
 
 
     explicit QCheckGrid(int rows, int columns, QWidget *parent = 0);
 
+
+    void patternResize(int rows, int columns);
     std::vector<bool> value();
+
+    QString *toNiceString();
 
 signals:
 
