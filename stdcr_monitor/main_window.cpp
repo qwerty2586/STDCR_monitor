@@ -2,10 +2,10 @@
 #include "params.h"
 #include "experiments/ERP.h"
 #include "experiments/BCI.h"
+#include "experiments/RESPONSE_EXPERIMENT.h"
 #include "experiments/AUTOSTIMULATION.h"
 #include "experiments/BIOSENSOR_LOGGER.h"
 #include "experiments/TEST_MODE.h"
-#include "experiments/BCI.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
@@ -62,7 +62,8 @@ void MainWindow::initExperiments() {
     experiments.push_back(erp);
     BCI *bci = new BCI();
     experiments.push_back(bci);
-    experiments.push_back(erp);
+    RESPONSE_EXPERIMENT *response_experiment = new RESPONSE_EXPERIMENT();
+    experiments.push_back(response_experiment);
     AUTOSTIMULATION *autostimulation = new AUTOSTIMULATION();
     experiments.push_back(autostimulation);
     BIOSENSOR_LOGGER *biosensor_logger = new BIOSENSOR_LOGGER();
