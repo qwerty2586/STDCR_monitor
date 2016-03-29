@@ -330,9 +330,9 @@ void BCI::tLengthChanged() {
             break;
         }
     }
-
-
     tleds[index]->pattern->patternResize(1, tleds[index]->pattern_length->value());
+    tleds[index]->bin->setText(tleds[index]->pattern->toNiceString()->toAscii());
+
 
 
 }

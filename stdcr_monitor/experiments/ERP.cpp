@@ -2,7 +2,8 @@
 #include "ERP.h"
 #include <QVBoxLayout>
 #include <QLabel>
-#include <stdcr_monitor/widgets/qcheckgrid.h>
+#include <QGroupBox>
+#include "../widgets/qsaveloadwidget.h"
 
 
 const static QString ERP_MS = "[ms]";
@@ -55,27 +56,38 @@ void ERP::initItems() {
     syncSetupLayout->addWidget(new QLabel(ERP_MS), 1, 2);
 
     syncSetupLayout->addWidget(new QLabel(ERP_EDGE), 2, 0);
+    QGroupBox *qGroubBox = new QGroupBox();
+    qGroubBox->setFlat(true); // udelame maly groupbox
+    qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
     QHBoxLayout *qhBoxLayout = new QHBoxLayout();
     q_edge_up = new QRadioButton("UP");
     q_edge_down = new QRadioButton("DOWN");
+    q_edge_up->setChecked(true);
     qhBoxLayout->addWidget(q_edge_up);
     qhBoxLayout->addWidget(q_edge_down);
-    syncSetupLayout->addLayout(qhBoxLayout, 2, 1, Qt::AlignLeft);
+    qGroubBox->setLayout(qhBoxLayout);
+    syncSetupLayout->addWidget(qGroubBox, 2, 1, Qt::AlignLeft);
 
     syncSetupLayout->addWidget(new QLabel(ERP_RAND), 3, 0);
+    qGroubBox = new QGroupBox();
+    qGroubBox->setFlat(true); // udelame maly groupbox
+    qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
     qhBoxLayout = new QHBoxLayout();
     q_rand_none = new QRadioButton("0");
     q_rand_plus = new QRadioButton("+");
     q_rand_minus = new QRadioButton("-");
     q_rand_plusminus = new QRadioButton("+ -");
+    q_rand_none->setChecked(true);
     qhBoxLayout->addWidget(q_rand_none);
     qhBoxLayout->addWidget(q_rand_plus);
     qhBoxLayout->addWidget(q_rand_minus);
     qhBoxLayout->addWidget(q_rand_plusminus);
-    syncSetupLayout->addLayout(qhBoxLayout, 3, 1, Qt::AlignLeft);
-    syncSetupLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 4, 0, 3, 1);
+    qGroubBox->setLayout(qhBoxLayout);
+    syncSetupLayout->addWidget(qGroubBox, 3, 1, Qt::AlignLeft);
 
-    syncSetupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Ignored, QSizePolicy::Ignored), 4, 0, 3, 0);
+    syncSetupLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 4, 0, 3,
+                             1); //odsazeni
+
 
     // 2nd tab
 
@@ -113,19 +125,17 @@ void ERP::initItems() {
     connect(q_clear_leds, SIGNAL(released()), this, SLOT(addLed())); //a pridame prvni led
     q_clear_leds->hide();
 
+
     addLed(); // prepare first led
+
+    ledSetupLayout->setRowMinimumHeight(0, 30);
+    ledSetupLayout->setRowStretch(MAX_LEDS + 4, 1); //nejake to roztazeni
 
     // 3rd tab
     QGridLayout *schemeLayout = new QGridLayout();
     tabs->widget(2)->setLayout(schemeLayout);
-
-    QCheckGrid *qCheckGrid = new QCheckGrid(3, 16);
-    schemeLayout->addWidget(qCheckGrid, 0, 0);
-    qCheckGrid = new QCheckGrid(3, 16);
-    schemeLayout->addWidget(qCheckGrid, 1, 0);
-
-    qCheckGrid = new QCheckGrid(3, 16);
-    schemeLayout->addWidget(qCheckGrid, 2, 0);
+    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget("./schemas", "erp_", ".xml");
+    schemeLayout->addWidget(qSaveLoadWidget, 0, 0);
 
 }
 
@@ -192,6 +202,7 @@ void ERP::clearLeds() {
     }
     leds.clear();
     ledSetupLayout->addWidget(q_add_led, 2, 0);
+
 
     q_clear_leds->hide(); // hide button for clearing leds
 

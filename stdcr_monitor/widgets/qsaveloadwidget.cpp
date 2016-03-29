@@ -1,0 +1,107 @@
+//
+// Created by qwerty on 28. 3. 2016.
+//
+
+#include <QListWidget>
+#include <QLabel>
+#include <QDir>
+#include "qsaveloadwidget.h"
+
+QSaveLoadWidget::QSaveLoadWidget(QString directory, QString prefix, QString suffix, QWidget *parent) {
+    this->setParent(parent);
+
+    this->directory = QString(directory);
+    this->prefix = QString(prefix);
+    this->suffix = QString(suffix);
+    //name_list = QStringList();
+    initItems();
+
+}
+
+void QSaveLoadWidget::initItems() {
+    layout = new QVBoxLayout();
+    this->setLayout(layout);
+    list = new QListWidget();
+    layout->addWidget(list, 1);
+    QHBoxLayout *qhBoxLayout = new QHBoxLayout();
+    qhBoxLayout->addWidget(new QLabel(prefix));
+    name_edit = new QLineEdit();
+    qhBoxLayout->addWidget(name_edit, 1); // roztahneme jmeno souboru
+    qhBoxLayout->addWidget(new QLabel(suffix));
+    load_button = new QPushButton("LOAD");
+    qhBoxLayout->addWidget(load_button);
+    save_button = new QPushButton("SAVE");
+    qhBoxLayout->addWidget(save_button);
+    layout->addLayout(qhBoxLayout);
+    refreshList();
+
+    save_button->setEnabled(false);
+    load_button->setEnabled(false);
+
+    connect(list, SIGNAL(currentRowChanged(int)), this, SLOT(listItemSelected(int)));
+    connect(name_edit, SIGNAL(textChanged(QString)), this, SLOT(nameEditChanged(QString)));
+
+
+}
+
+
+void QSaveLoadWidget::refreshList() {
+    populateList();
+    list->clear();
+    list->addItems(name_list);
+
+}
+
+void QSaveLoadWidget::populateList() {
+    name_list.clear();
+    QDir dir(directory);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }  // vytvorime adresar pokud neexistuje
+    QStringList filters;
+    filters.push_back(prefix + "*" + suffix);
+    dir.setNameFilters(filters);
+    name_list = dir.entryList();
+
+}
+
+void QSaveLoadWidget::listItemSelected(int item) {
+    if (item < 0)
+        return; // zabraneni lezeni do indexu -1 v poli
+    QString shortname = name_list[item];
+    shortname = shortname.mid(prefix.size(), shortname.size() - prefix.size() - suffix.size());
+    name_edit->setText(shortname);
+}
+
+void QSaveLoadWidget::nameEditChanged(const QString name) {
+    if (name.size() <= 0) {
+        load_button->setEnabled(false);
+        save_button->setEnabled(false);
+        if (list->currentRow() >= 0) list->item(list->currentRow())->setSelected(false);
+        list->setCurrentRow(-1); // odselectnuti polozky v listu
+        return;
+    }
+    save_button->setEnabled(true);
+    QString longname = prefix + name + suffix;
+    for (int i = 0; i < name_list.size(); ++i) {
+        if (longname == name_list[i]) {
+            list->setCurrentRow(i);
+            load_button->setEnabled(true);
+            return;
+        }
+    }
+    if (list->currentRow() >= 0) list->item(list->currentRow())->setSelected(false);
+    list->setCurrentRow(-1);
+    load_button->setEnabled(false);
+}
+
+
+
+
+
+
+
+
+
+
+
