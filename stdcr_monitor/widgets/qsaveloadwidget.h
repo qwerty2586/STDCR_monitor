@@ -49,6 +49,10 @@ private slots:
     void listItemSelected(int item);
 
     void nameEditChanged(const QString name);
+
+    void saveClick();
+
+    void loadClick();
 };
 
 #endif //STDCR_MONITOR_QSAVELOADWIDGET_H

@@ -36,11 +36,14 @@ void QSaveLoadWidget::initItems() {
     refreshList();
 
     save_button->setEnabled(false);
-    load_button->setEnabled(false);
+    load_button->setEnabled(
+            false); // pocatecni stav tlacitek je nestisknutelne az se zadanim prislusneho jmena se zpristupni
 
     connect(list, SIGNAL(currentRowChanged(int)), this, SLOT(listItemSelected(int)));
     connect(name_edit, SIGNAL(textChanged(QString)), this, SLOT(nameEditChanged(QString)));
 
+    connect(save_button, SIGNAL(released()), this, SLOT(saveClick()));
+    connect(load_button, SIGNAL(released()), this, SLOT(loadClick()));
 
 }
 
@@ -94,6 +97,24 @@ void QSaveLoadWidget::nameEditChanged(const QString name) {
     list->setCurrentRow(-1);
     load_button->setEnabled(false);
 }
+
+void QSaveLoadWidget::saveClick() {
+    QString fullpath = directory;
+    if (fullpath.right(1).compare("/") != 0) fullpath += "/";
+    fullpath += prefix + name_edit->text() + suffix;
+    emit save(fullpath);
+}
+
+void QSaveLoadWidget::loadClick() {
+    QString fullpath = directory;
+    if (fullpath.right(1).compare("/") != 0) fullpath += "/";
+    fullpath += prefix + name_edit->text() + suffix;
+    emit load(fullpath);
+}
+
+
+
+
 
 
 
