@@ -17,4 +17,4 @@ set(SOURCE_FILES stdcr_monitor/main.cpp stdcr_monitor/params.cpp stdcr_monitor/m
 
 add_executable(STDCR_monitor ${SOURCE_FILES})
 
-target_link_libraries(STDCR_monitor Qt4::QtGui)
+target_link_libraries(STDCR_monitor Qt4::QtGui Qt4::QtXml)

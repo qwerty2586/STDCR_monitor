@@ -6,6 +6,7 @@
 #include <QXmlStreamReader>
 #include <QFile>
 #include <QMessageBox>
+#include <QtXml/QDomDocument>
 #include "../widgets/qsaveloadwidget.h"
 
 
@@ -134,6 +135,7 @@ void ERP::initItems() {
     ledSetupLayout->setRowMinimumHeight(0, 30);
     ledSetupLayout->setRowStretch(MAX_LEDS + 4, 1); //nejake to roztazeni
 
+
     // schema tab
     QGridLayout *schemeLayout = new QGridLayout();
     tabs->widget(2)->setLayout(schemeLayout);
@@ -215,14 +217,7 @@ void ERP::clearLeds() {
 }
 
 
-void ERP::loadFile(QString filepathname) {
-    QFile file(filepathname);
-    if (file.open(QIODevice::ReadOnly)) {
-        QXmlStreamReader xml(&file);
 
-
-    }
-}
 
 const QString DATA_ROOT = "ERP";
 const QString DATA_ROOT_SYNC = "SYNC_SETUP";
@@ -245,7 +240,46 @@ const QString DATA_DISTRIBUTION_VALUE = "DISTRIBUTION_VALUE";
 const QString DATA_DISTRIBUTION_DELAY = "DISTRIBUTION_DELAY";
 const QString DATA_BRIGHTNESS = "BRIGHTNESS";
 
+void ERP::loadFile(QString filepathname) {
+    QDomDocument doc;
+    QFile file(filepathname);
+    QString value = "";
+    if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file))
+        return;
+
+    QDomNode syncnode = doc.elementsByTagName(DATA_ROOT_SYNC).item(0);
+    q_out->setValue(syncnode.firstChildElement(DATA_OUT).text().toInt());
+    q_wait->setValue(syncnode.firstChildElement(DATA_WAIT).text().toInt());
+    value = syncnode.firstChildElement(DATA_EDGE).text();
+    if (value == DATA_EDGE_UP) q_edge_up->setChecked(true);
+    if (value == DATA_EDGE_DOWN) q_edge_down->setChecked(true);
+    value = syncnode.firstChildElement(DATA_RAND).text();
+    if (value == DATA_RAND_NONE) q_rand_none->setChecked(true);
+    if (value == DATA_RAND_PLUS) q_rand_plus->setChecked(true);
+    if (value == DATA_RAND_MINUS) q_rand_minus->setChecked(true);
+    if (value == DATA_RAND_PLUSMINUS) q_rand_plusminus->setChecked(true);
+
+    QDomNodeList ledlist = doc.elementsByTagName(DATA_ROOT_LED);
+    clearLeds();
+    for (int i = 0; i < ledlist.size(); i++) {
+        addLed();
+        QDomNode lednode = ledlist.item(i);
+        leds[i]->pulse_up->setValue(lednode.firstChildElement(DATA_PULSE_UP).text().toInt());
+        leds[i]->pulse_down->setValue(lednode.firstChildElement(DATA_PULSE_DOWN).text().toInt());
+        leds[i]->dist_value->setValue(lednode.firstChildElement(DATA_DISTRIBUTION_VALUE).text().toInt());
+        leds[i]->dist_delay->setValue(lednode.firstChildElement(DATA_DISTRIBUTION_DELAY).text().toInt());
+        leds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+    }
+
+}
+
 void ERP::saveFile(QString filepathname) {
+    //musime zobrazit vsechny prvky jinak v nich nebudou hodnoty... just QT thing
+    int backup = tabs->currentIndex();
+    tabs->setCurrentIndex(1);
+    tabs->setCurrentIndex(2);
+    tabs->setCurrentIndex(backup);
+
     QFile file(filepathname);
     QString value = "";
     if (file.open(QIODevice::WriteOnly)) {
@@ -282,6 +316,7 @@ void ERP::saveFile(QString filepathname) {
         xml.writeEndElement();
         xml.writeEndDocument();
 
+        file.close();
     }
 }
 
