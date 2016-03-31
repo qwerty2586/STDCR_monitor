@@ -3,6 +3,9 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QGroupBox>
+#include <QXmlStreamReader>
+#include <QFile>
+#include <QMessageBox>
 #include "../widgets/qsaveloadwidget.h"
 
 
@@ -131,11 +134,14 @@ void ERP::initItems() {
     ledSetupLayout->setRowMinimumHeight(0, 30);
     ledSetupLayout->setRowStretch(MAX_LEDS + 4, 1); //nejake to roztazeni
 
-    // 3rd tab
+    // schema tab
     QGridLayout *schemeLayout = new QGridLayout();
     tabs->widget(2)->setLayout(schemeLayout);
     QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget("./schemas", "erp_", ".xml");
     schemeLayout->addWidget(qSaveLoadWidget, 0, 0);
+    connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
+    connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
+    connect(qSaveLoadWidget, SIGNAL(save(QString)), qSaveLoadWidget, SLOT(refreshList()));
 
 }
 
@@ -207,3 +213,80 @@ void ERP::clearLeds() {
     q_clear_leds->hide(); // hide button for clearing leds
 
 }
+
+
+void ERP::loadFile(QString filepathname) {
+    QFile file(filepathname);
+    if (file.open(QIODevice::ReadOnly)) {
+        QXmlStreamReader xml(&file);
+
+
+    }
+}
+
+const QString DATA_ROOT = "ERP";
+const QString DATA_ROOT_SYNC = "SYNC_SETUP";
+const QString DATA_OUT = "OUT";
+const QString DATA_WAIT = "WAIT";
+const QString DATA_EDGE = "EDGE";
+const QString DATA_EDGE_UP = "UP";
+const QString DATA_EDGE_DOWN = "DOWN";
+const QString DATA_RAND = "RAND";
+const QString DATA_RAND_NONE = "NONE";
+const QString DATA_RAND_PLUS = "PLUS";
+const QString DATA_RAND_MINUS = "MINUS";
+const QString DATA_RAND_PLUSMINUS = "BOTH";
+
+const QString DATA_ROOT_LEDS = "LEDS_SETUP";
+const QString DATA_ROOT_LED = "LED";
+const QString DATA_PULSE_UP = "PULSE_UP";
+const QString DATA_PULSE_DOWN = "PULSE_DOWN";
+const QString DATA_DISTRIBUTION_VALUE = "DISTRIBUTION_VALUE";
+const QString DATA_DISTRIBUTION_DELAY = "DISTRIBUTION_DELAY";
+const QString DATA_BRIGHTNESS = "BRIGHTNESS";
+
+void ERP::saveFile(QString filepathname) {
+    QFile file(filepathname);
+    QString value = "";
+    if (file.open(QIODevice::WriteOnly)) {
+        QXmlStreamWriter xml(&file);
+        xml.setAutoFormatting(true);
+        xml.writeStartDocument();
+        xml.writeStartElement(DATA_ROOT);
+
+        xml.writeStartElement(DATA_ROOT_SYNC);
+        xml.writeTextElement(DATA_OUT, q_out->text());
+        xml.writeTextElement(DATA_WAIT, q_wait->text());
+        if (q_edge_up->isChecked()) value = DATA_EDGE_UP;
+        if (q_edge_down->isChecked()) value = DATA_EDGE_DOWN;
+        xml.writeTextElement(DATA_EDGE, value);
+        if (q_rand_none->isChecked()) value = DATA_RAND_NONE;
+        if (q_rand_plus->isChecked()) value = DATA_RAND_PLUS;
+        if (q_rand_minus->isChecked()) value = DATA_RAND_MINUS;
+        if (q_rand_plusminus->isChecked()) value = DATA_RAND_PLUSMINUS;
+        xml.writeTextElement(DATA_RAND, value);
+        xml.writeEndElement();
+
+        xml.writeStartElement(DATA_ROOT_LEDS);
+        for (int i = 0; i < leds.size(); ++i) {
+            xml.writeStartElement(DATA_ROOT_LED);
+            xml.writeTextElement(DATA_PULSE_UP, leds[i]->pulse_up->text());
+            xml.writeTextElement(DATA_PULSE_DOWN, leds[i]->pulse_down->text());
+            xml.writeTextElement(DATA_DISTRIBUTION_VALUE, leds[i]->dist_value->text());
+            xml.writeTextElement(DATA_DISTRIBUTION_DELAY, leds[i]->dist_delay->text());
+            xml.writeTextElement(DATA_BRIGHTNESS, leds[i]->brightness->text());
+            xml.writeEndElement();
+        }
+        xml.writeEndElement();
+
+        xml.writeEndElement();
+        xml.writeEndDocument();
+
+    }
+}
+
+
+
+
+
+

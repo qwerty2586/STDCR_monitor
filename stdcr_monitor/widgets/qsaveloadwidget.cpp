@@ -52,6 +52,7 @@ void QSaveLoadWidget::refreshList() {
     populateList();
     list->clear();
     list->addItems(name_list);
+    nameEditChanged(name_edit->text());
 
 }
 

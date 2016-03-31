@@ -44,6 +44,10 @@ private slots:
 
     void clearLeds();
 
+    void loadFile(QString filepathname);
+
+    void saveFile(QString filepathname);
+
 
 
 };
