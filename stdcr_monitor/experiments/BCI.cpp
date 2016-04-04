@@ -1,5 +1,7 @@
-
-
+#include <stdcr_monitor/widgets/qsaveloadwidget.h>
+#include <QtXml/QDomDocument>
+#include <QFile>
+#include <QXmlStreamWriter>
 #include "BCI.h"
 
 const int MAX_LEDS = 8;
@@ -21,6 +23,7 @@ void BCI::initItems() {
     t_tabs = new QTabWidget();
     tabs->addTab(t_tabs, "T-VEP");
     tabs->addTab(new QWidget(), "C-VEP");
+    tabs->addTab(new QWidget(), "SCHEMA");
     l->addWidget(tabs);
     this->setLayout(l);
 
@@ -100,6 +103,17 @@ void BCI::initItems() {
     q_brightness->setRange(0, 100);
     cvepLayout->addWidget(q_brightness, 8, 1);
     cvepLayout->addWidget(new QLabel("[%]"), 8, 2);
+
+    //schema
+
+    QGridLayout *schemaLayout = new QGridLayout();
+    tabs->widget(3)->setLayout(schemaLayout);
+    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget("./schemas", "bci_", ".xml");
+    schemaLayout->addWidget(qSaveLoadWidget, 0, 0);
+    connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
+    connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
+    connect(qSaveLoadWidget, SIGNAL(save(QString)), qSaveLoadWidget, SLOT(refreshList()));
+
 
 
 }
@@ -338,6 +352,137 @@ void BCI::tLengthChanged() {
 }
 
 
+const QString DATA_ROOT = "BCI";
+const QString DATA_ROOT_CVEP = "C-VEP";
+const QString DATA_STIMULI_COUNT = "STIMULI_COUNT";
+const QString DATA_PATTERN = "PATTERN";
+const QString DATA_PULSE_LENGTH = "PULSE_LENGTH";
+const QString DATA_PULSE_SKEW = "PULSE_SKEW";
+const QString DATA_BRIGHTNESS = "BRIGHTNESS";
+
+const QString DATA_ROOT_FVEP = "F-VEP";
+const QString DATA_LED = "LED";
+const QString DATA_TIME_ON = "TIME_ON";
+const QString DATA_TIME_OFF = "TIME_OFF";
+const QString DATA_FREQUENCY = "FREQUENCY";
+const QString DATA_DUTY_CYCLE = "DUTY_CYCLE";
+
+const QString DATA_ROOT_TVEP = "T-VEP";
+
+
+void BCI::loadFile(QString filepathname) {
+    QDomDocument doc;
+    QFile file(filepathname);
+    QString value = "";
+    if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file))
+        return;
+
+    QDomNode cvepnode = doc.elementsByTagName(DATA_ROOT_CVEP).item(0);
+    q_stimuli_count->setValue(cvepnode.firstChildElement(DATA_STIMULI_COUNT).text().toInt());
+    value = cvepnode.firstChildElement(DATA_PATTERN).text();
+    q_pattern->fromString(value);
+    q_pulse_length->setValue(cvepnode.firstChildElement(DATA_PULSE_LENGTH).text().toInt());
+    q_pulse_skew->setValue(cvepnode.firstChildElement(DATA_PULSE_SKEW).text().toInt());
+    q_brightness->setValue(cvepnode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+
+    QDomNode fvepnode = doc.elementsByTagName(DATA_ROOT_FVEP).item(0);
+    QDomNodeList fvepleds = fvepnode.toElement().elementsByTagName(DATA_LED);
+    clearFLeds();
+    for (int i = 0; i < fvepleds.size(); ++i) {
+        addFLed();
+        QDomNode lednode = fvepleds.item(i);
+        fleds[i]->time_on->setValue(lednode.firstChildElement(DATA_TIME_ON).text().toInt());
+        fleds[i]->time_off->setValue(lednode.firstChildElement(DATA_TIME_OFF).text().toInt());
+        fleds[i]->frequency->setValue(lednode.firstChildElement(DATA_FREQUENCY).text().toInt());
+        fleds[i]->duty_cycle->setValue(lednode.firstChildElement(DATA_DUTY_CYCLE).text().toInt());
+        fleds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+    }
+
+    QDomNode tvepnode = doc.elementsByTagName(DATA_ROOT_TVEP).item(0);
+    QDomNodeList tvepleds = tvepnode.toElement().elementsByTagName(DATA_LED);
+    clearTLeds();
+    for (int i = 0; i < tvepleds.size(); ++i) {
+        addTLed();
+        QDomNode lednode = tvepleds.item(i);
+        value = lednode.firstChildElement(DATA_PATTERN).text();
+        tleds[i]->pattern_length->setValue(value.length());
+        tleds[i]->pattern->fromString(value);
+        tleds[i]->pulse_length->setValue(lednode.firstChildElement(DATA_PULSE_LENGTH).text().toInt());
+        tleds[i]->pulse_skew->setValue(lednode.firstChildElement(DATA_PULSE_SKEW).text().toInt());
+        tleds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+    }
+
+
+    file.close();
+
+
+};
+
+void BCI::saveFile(QString filepathname) {
+    //musime zobrazit vsechny prvky jinak v nich nebudou hodnoty... just QT thing
+    int backup = tabs->currentIndex();
+    tabs->setCurrentIndex(0);
+    int backup2 = f_tabs->currentIndex();
+    for (int i = 0; i < f_tabs->count(); ++i) {
+        f_tabs->setCurrentIndex(i);
+    }
+    f_tabs->setCurrentIndex(backup2);
+    tabs->setCurrentIndex(1);
+    backup2 = t_tabs->currentIndex();
+    for (int i = 0; i < t_tabs->count(); ++i) {
+        t_tabs->setCurrentIndex(i);
+    }
+    t_tabs->setCurrentIndex(backup2);
+    tabs->setCurrentIndex(2);
+    tabs->setCurrentIndex(3);
+    tabs->setCurrentIndex(backup);
+
+    QFile file(filepathname);
+    QString value = "";
+    if (file.open(QIODevice::WriteOnly)) {
+        QXmlStreamWriter xml(&file);
+        xml.setAutoFormatting(true);
+        xml.writeStartDocument();
+        xml.writeStartElement(DATA_ROOT);
+
+        xml.writeStartElement(DATA_ROOT_FVEP);
+        for (int i = 0; i < fleds.size(); i++) {
+            xml.writeStartElement(DATA_LED);
+            xml.writeTextElement(DATA_TIME_ON, fleds[i]->time_on->text());
+            xml.writeTextElement(DATA_TIME_OFF, fleds[i]->time_off->text());
+            xml.writeTextElement(DATA_FREQUENCY, fleds[i]->frequency->text());
+            xml.writeTextElement(DATA_DUTY_CYCLE, fleds[i]->duty_cycle->text());
+            xml.writeTextElement(DATA_BRIGHTNESS, fleds[i]->brightness->text());
+            xml.writeEndElement();
+        }
+        xml.writeEndElement();
+
+        xml.writeStartElement(DATA_ROOT_TVEP);
+        for (int i = 0; i < tleds.size(); i++) {
+            xml.writeStartElement(DATA_LED);
+            xml.writeTextElement(DATA_PATTERN, tleds[i]->pattern->toString()->toAscii());
+            xml.writeTextElement(DATA_PULSE_LENGTH, tleds[i]->pulse_length->text());
+            xml.writeTextElement(DATA_PULSE_SKEW, tleds[i]->pulse_skew->text());
+            xml.writeTextElement(DATA_BRIGHTNESS, tleds[i]->brightness->text());
+            xml.writeEndElement();
+        }
+        xml.writeEndElement();
+
+
+        xml.writeStartElement(DATA_ROOT_CVEP);
+        xml.writeTextElement(DATA_STIMULI_COUNT, q_stimuli_count->text());
+        xml.writeTextElement(DATA_PATTERN, q_pattern->toString()->toAscii());
+        xml.writeTextElement(DATA_PULSE_LENGTH, q_pulse_length->text());
+        xml.writeTextElement(DATA_PULSE_SKEW, q_pulse_skew->text());
+        xml.writeTextElement(DATA_BRIGHTNESS, q_brightness->text());
+        xml.writeEndElement();
+
+        xml.writeEndElement();
+        xml.writeEndDocument();
+
+        file.close();
+    }
+}
 
 
 

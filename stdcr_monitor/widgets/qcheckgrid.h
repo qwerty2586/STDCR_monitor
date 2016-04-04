@@ -20,6 +20,9 @@ public:
 
     QString *toNiceString();
 
+    QString *toString();
+
+    void fromString(QString s);
 signals:
 
     void valueChanged();

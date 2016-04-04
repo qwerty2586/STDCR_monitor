@@ -86,6 +86,33 @@ void QCheckGrid::patternResize(int rows, int columns) {
 
 }
 
+QString *QCheckGrid::toString() {
+    QString *s = new QString("");
+    for (int i = 0; i < m_value.size(); ++i) {
+        if (m_value[i]) s->append("1");
+        else s->append("0");
+    }
+    return s;
+}
+
+void QCheckGrid::fromString(QString s) {
+    for (int i = 0; (i < m_value.size()) && (i < s.length()); ++i) {
+        if (s[i] == '1') {
+            m_value[i] = true;
+            boxes[i]->setChecked(true);
+        }
+        else {
+            m_value[i] = false;
+            boxes[i]->setChecked(false);
+        }
+    }
+    emit valueChanged();
+}
+
+
+
+
+
 
 
 

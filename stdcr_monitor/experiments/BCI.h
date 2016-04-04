@@ -69,8 +69,11 @@ private slots:
 
     void tLengthChanged();
 
-
     void patternChanged();
+
+    void loadFile(QString filepathname);
+
+    void saveFile(QString filepathname);
 
 
 };
