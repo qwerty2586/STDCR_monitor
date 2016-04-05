@@ -163,7 +163,7 @@ const QString DATA_W = "W";
 const QString DATA_H = "H";
 
 bool dataBool(QString s) {
-    return DATA_TRUE == s;
+    return (DATA_TRUE == s);
 };
 
 QString dataBool(bool b) {
