@@ -36,6 +36,12 @@ private:
 
     void initItems();
 
+private slots:
+
+    void loadFile(QString filepathname);
+
+    void saveFile(QString filepathname);
+
 };
 
 
