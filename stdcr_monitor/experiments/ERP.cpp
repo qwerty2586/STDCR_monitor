@@ -8,23 +8,14 @@
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
 #include "../widgets/qsaveloadwidget.h"
-
-
-const static QString ERP_MS = "[ms]";
-const static QString ERP_OUT = "OUT";
-const static QString ERP_WAIT = "WAIT";
-const static QString ERP_EDGE = "EDGE";
-const static QString ERP_RAND = "RAND";
-
-const static int MAX_LEDS = 8;
-
-
+#include "../params.h"
 
 
 ERP::ERP(QWidget *parent) : Experiment(parent) {
     initItems();
 
 };
+
 
 
 void ERP::initItems() {
@@ -47,19 +38,19 @@ void ERP::initItems() {
     syncSetupLayout->setColumnStretch(1, 1);
     syncSetupLayout->setColumnStretch(2, 1);
 
-    syncSetupLayout->addWidget(new QLabel(ERP_OUT), 0, 0);
+    syncSetupLayout->addWidget(new QLabel("OUT"), 0, 0);
     q_out = new QSpinBox();
-    q_out->setRange(0, 30000);
+    q_out->setRange(MIN_MS, MAX_MS);
     syncSetupLayout->addWidget(q_out, 0, 1);
-    syncSetupLayout->addWidget(new QLabel(ERP_MS), 0, 2);
+    syncSetupLayout->addWidget(new QLabel(TEXT_MS), 0, 2);
 
-    syncSetupLayout->addWidget(new QLabel(ERP_WAIT), 1, 0);
+    syncSetupLayout->addWidget(new QLabel("WAIT"), 1, 0);
     q_wait = new QSpinBox();
-    q_wait->setRange(0, 30000);
+    q_wait->setRange(MIN_MS, MAX_MS);
     syncSetupLayout->addWidget(q_wait, 1, 1);
-    syncSetupLayout->addWidget(new QLabel(ERP_MS), 1, 2);
+    syncSetupLayout->addWidget(new QLabel(TEXT_MS), 1, 2);
 
-    syncSetupLayout->addWidget(new QLabel(ERP_EDGE), 2, 0);
+    syncSetupLayout->addWidget(new QLabel("EDGE"), 2, 0);
     QGroupBox *qGroubBox = new QGroupBox();
     qGroubBox->setFlat(true); // udelame maly groupbox
     qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
@@ -72,7 +63,7 @@ void ERP::initItems() {
     qGroubBox->setLayout(qhBoxLayout);
     syncSetupLayout->addWidget(qGroubBox, 2, 1, Qt::AlignLeft);
 
-    syncSetupLayout->addWidget(new QLabel(ERP_RAND), 3, 0);
+    syncSetupLayout->addWidget(new QLabel("RAND"), 3, 0);
     qGroubBox = new QGroupBox();
     qGroubBox->setFlat(true); // udelame maly groupbox
     qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
@@ -89,8 +80,8 @@ void ERP::initItems() {
     qGroubBox->setLayout(qhBoxLayout);
     syncSetupLayout->addWidget(qGroubBox, 3, 1, Qt::AlignLeft);
 
-    syncSetupLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 4, 0, 3,
-                             1); //odsazeni
+    syncSetupLayout->addItem(
+            new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding), 4, 0, 3, 1); //odsazeni
 
 
     // 2nd tab
@@ -103,8 +94,8 @@ void ERP::initItems() {
     ledSetupLayout->setColumnStretch(2, 2);
     ledSetupLayout->setColumnStretch(3, 2);
 
-    ledSetupLayout->addWidget(new QLabel("PULSE [ms]"), 0, 1);
-    ledSetupLayout->addWidget(new QLabel("DISTRIBUTION [ms]"), 0, 2);
+    ledSetupLayout->addWidget(new QLabel("PULSE " + TEXT_MS), 0, 1);
+    ledSetupLayout->addWidget(new QLabel("DISTRIBUTION " + TEXT_MS), 0, 2);
     ledSetupLayout->addWidget(new QLabel("BRIGHTNESS"), 0, 3);
 
     qhBoxLayout = new QHBoxLayout();
@@ -117,7 +108,7 @@ void ERP::initItems() {
     qhBoxLayout->addWidget(new QLabel("DELAY"));
     ledSetupLayout->addLayout(qhBoxLayout, 1, 2);
 
-    ledSetupLayout->addWidget(new QLabel("[%]"), 1, 3);
+    ledSetupLayout->addWidget(new QLabel(TEXT_PERCENT), 1, 3);
 
     q_add_led = new QPushButton("+");
     ledSetupLayout->addWidget(q_add_led, 2, 0);
@@ -139,7 +130,7 @@ void ERP::initItems() {
     // schema tab
     QGridLayout *schemeLayout = new QGridLayout();
     tabs->widget(2)->setLayout(schemeLayout);
-    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget("./schemas", "erp_", ".xml");
+    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget(SCHEMAS_DIR, "erp_", SCHEMAS_EXTENSION);
     schemeLayout->addWidget(qSaveLoadWidget, 0, 0);
     connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
     connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
@@ -159,10 +150,19 @@ void ERP::addLed() {
 
     leds.push_back(new Led());
     leds[row]->pulse_up = new QSpinBox();
+    leds[row]->pulse_up->setRange(MIN_MS, MAX_MS);
+
     leds[row]->pulse_down = new QSpinBox();
+    leds[row]->pulse_down->setRange(MIN_MS, MAX_MS);
+
     leds[row]->dist_value = new QSpinBox();
+    leds[row]->dist_value->setRange(MIN_MS, MAX_MS);
+
     leds[row]->dist_delay = new QSpinBox();
+    leds[row]->dist_delay->setRange(MIN_MS, MAX_MS);
+
     leds[row]->brightness = new QSpinBox();
+    leds[row]->pulse_up->setRange(MIN_P, MAX_P);
 
     QHBoxLayout *qhBoxLayout = new QHBoxLayout();
     qhBoxLayout->addWidget(leds[row]->pulse_up);
@@ -217,28 +217,25 @@ void ERP::clearLeds() {
 }
 
 
+const QString DATA_ROOT = "erp";
+const QString DATA_OUT = "out";
+const QString DATA_WAIT = "wait";
+const QString DATA_EDGE = "edge";
+const QString DATA_EDGE_UP = "up";
+const QString DATA_EDGE_DOWN = "down";
+const QString DATA_RAND = "rand";
+const QString DATA_RAND_NONE = "none";
+const QString DATA_RAND_PLUS = "plus";
+const QString DATA_RAND_MINUS = "minus";
+const QString DATA_RAND_PLUSMINUS = "both";
 
-
-const QString DATA_ROOT = "ERP";
-const QString DATA_ROOT_SYNC = "SYNC_SETUP";
-const QString DATA_OUT = "OUT";
-const QString DATA_WAIT = "WAIT";
-const QString DATA_EDGE = "EDGE";
-const QString DATA_EDGE_UP = "UP";
-const QString DATA_EDGE_DOWN = "DOWN";
-const QString DATA_RAND = "RAND";
-const QString DATA_RAND_NONE = "NONE";
-const QString DATA_RAND_PLUS = "PLUS";
-const QString DATA_RAND_MINUS = "MINUS";
-const QString DATA_RAND_PLUSMINUS = "BOTH";
-
-const QString DATA_ROOT_LEDS = "LEDS_SETUP";
-const QString DATA_ROOT_LED = "LED";
-const QString DATA_PULSE_UP = "PULSE_UP";
-const QString DATA_PULSE_DOWN = "PULSE_DOWN";
-const QString DATA_DISTRIBUTION_VALUE = "DISTRIBUTION_VALUE";
-const QString DATA_DISTRIBUTION_DELAY = "DISTRIBUTION_DELAY";
-const QString DATA_BRIGHTNESS = "BRIGHTNESS";
+const QString DATA_ROOT_LEDS = "leds_setup";
+const QString DATA_ROOT_LED = "led";
+const QString DATA_PULSE_UP = "pulse_up";
+const QString DATA_PULSE_DOWN = "pulse_down";
+const QString DATA_DISTRIBUTION_VALUE = "distribution_value";
+const QString DATA_DISTRIBUTION_DELAY = "distribution_delay";
+const QString DATA_BRIGHTNESS = "brightness";
 
 void ERP::loadFile(QString filepathname) {
     QDomDocument doc;
@@ -247,13 +244,13 @@ void ERP::loadFile(QString filepathname) {
     if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file))
         return;
 
-    QDomNode syncnode = doc.elementsByTagName(DATA_ROOT_SYNC).item(0);
-    q_out->setValue(syncnode.firstChildElement(DATA_OUT).text().toInt());
-    q_wait->setValue(syncnode.firstChildElement(DATA_WAIT).text().toInt());
-    value = syncnode.firstChildElement(DATA_EDGE).text();
+    QDomNode rootnode = doc.elementsByTagName(DATA_ROOT).item(0);
+    q_out->setValue(rootnode.firstChildElement(DATA_OUT).text().toInt());
+    q_wait->setValue(rootnode.firstChildElement(DATA_WAIT).text().toInt());
+    value = rootnode.firstChildElement(DATA_EDGE).text();
     if (value == DATA_EDGE_UP) q_edge_up->setChecked(true);
     if (value == DATA_EDGE_DOWN) q_edge_down->setChecked(true);
-    value = syncnode.firstChildElement(DATA_RAND).text();
+    value = rootnode.firstChildElement(DATA_RAND).text();
     if (value == DATA_RAND_NONE) q_rand_none->setChecked(true);
     if (value == DATA_RAND_PLUS) q_rand_plus->setChecked(true);
     if (value == DATA_RAND_MINUS) q_rand_minus->setChecked(true);
@@ -288,7 +285,6 @@ void ERP::saveFile(QString filepathname) {
         xml.writeStartDocument();
         xml.writeStartElement(DATA_ROOT);
 
-        xml.writeStartElement(DATA_ROOT_SYNC);
         xml.writeTextElement(DATA_OUT, q_out->text());
         xml.writeTextElement(DATA_WAIT, q_wait->text());
         if (q_edge_up->isChecked()) value = DATA_EDGE_UP;
@@ -299,7 +295,6 @@ void ERP::saveFile(QString filepathname) {
         if (q_rand_minus->isChecked()) value = DATA_RAND_MINUS;
         if (q_rand_plusminus->isChecked()) value = DATA_RAND_PLUSMINUS;
         xml.writeTextElement(DATA_RAND, value);
-        xml.writeEndElement();
 
         xml.writeStartElement(DATA_ROOT_LEDS);
         for (int i = 0; i < leds.size(); ++i) {

@@ -3,9 +3,8 @@
 #include "TEST_MODE.h"
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QStringList>
+#include "../params.h"
 
-const static int MAX_LEDS = 8;
 
 TEST_MODE::TEST_MODE(QWidget *parent) : Experiment(parent) {
     initItems();

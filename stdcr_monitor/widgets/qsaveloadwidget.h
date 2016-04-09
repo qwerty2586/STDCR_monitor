@@ -18,7 +18,7 @@ Q_OBJECT
 public:
 
 
-    explicit QSaveLoadWidget(QString directory, QString prefix, QString suffix, QWidget *parent = 0);
+    explicit QSaveLoadWidget(const QString directory, const QString prefix, const QString suffix, QWidget *parent = 0);
 
 public slots:
 

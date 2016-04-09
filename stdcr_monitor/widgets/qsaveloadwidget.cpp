@@ -7,7 +7,7 @@
 #include <QDir>
 #include "qsaveloadwidget.h"
 
-QSaveLoadWidget::QSaveLoadWidget(QString directory, QString prefix, QString suffix, QWidget *parent) {
+QSaveLoadWidget::QSaveLoadWidget(const QString directory, const QString prefix, const QString suffix, QWidget *parent) {
     this->setParent(parent);
 
     this->directory = QString(directory);

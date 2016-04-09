@@ -3,8 +3,9 @@
 #include <QFile>
 #include <QXmlStreamWriter>
 #include "BCI.h"
+#include "../params.h"
 
-const int MAX_LEDS = 8;
+
 const int DEFAULT_LENGTH = 8;
 const int MAX_LENGTH = 32;
 
@@ -108,7 +109,7 @@ void BCI::initItems() {
 
     QGridLayout *schemaLayout = new QGridLayout();
     tabs->widget(3)->setLayout(schemaLayout);
-    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget("./schemas", "bci_", ".xml");
+    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget(SCHEMAS_DIR, "bci_", SCHEMAS_EXTENSION);
     schemaLayout->addWidget(qSaveLoadWidget, 0, 0);
     connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
     connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));

@@ -5,8 +5,7 @@
 #include <QFile>
 #include <QXmlStreamWriter>
 #include <QtXml/QDomDocument>
-
-const static int MAX_LEDS = 8;
+#include "../params.h"
 
 RESPONSE_EXPERIMENT::RESPONSE_EXPERIMENT(QWidget *parent) : Experiment(parent) {
     initItems();
@@ -133,7 +132,7 @@ void RESPONSE_EXPERIMENT::initItems() {
     //SCHEMA
     QGridLayout *schemaLayout = new QGridLayout();
     tabs->widget(2)->setLayout(schemaLayout);
-    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget("./schemas", "re_", ".xml");
+    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget(SCHEMAS_DIR, "re_", SCHEMAS_EXTENSION);
     schemaLayout->addWidget(qSaveLoadWidget, 0, 0);
     connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
     connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
