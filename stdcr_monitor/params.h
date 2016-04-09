@@ -13,6 +13,8 @@ extern const QString SCHEMAS_DIR;
 extern const QString SCHEMAS_EXTENSION;
 extern const QString TEXT_MS;
 extern const QString TEXT_PERCENT;
+extern const QString TEXT_CELSIUS;
+extern const QString TEXT_MV;
 extern const int MIN_MS;
 extern const int MAX_MS;
 extern const int MIN_P;

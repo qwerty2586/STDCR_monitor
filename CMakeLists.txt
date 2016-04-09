@@ -31,6 +31,8 @@ set(SOURCE_FILES
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_win.cpp
 
+        stdcr_comm/stimulator.cpp
+
 
         )
 

@@ -247,10 +247,10 @@ void ERP::loadFile(QString filepathname) {
     QDomNode rootnode = doc.elementsByTagName(DATA_ROOT).item(0);
     q_out->setValue(rootnode.firstChildElement(DATA_OUT).text().toInt());
     q_wait->setValue(rootnode.firstChildElement(DATA_WAIT).text().toInt());
-    value = rootnode.firstChildElement(DATA_EDGE).text();
+    value = rootnode.firstChildElement(DATA_EDGE).text().toLower();
     if (value == DATA_EDGE_UP) q_edge_up->setChecked(true);
     if (value == DATA_EDGE_DOWN) q_edge_down->setChecked(true);
-    value = rootnode.firstChildElement(DATA_RAND).text();
+    value = rootnode.firstChildElement(DATA_RAND).text().toLower();
     if (value == DATA_RAND_NONE) q_rand_none->setChecked(true);
     if (value == DATA_RAND_PLUS) q_rand_plus->setChecked(true);
     if (value == DATA_RAND_MINUS) q_rand_minus->setChecked(true);

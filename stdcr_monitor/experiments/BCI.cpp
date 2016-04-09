@@ -91,19 +91,21 @@ void BCI::initItems() {
 
     cvepLayout->addWidget(new QLabel("PULSE LENGTH"), 6, 0);
     q_pulse_length = new QSpinBox();
+    q_pulse_length->setRange(MIN_MS, MAX_MS);
     cvepLayout->addWidget(q_pulse_length, 6, 1);
-    cvepLayout->addWidget(new QLabel("[ms]"), 6, 2);
+    cvepLayout->addWidget(new QLabel(TEXT_MS), 6, 2);
 
     cvepLayout->addWidget(new QLabel("PULSE SKEW"), 7, 0);
     q_pulse_skew = new QSpinBox();
+    q_pulse_skew->setRange(MIN_MS, MAX_MS);
     cvepLayout->addWidget(q_pulse_skew, 7, 1);
-    cvepLayout->addWidget(new QLabel("[ms]"), 7, 2);
+    cvepLayout->addWidget(new QLabel(TEXT_MS), 7, 2);
 
     cvepLayout->addWidget(new QLabel("BRIGHTNESS"), 8, 0);
     q_brightness = new QSpinBox();
-    q_brightness->setRange(0, 100);
+    q_brightness->setRange(MIN_P, MAX_P);
     cvepLayout->addWidget(q_brightness, 8, 1);
-    cvepLayout->addWidget(new QLabel("[%]"), 8, 2);
+    cvepLayout->addWidget(new QLabel(TEXT_PERCENT), 8, 2);
 
     //schema
 
@@ -146,24 +148,24 @@ void BCI::addFLed() {
 
     l->label1 = new QLabel("TIME ON");
     l->time_on = new QSpinBox();
-    l->time_on->setRange(0, 30000);
-    l->label1p = new QLabel("[ms]");
+    l->time_on->setRange(MIN_MS, MAX_MS);
+    l->label1p = new QLabel(TEXT_MS);
     fLedLayout->addWidget(l->label1, 0, 0);
     fLedLayout->addWidget(l->time_on, 0, 1);
     fLedLayout->addWidget(l->label1p, 0, 2);
 
     l->label2 = new QLabel("TIME OFF");
     l->time_off = new QSpinBox();
-    l->time_off->setRange(0, 30000);
-    l->label2p = new QLabel("[ms]");
+    l->time_off->setRange(MIN_MS, MAX_MS);
+    l->label2p = new QLabel(TEXT_MS);
     fLedLayout->addWidget(l->label2, 1, 0);
     fLedLayout->addWidget(l->time_off, 1, 1);
     fLedLayout->addWidget(l->label2p, 1, 2);
 
     l->label3 = new QLabel("FREQUENCY");
     l->frequency = new QSpinBox();
-    l->frequency->setRange(0, 30000);
-    l->label3p = new QLabel("[ms]");
+    l->frequency->setRange(MIN_MS, MAX_MS);
+    l->label3p = new QLabel(TEXT_MS);
     fLedLayout->addWidget(l->label3, 2, 0);
     fLedLayout->addWidget(l->frequency, 2, 1);
     fLedLayout->addWidget(l->label3p, 2, 2);
@@ -171,7 +173,7 @@ void BCI::addFLed() {
     l->label4 = new QLabel("DUTY CYCLE");
     l->duty_cycle = new QSpinBox();
     l->duty_cycle->setRange(0, 100);
-    l->label4p = new QLabel("[%]");
+    l->label4p = new QLabel(TEXT_PERCENT);
     fLedLayout->addWidget(l->label4, 3, 0);
     fLedLayout->addWidget(l->duty_cycle, 3, 1);
     fLedLayout->addWidget(l->label4p, 3, 2);
@@ -179,7 +181,7 @@ void BCI::addFLed() {
     l->label5 = new QLabel("BRIGHTNESS");
     l->brightness = new QSpinBox();
     l->brightness->setRange(0, 100);
-    l->label5p = new QLabel("[%]");
+    l->label5p = new QLabel(TEXT_PERCENT);
     fLedLayout->addWidget(l->label5, 4, 0);
     fLedLayout->addWidget(l->brightness, 4, 1);
     fLedLayout->addWidget(l->label5p, 4, 2);
@@ -262,17 +264,17 @@ void BCI::addTLed() {
     l->label2 = new QLabel("PULSE LENGTH");
     tLedLayout->addWidget(l->label2, 7, 0);
     l->pulse_length = new QSpinBox();
-    l->pulse_length->setRange(0, 30000);
+    l->pulse_length->setRange(MIN_MS, MAX_MS);
     tLedLayout->addWidget(l->pulse_length, 7, 1);
-    l->label2p = new QLabel("[ms]");
+    l->label2p = new QLabel(TEXT_MS);
     tLedLayout->addWidget(l->label2p, 7, 2);
 
     l->label3 = new QLabel("PULSE SKEW");
     tLedLayout->addWidget(l->label3, 8, 0);
     l->pulse_skew = new QSpinBox();
-    l->pulse_skew->setRange(0, 30000);
+    l->pulse_skew->setRange(MIN_MS, MAX_MS);
     tLedLayout->addWidget(l->pulse_skew, 8, 1);
-    l->label3p = new QLabel("[ms]");
+    l->label3p = new QLabel(TEXT_MS);
     tLedLayout->addWidget(l->label3p, 8, 2);
 
 
@@ -281,7 +283,7 @@ void BCI::addTLed() {
     l->brightness = new QSpinBox();
     l->brightness->setRange(0, 100);
     tLedLayout->addWidget(l->brightness, 9, 1);
-    l->label4p = new QLabel("[\%]");
+    l->label4p = new QLabel(TEXT_PERCENT);
     tLedLayout->addWidget(l->label4p, 9, 2);
 
 
@@ -353,22 +355,22 @@ void BCI::tLengthChanged() {
 }
 
 
-const QString DATA_ROOT = "BCI";
-const QString DATA_ROOT_CVEP = "C-VEP";
-const QString DATA_STIMULI_COUNT = "STIMULI_COUNT";
-const QString DATA_PATTERN = "PATTERN";
-const QString DATA_PULSE_LENGTH = "PULSE_LENGTH";
-const QString DATA_PULSE_SKEW = "PULSE_SKEW";
-const QString DATA_BRIGHTNESS = "BRIGHTNESS";
+const QString DATA_ROOT = "bci";
+const QString DATA_ROOT_CVEP = "c-vep";
+const QString DATA_STIMULI_COUNT = "stimuli_count";
+const QString DATA_PATTERN = "pattern";
+const QString DATA_PULSE_LENGTH = "pulse_length";
+const QString DATA_PULSE_SKEW = "pulse_skew";
+const QString DATA_BRIGHTNESS = "brightness";
 
-const QString DATA_ROOT_FVEP = "F-VEP";
-const QString DATA_LED = "LED";
-const QString DATA_TIME_ON = "TIME_ON";
-const QString DATA_TIME_OFF = "TIME_OFF";
-const QString DATA_FREQUENCY = "FREQUENCY";
-const QString DATA_DUTY_CYCLE = "DUTY_CYCLE";
+const QString DATA_ROOT_FVEP = "f-vep";
+const QString DATA_LED = "led";
+const QString DATA_TIME_ON = "time_on";
+const QString DATA_TIME_OFF = "time_off";
+const QString DATA_FREQUENCY = "frequency";
+const QString DATA_DUTY_CYCLE = "duty_cycle";
 
-const QString DATA_ROOT_TVEP = "T-VEP";
+const QString DATA_ROOT_TVEP = "t-vep";
 
 
 void BCI::loadFile(QString filepathname) {

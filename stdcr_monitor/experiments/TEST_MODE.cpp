@@ -6,6 +6,7 @@
 #include "../params.h"
 
 
+
 TEST_MODE::TEST_MODE(QWidget *parent) : Experiment(parent) {
     initItems();
 
@@ -34,27 +35,27 @@ void TEST_MODE::initItems() {
 
     enviroment_layout->addWidget(new QLabel("Temperature"), 1, 0);
     temperature = new QLineEdit();
-    temperature->setDisabled(1);
+    temperature->setReadOnly(true);
     enviroment_layout->addWidget(temperature, 1, 1);
-    enviroment_layout->addWidget(new QLabel("[C]"), 1, 2);
+    enviroment_layout->addWidget(new QLabel(TEXT_CELSIUS), 1, 2);
 
     enviroment_layout->addWidget(new QLabel("Voltage 3.3V"), 2, 0);
     voltage_3V = new QLineEdit();
-    voltage_3V->setDisabled(1);
+    voltage_3V->setReadOnly(true);
     enviroment_layout->addWidget(voltage_3V, 2, 1);
-    enviroment_layout->addWidget(new QLabel("[mV]"), 2, 2);
+    enviroment_layout->addWidget(new QLabel(TEXT_MV), 2, 2);
 
     enviroment_layout->addWidget(new QLabel("Voltage 5.0V"), 3, 0);
     voltage_5V = new QLineEdit();
-    voltage_5V->setDisabled(1);
+    voltage_5V->setReadOnly(true);
     enviroment_layout->addWidget(voltage_5V, 3, 1);
-    enviroment_layout->addWidget(new QLabel("[mV]"), 3, 2);
+    enviroment_layout->addWidget(new QLabel(TEXT_MV), 3, 2);
 
     enviroment_layout->addWidget(new QLabel("Voltage LED"), 4, 0);
     voltage_LED = new QLineEdit();
-    voltage_LED->setDisabled(1);
+    voltage_LED->setReadOnly(true);
     enviroment_layout->addWidget(voltage_LED, 4, 1);
-    enviroment_layout->addWidget(new QLabel("[mV]"), 4, 2);
+    enviroment_layout->addWidget(new QLabel(TEXT_MV), 4, 2);
 
     l->addWidget(new QLabel("Tests"), 0, Qt::AlignCenter);
 
@@ -62,9 +63,9 @@ void TEST_MODE::initItems() {
 
     test_layout->addWidget(new QLabel("Brightness"), 0, 0);
     brightness = new QSpinBox();
-    brightness->setRange(0, 100);
+    brightness->setRange(MIN_P, MAX_P);
     test_layout->addWidget(brightness, 0, 1);
-    test_layout->addWidget(new QLabel("[%]"), 0, 2);
+    test_layout->addWidget(new QLabel(TEXT_PERCENT), 0, 2);
 
     test_layout->addWidget(new QLabel("LED test"), 1, 0);
     led_test = new QComboBox();
@@ -75,8 +76,8 @@ void TEST_MODE::initItems() {
 
     test_layout->addWidget(new QLabel("Sync out test"), 2, 0);
     sync_out_test = new QSpinBox();
-    sync_out_test->setRange(0, 30000);
+    sync_out_test->setRange(MIN_MS, MAX_MS);
     test_layout->addWidget(sync_out_test, 2, 1);
-    test_layout->addWidget(new QLabel("[ms]"), 2, 2);
+    test_layout->addWidget(new QLabel(TEXT_MS), 2, 2);
 
 }
