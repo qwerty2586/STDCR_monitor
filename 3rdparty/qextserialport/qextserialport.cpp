@@ -359,7 +359,7 @@ void QextSerialPortPrivate::_q_canRead() {
 /*!
     \fn void QextSerialPort::dsrChanged(bool status)
     This signal is emitted whenever dsr line has changed its state. You may
-    use this signal to check if device is connected.
+    use this signal to check if device is m_connected.
 
     \a status true when DSR signal is on, false otherwise.
  */

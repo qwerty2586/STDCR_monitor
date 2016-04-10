@@ -6,6 +6,13 @@
 #include "experiments/AUTOSTIMULATION.h"
 #include "experiments/BIOSENSOR_LOGGER.h"
 #include "experiments/TEST_MODE.h"
+#include <stdcr_comm/serials.h>
+
+const QString TEXT_CONNECT = "CONNECT";
+const QString TEXT_DISCONNECT = "DISCONNECT";
+
+const QString TEXT_START = "START";
+const QString TEXT_STOP = "STOP";
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
@@ -41,9 +48,19 @@ void MainWindow::initItems() {
     experimentNameLabel = new QLabel();
     experimentNameLabel->setAlignment(Qt::AlignHCenter);
 
-    backButton = new QPushButton(QString::fromUtf8("BACK TO MENU"));
+    portGroup = new QGroupBox("PORT");
+    portLayout = new QHBoxLayout();
+    portCombo = new QComboBox();
+    portCombo->addItems(listOfAvailableSerials());
+    portLayout->addWidget(portCombo);
+    portConnectDisconnect = new QPushButton(TEXT_CONNECT);
+
+    portLayout->addWidget(portConnectDisconnect);
+    portGroup->setLayout(portLayout);
+
+    backButton = new QPushButton("BACK TO MENU");
     QObject::connect(backButton, SIGNAL(released()), this, SLOT(backClick()));
-    startStopButton = new QPushButton(QString::fromUtf8("START"));
+    startStopButton = new QPushButton(TEXT_START);
     QObject::connect(startStopButton, SIGNAL(released()), this, SLOT(startStopClick()));
     experimentButtonsLayout = new QHBoxLayout();
     experimentButtonsLayout->addWidget(backButton);
@@ -83,6 +100,8 @@ void MainWindow::showMenu() {
         menuButtons[i]->show();
 
     }
+    layout()->addWidget(portGroup);
+    portGroup->show();
     ((QVBoxLayout *) layout())->addStretch(1);
 }
 

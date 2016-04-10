@@ -31,11 +31,18 @@ public:
 
     void fileConnect();
 
+signals:
+
+    void incomingMessage(char, QByteArray);
+
+    void connected(bool);
+
 
 private:
-    QByteArray buffer;
+    QByteArray buffer, incoming_data;
+    char incoming_type;
     QextSerialPort *m_port;
-    bool connected, opened, deviceOn;
+    bool opened, deviceOn;
 private slots:
 
     void onReadyRead();

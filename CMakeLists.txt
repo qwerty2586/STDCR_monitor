@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 project(STDCR_monitor)
 
+#[[ pro kompilaci na windows je zapotrebi nainstalovat
+qt 4.8.6 a umistit do c:/qt/4.8.6, pro beh na windows jsou pak zapotrebi ve
+stejnem adresari s binarkou:
+    QtCore4.dll QtGui4.dll QtXml4.dll libgcc_s_dw2-1.dll libstdc++-6.dll libwinpthread-1.dll
+pro debug je jeste treba:
+    QtCored4.dll QtGuid4.dll QtXmld4.dll
+]]
 if (WIN32)
     set(CMAKE_PREFIX_PATH c:/qt/4.8.6)
 endif (WIN32)
@@ -30,19 +37,24 @@ set(SOURCE_FILES
         stdcr_monitor/widgets/qwaveform.cpp
         stdcr_monitor/experiments/RESPONSE_EXPERIMENT.cpp
         stdcr_monitor/widgets/qsaveloadwidget.cpp
-
-        stdcr_comm/stimulator.cpp
         )
 
 set(SOURCE_FILES_WIN
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_win.cpp
-        )
+
+        stdcr_comm/stimulator.cpp
+        stdcr_comm/serials_win.cpp)
 
 set(SOURCE_FILES_LINUX
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_unix.cpp
-        )
+
+        3rdparty/qextserialport/qextserialenumerator.cpp
+        3rdparty/qextserialport/qextserialenumerator_linux.cpp
+
+        stdcr_comm/stimulator.cpp
+        stdcr_comm/serials_linux.cpp)
 
 if (WIN32)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_WIN})

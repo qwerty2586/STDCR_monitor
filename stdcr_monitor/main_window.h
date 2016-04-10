@@ -8,6 +8,8 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QComboBox>
+#include <QGroupBox>
 #include "experiment.h"
 
 
@@ -27,6 +29,10 @@ private:
     QPushButton *backButton, *startStopButton;
     QHBoxLayout *experimentButtonsLayout;
     QWidget *experimentButtonsWidget;
+    QGroupBox *portGroup;
+    QHBoxLayout *portLayout;
+    QComboBox *portCombo;
+    QPushButton *portConnectDisconnect;
 
 
     std::vector<Experiment *> experiments;
