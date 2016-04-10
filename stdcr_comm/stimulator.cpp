@@ -14,21 +14,17 @@ Stimulator::Stimulator(const QString filename) {
 
 void Stimulator::setFile(const QString filename) {
     m_port->setPortName(filename);
+    fileConnect();
 
 }
 
 void Stimulator::fileConnect() {
-    if (m_port->open(QIODevice::ReadWrite) == true) {
-        opened = true;
-    }
-    else {
-        opened = false;
-    }
+    opened = m_port->open(QIODevice::ReadWrite);
 }
 
 void Stimulator::onReadyRead() {
     QByteArray bytes;
-    int bytesLength = m_port->bytesAvailable();
+    int bytesLength = (int) m_port->bytesAvailable();
     bytes.resize(bytesLength);
     m_port->read(bytes.data(), bytes.size());
     buffer.append(bytes);
@@ -37,14 +33,13 @@ void Stimulator::onReadyRead() {
 }
 
 void Stimulator::onDsrChanged(bool status) {
-    if (status)
-        deviceOn = true;
-    else
-        deviceOn = false;
+    deviceOn = status;
 }
 
 void Stimulator::checkBuffer() {
+    while (buffer.size() >= PACKET_SIZE) {
 
+    }
 }
 
 
