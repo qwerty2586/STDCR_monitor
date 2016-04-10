@@ -1,12 +1,14 @@
 #include "main_window.h"
-#include "params.h"
-#include "experiments/ERP.h"
-#include "experiments/BCI.h"
-#include "experiments/RESPONSE_EXPERIMENT.h"
-#include "experiments/AUTOSTIMULATION.h"
-#include "experiments/BIOSENSOR_LOGGER.h"
-#include "experiments/TEST_MODE.h"
+#include <stdcr_monitor/params.h>
+#include <stdcr_monitor/experiments/ERP.h>
+#include <stdcr_monitor/experiments/BCI.h>
+#include <stdcr_monitor/experiments/RESPONSE_EXPERIMENT.h>
+#include <stdcr_monitor/experiments/AUTOSTIMULATION.h>
+#include <stdcr_monitor/experiments/BIOSENSOR_LOGGER.h>
+#include <stdcr_monitor/experiments/TEST_MODE.h>
 #include <stdcr_comm/serials.h>
+#include <c++/iostream>
+
 
 const QString TEXT_CONNECT = "CONNECT";
 const QString TEXT_DISCONNECT = "DISCONNECT";
@@ -20,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     windowLayout = NULL;
     portConnected = false;
+    experimentRunning = false;
     port = new Stimulator();
     connect(port, SIGNAL(connected(bool)), this, SLOT(onPortConnected(bool)));
 
@@ -58,6 +61,7 @@ void MainWindow::initItems() {
     portCombo->addItems(listOfAvailableSerials());
     portLayout->addWidget(portCombo);
     portConnectDisconnect = new QPushButton(TEXT_CONNECT);
+    portConnectDisconnect->setStyleSheet("color: green");
     QObject::connect(portConnectDisconnect, SIGNAL(released()), this, SLOT(portConnectDisconnectClick()));
 
 
@@ -67,6 +71,7 @@ void MainWindow::initItems() {
     backButton = new QPushButton("BACK TO MENU");
     QObject::connect(backButton, SIGNAL(released()), this, SLOT(backClick()));
     startStopButton = new QPushButton(TEXT_START);
+    startStopButton->setEnabled(portConnected);
     QObject::connect(startStopButton, SIGNAL(released()), this, SLOT(startStopClick()));
     experimentButtonsLayout = new QHBoxLayout();
     experimentButtonsLayout->addWidget(backButton);
@@ -75,6 +80,9 @@ void MainWindow::initItems() {
     experimentButtonsLayout->addStretch(2);
     experimentButtonsWidget = new QWidget();
     experimentButtonsWidget->setLayout(experimentButtonsLayout);
+
+
+    connect(port, SIGNAL(incomingMessage(char, QByteArray)), this, SLOT(debugpacket(char, QByteArray)));
 
 
 
@@ -93,12 +101,16 @@ void MainWindow::initExperiments() {
     experiments.push_back(biosensor_logger);
     TEST_MODE *test_mode = new TEST_MODE();
     experiments.push_back(test_mode);
+    for (int i = 0; i < experiments.size(); i++) {
+        experiments[i]->setStimulator(port);
+        connect(experiments[i], SIGNAL(experimentStateChanged(bool)), this, SLOT(onExperimentStateChanged(bool)));
+    }
 }
 
 
 void MainWindow::showMenu() {
 
-    layout()->setContentsMargins(MAIN_WIDTH / 6, -1, MAIN_WIDTH / 6, -1);
+    layout()->setContentsMargins(MAIN_WIDTH / 6, -1, MAIN_WIDTH / 6, -1); // pekne okraje kolem tlacitek
     layout()->addWidget(this->captionLabel);
     captionLabel->show();
     for (int i = 0; i < experiments.size(); i++) {
@@ -174,27 +186,69 @@ void MainWindow::backClick() {
 }
 
 void MainWindow::startStopClick() {
+    if (!experimentRunning)
+        experiments[activeExperiment]->changeExperimentState(true);
+    else
+        experiments[runningExperimentIndex]->changeExperimentState(false);
+
 
 }
 
 void MainWindow::portConnectDisconnectClick() {
     if (!portConnected) { //CONNECT
         port->setFile(portCombo->currentText());
-    } else {
+    } else {            //disconnect
         port->portDisconnect();
     }
 
 }
 
 void MainWindow::onPortConnected(bool connected) {
+    portConnected = connected;
+    portCombo->setEnabled(!connected);
+    startStopButton->setEnabled(connected);
     if (connected) {
-        portConnected = true;
         portConnectDisconnect->setText(TEXT_DISCONNECT);
+        portConnectDisconnect->setStyleSheet("color: red");
+
     } else {
-        portConnected = false;
         portConnectDisconnect->setText(TEXT_CONNECT);
+        portConnectDisconnect->setStyleSheet("color: green");
     }
 }
+
+void MainWindow::onExperimentStateChanged(bool state) {
+    for (int i = 0; i < experiments.size(); ++i) {
+        if (sender() == experiments[i]) runningExperimentIndex = i;
+    }
+    experimentRunning = state;
+    if (state) {
+        startStopButton->setText(TEXT_STOP);
+    } else {
+        startStopButton->setText(TEXT_START);
+    }
+
+}
+
+void MainWindow::debugpacket(char c, QByteArray a) {
+    std::cout << c << ":  ";
+    std::cout << a.data();
+    std::cout << std::endl;
+
+}
+
+MainWindow::~MainWindow() {
+    port->portDisconnect();
+    delete port;
+}
+
+
+
+
+
+
+
+
 
 
 

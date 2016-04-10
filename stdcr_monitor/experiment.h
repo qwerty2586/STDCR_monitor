@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QString>
+#include <stdcr_comm/stimulator.h>
 
 
 class Experiment : public QWidget {
@@ -18,6 +19,14 @@ public:
     virtual bool isImplemented() = 0;
 
     virtual QString getName() = 0;
+
+    virtual void setStimulator(Stimulator *port) { this->port = port; };
+
+    virtual void changeExperimentState(bool state) { };
+    Stimulator *port;
+signals:
+
+    void experimentStateChanged(bool);
 
 
 private:

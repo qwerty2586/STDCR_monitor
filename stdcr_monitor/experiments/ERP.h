@@ -2,11 +2,12 @@
 #ifndef STDCR_MONITOR_ERP_H
 #define STDCR_MONITOR_ERP_H
 
-#include "../experiment.h"
+#include <stdcr_monitor/experiment.h>
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QRadioButton>
 #include <QPushButton>
+#include <stdcr_comm/stimulator.h>
 
 
 class ERP : public Experiment {
@@ -20,6 +21,10 @@ public:
     QString getName() override { return QString::fromUtf8("ERP"); };
 
     bool isImplemented() override { return true; };
+
+    void changeExperimentState(bool state);
+
+
 
 
 private:

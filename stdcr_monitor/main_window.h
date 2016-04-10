@@ -11,7 +11,7 @@
 #include <QComboBox>
 #include <QGroupBox>
 #include <stdcr_comm/stimulator.h>
-#include "experiment.h"
+#include <stdcr_monitor/experiment.h>
 
 
 
@@ -20,6 +20,8 @@ Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+
+    ~MainWindow();
 
 
 private:
@@ -35,13 +37,15 @@ private:
     QComboBox *portCombo;
     QPushButton *portConnectDisconnect;
 
-    bool portConnected;
+    bool portConnected, experimentRunning;
     Stimulator *port;
 
 
     std::vector<Experiment *> experiments;
 
     int activeExperiment;
+    int runningExperimentIndex;
+
 
     void initItems();
 
@@ -54,8 +58,7 @@ private:
     void clearLayout();
 
 
-
-public slots:
+private slots:
 
     void menuButtonClick();
 
@@ -68,6 +71,12 @@ public slots:
     void portConnectDisconnectClick();
 
     void onPortConnected(bool connected);
+
+    void onExperimentStateChanged(bool state);
+
+    void debugpacket(char, QByteArray);
+
+
 };
 
 

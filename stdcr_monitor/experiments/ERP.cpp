@@ -7,8 +7,9 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
-#include "../widgets/qsaveloadwidget.h"
-#include "../params.h"
+#include <stdcr_monitor/widgets/qsaveloadwidget.h>
+#include <stdcr_monitor/params.h>
+#include <stdcr_comm/stimulator.h>
 
 
 ERP::ERP(QWidget *parent) : Experiment(parent) {
@@ -314,6 +315,38 @@ void ERP::saveFile(QString filepathname) {
         file.close();
     }
 }
+
+void ERP::changeExperimentState(bool state) {
+    if (state) { //START
+        char c;
+        if (q_edge_up->isChecked()) c = StimulatorMessage::PULSE_EDGE_UP;
+        if (q_edge_down->isChecked()) c = StimulatorMessage::PULSE_EDGE_DOWN;
+        port->sendMessage(StimulatorMessage::PULSE_EDGE, c);
+        for (int i = 0; i < leds.size(); ++i) {
+            port->sendMessage(StimulatorMessage::TIME_ON_LED[i],
+                              leds[i]->pulse_up->value());
+            port->sendMessage(StimulatorMessage::TIME_PAUSE_LED[i],
+                              leds[i]->pulse_down->value());
+            port->sendMessage(StimulatorMessage::DISTRIBUTION_LED[i],
+                              (char) (leds[i]->dist_value->value()));
+            port->sendMessage(StimulatorMessage::BRIGHTNESS_LED[i],
+                              (char) (leds[i]->brightness->value()));
+
+
+        }
+
+        port->sendMessage(StimulatorMessage::LED_ENABLE);
+        emit experimentStateChanged(true);
+    } else { //STOP
+        port->sendMessage(StimulatorMessage::LED_DISABLE);
+        emit experimentStateChanged(false);
+    }
+}
+
+
+
+
+
 
 
 
