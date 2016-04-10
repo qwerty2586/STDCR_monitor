@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     resize(MAIN_WIDTH, MAIN_HEIGHT);
 
     windowLayout = NULL;
+    portConnected = false;
+    port = new Stimulator();
+    connect(port, SIGNAL(connected(bool)), this, SLOT(onPortConnected(bool)));
+
     initExperiments();
     initItems();
     windowLayout = new QVBoxLayout(this);
@@ -54,6 +58,8 @@ void MainWindow::initItems() {
     portCombo->addItems(listOfAvailableSerials());
     portLayout->addWidget(portCombo);
     portConnectDisconnect = new QPushButton(TEXT_CONNECT);
+    QObject::connect(portConnectDisconnect, SIGNAL(released()), this, SLOT(portConnectDisconnectClick()));
+
 
     portLayout->addWidget(portConnectDisconnect);
     portGroup->setLayout(portLayout);
@@ -170,4 +176,27 @@ void MainWindow::backClick() {
 void MainWindow::startStopClick() {
 
 }
+
+void MainWindow::portConnectDisconnectClick() {
+    if (!portConnected) { //CONNECT
+        port->setFile(portCombo->currentText());
+    } else {
+        port->portDisconnect();
+    }
+
+}
+
+void MainWindow::onPortConnected(bool connected) {
+    if (connected) {
+        portConnected = true;
+        portConnectDisconnect->setText(TEXT_DISCONNECT);
+    } else {
+        portConnected = false;
+        portConnectDisconnect->setText(TEXT_CONNECT);
+    }
+}
+
+
+
+
 

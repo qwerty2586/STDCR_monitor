@@ -53,6 +53,25 @@ void Stimulator::checkBuffer() {
     }
 }
 
+void Stimulator::portDisconnect() {
+    bool lastState = opened;
+    if (m_port->isOpen()) {
+        m_port->close();
+        incoming_data.clear();
+        buffer.clear();
+    }
+    opened = false;
+    if (lastState != opened) emit connected(opened);
+}
+
+bool Stimulator::isPortConnected() {
+    return opened;
+}
+
+
+
+
+
 
 
 

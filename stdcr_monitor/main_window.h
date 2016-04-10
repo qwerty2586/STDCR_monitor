@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QGroupBox>
+#include <stdcr_comm/stimulator.h>
 #include "experiment.h"
 
 
@@ -33,6 +34,9 @@ private:
     QHBoxLayout *portLayout;
     QComboBox *portCombo;
     QPushButton *portConnectDisconnect;
+
+    bool portConnected;
+    Stimulator *port;
 
 
     std::vector<Experiment *> experiments;
@@ -60,6 +64,10 @@ public slots:
     void startStopClick();
 
     void initExperiments();
+
+    void portConnectDisconnectClick();
+
+    void onPortConnected(bool connected);
 };
 
 
