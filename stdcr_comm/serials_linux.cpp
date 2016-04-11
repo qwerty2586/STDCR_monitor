@@ -1,5 +1,6 @@
 #include "serials.h"
-#include <3rdparty/qextserialport/qextserialenumerator.h>
+#include <QDir>
+
 
 QStringList listOfAvailableSerials() {
 
