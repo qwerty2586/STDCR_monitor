@@ -77,9 +77,8 @@ void Stimulator::sendMessage(char messageType, char messageData) {
 }
 
 void Stimulator::sendMessage(char messageType, int messageData) {
-    int16_t data = messageData;
-    char low = data & 0xFF;
-    char high = (data >> 8) & 0xFF; //rozdeleni na dva bajty
+    char low = (char) (messageData & 0xFF);
+    char high = (char) ((messageData >> 8) & 0xFF); //rozdeleni na dva bajty
     QByteArray array;
     array.append(high);
     array.append(low);
@@ -97,7 +96,7 @@ void Stimulator::sendMessage(char messageType, QByteArray messageData) {
         m_port->write(output);
     }
     output.clear();
-    output.append(messageData.size());
+    output.append((char) messageData.size());
     output.append(messageType);
     output.append(messageData);
     if (output.size() < PACKET_SIZE) {

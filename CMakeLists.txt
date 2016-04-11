@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 project(STDCR_monitor)
 
+# definice LINUX
+if (UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif ()
+
 #[[ pro kompilaci na windows je zapotrebi nainstalovat
 qt 4.8.6 a umistit do c:/qt/4.8.6, pro beh na windows jsou pak zapotrebi ve
 stejnem adresari s binarkou:
