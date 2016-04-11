@@ -55,9 +55,6 @@ set(SOURCE_FILES_LINUX
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_unix.cpp
 
-        3rdparty/qextserialport/qextserialenumerator.cpp
-        3rdparty/qextserialport/qextserialenumerator_linux.cpp
-
         stdcr_comm/stimulator.cpp
         stdcr_comm/serials_linux.cpp)
 

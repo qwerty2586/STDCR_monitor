@@ -2,10 +2,16 @@
 #include <3rdparty/qextserialport/qextserialenumerator.h>
 
 QStringList listOfAvailableSerials() {
-    QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
+
     QStringList r;
-            foreach (QextPortInfo info, ports) {
-            r.append(info.portName);
-        }
+    name_list.clear();
+    QDir dir("/dev");
+    QStringList filters;
+    filters.push_back("ttyU*");
+    filters.push_back("ttyA*");
+    filters.push_back("ttyS*");
+    filters.push_back("rfcomm*");
+    dir.setNameFilters(filters);
+    r.append(dir.entryList());
     return r;
 };
