@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response_experiment>
+    <led_count>4</led_count>
+    <cycles>30</cycles>
+    <wait_time_fixed>500</wait_time_fixed>
+    <wait_time_random>300</wait_time_random>
+    <miss_time>100</miss_time>
+    <onfail>wait</onfail>
+    <brightness>50</brightness>
+    <m>true</m>
+    <f>false</f>
+    <a>false</a>
+    <w>true</w>
+    <h>true</h>
+</response_experiment>

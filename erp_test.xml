@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<erp>
+    <out>500</out>
+    <wait>200</wait>
+    <edge>up</edge>
+    <rand>plus</rand>
+    <leds_setup>
+        <led>
+            <pulse_up>300</pulse_up>
+            <pulse_down>100</pulse_down>
+            <distribution_value>20</distribution_value>
+            <distribution_delay>5</distribution_delay>
+            <brightness>50</brightness>
+        </led>
+        <led>
+            <pulse_up>500</pulse_up>
+            <pulse_down>100</pulse_down>
+            <distribution_value>30</distribution_value>
+            <distribution_delay>10</distribution_delay>
+            <brightness>60</brightness>
+        </led>
+        <led>
+            <pulse_up>200</pulse_up>
+            <pulse_down>50</pulse_down>
+            <distribution_value>50</distribution_value>
+            <distribution_delay>12</distribution_delay>
+            <brightness>75</brightness>
+        </led>
+    </leds_setup>
+</erp>
