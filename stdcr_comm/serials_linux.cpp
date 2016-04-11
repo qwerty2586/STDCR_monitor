@@ -5,7 +5,6 @@
 QStringList listOfAvailableSerials() {
 
     QStringList r;
-    name_list.clear();
     QDir dir("/dev");
     QStringList filters;
     filters.push_back("ttyU*");
