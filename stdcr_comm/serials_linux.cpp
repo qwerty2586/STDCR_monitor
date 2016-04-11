@@ -3,9 +3,9 @@
 
 
 QStringList listOfAvailableSerials() {
-
+    // zase nefunguje enumenator takze hledame rucne
     QStringList r;
-    QDir dir("/dev");
+    QDir dir("dev", "", QDir::Name, QDir::System);
     QStringList filters;
     filters.push_back("ttyU*");
     filters.push_back("ttyA*");
