@@ -96,8 +96,8 @@ void ERP::initItems() {
     ledSetupLayout->setColumnStretch(3, 2);
 
     ledSetupLayout->addWidget(new QLabel("PULSE " + TEXT_MS), 0, 1);
-    ledSetupLayout->addWidget(new QLabel("DISTRIBUTION " + TEXT_MS), 0, 2);
-    ledSetupLayout->addWidget(new QLabel("BRIGHTNESS"), 0, 3);
+    ledSetupLayout->addWidget(new QLabel("DISTRIBUTION [\%/COUNT]"), 0, 2);
+    ledSetupLayout->addWidget(new QLabel("BRIGHTNESS " + TEXT_PERCENT), 0, 3);
 
     qhBoxLayout = new QHBoxLayout();
     qhBoxLayout->addWidget(new QLabel("UP"));
@@ -157,13 +157,13 @@ void ERP::addLed() {
     leds[row]->pulse_down->setRange(MIN_MS, MAX_MS);
 
     leds[row]->dist_value = new QSpinBox();
-    leds[row]->dist_value->setRange(MIN_MS, MAX_MS);
+    leds[row]->dist_value->setRange(MIN_P, MAX_P);
 
     leds[row]->dist_delay = new QSpinBox();
-    leds[row]->dist_delay->setRange(MIN_MS, MAX_MS);
+    leds[row]->dist_delay->setRange(MIN_COUNT, MAX_COUNT);
 
     leds[row]->brightness = new QSpinBox();
-    leds[row]->pulse_up->setRange(MIN_P, MAX_P);
+    leds[row]->brightness->setRange(MIN_P, MAX_P);
 
     QHBoxLayout *qhBoxLayout = new QHBoxLayout();
     qhBoxLayout->addWidget(leds[row]->pulse_up);

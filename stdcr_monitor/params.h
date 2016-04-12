@@ -19,6 +19,8 @@ extern const int MIN_MS;
 extern const int MAX_MS;
 extern const int MIN_P;
 extern const int MAX_P;
+extern const int MIN_COUNT;
+extern const int MAX_COUNT;
 
 
 

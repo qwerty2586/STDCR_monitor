@@ -16,4 +16,5 @@ const int MIN_MS = 0;
 const int MAX_MS = 30000;
 const int MIN_P = 0;
 const int MAX_P = 100;
-
+const int MIN_COUNT = 0;
+const int MAX_COUNT = 100;
