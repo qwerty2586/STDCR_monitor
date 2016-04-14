@@ -1,17 +1,13 @@
 #include "serials.h"
 #include <QDir>
+#include <stdcr_monitor/params.h>
 
 
 QStringList listOfAvailableSerials() {
     // zase nefunguje enumenator takze hledame rucne
     QStringList r;
-    QDir dir("/dev", "", QDir::Name, QDir::System);
-    QStringList filters;
-    filters.push_back("ttyU*");
-    filters.push_back("ttyA*");
-    filters.push_back("ttyS*");
-    filters.push_back("rfcomm*");
-    dir.setNameFilters(filters);
+    QDir dir(LINUX_DEV_DIR, "", QDir::Name, QDir::System);
+    dir.setNameFilters(LINUX_DEV_MASK);
     r.append(dir.entryList());
     return r;
 };

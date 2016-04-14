@@ -1,10 +1,11 @@
 #include "serials.h"
 #include <windows.h>
+#include <stdcr_monitor/params.h>
 
 QStringList listOfAvailableSerials() {
     QStringList r;
     QString com;
-    for (int i = 1; i <= 12; ++i) {
+    for (int i = 1; i <= WINDOWS_MAX_COM; ++i) {
         HANDLE hComm;
         std::wstring wstringPath{L"\\\\.\\COM"}; // snazime se vytvorit \\.\COM1 ale v MS string formatu
         wstringPath.append(std::to_wstring(i));
