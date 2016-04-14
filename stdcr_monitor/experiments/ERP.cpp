@@ -321,7 +321,15 @@ void ERP::changeExperimentState(bool state) {
         char c;
         if (q_edge_up->isChecked()) c = StimulatorMessage::PULSE_EDGE_UP;
         if (q_edge_down->isChecked()) c = StimulatorMessage::PULSE_EDGE_DOWN;
+        if (q_rand_none)
+            port->sendMessage(StimulatorMessage::RANDOM_DISABLE);
+        else
+            port->sendMessage(StimulatorMessage::RANDOM_ENABLE);
+        // zatim nelze protokolem nastavit + - +-
+
+        port->sendMessage(StimulatorMessage::SYNC_PULSE_INTERVAL, q_out->value());
         port->sendMessage(StimulatorMessage::PULSE_EDGE, c);
+
         for (int i = 0; i < leds.size(); ++i) {
             port->sendMessage(StimulatorMessage::TIME_ON_LED[i],
                               leds[i]->pulse_up->value());
