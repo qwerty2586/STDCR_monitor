@@ -1,10 +1,7 @@
-
-
 #include "params.h"
 
 const int MAIN_WIDTH = 500;
 const int MAIN_HEIGHT = 400;
-const QString CONN_FILE = "COM4";
 const int MAX_LEDS = 8;
 const QString SCHEMAS_DIR = "./schemas";
 const QString SCHEMAS_EXTENSION = ".xml";
@@ -18,3 +15,8 @@ const int MIN_P = 0;
 const int MAX_P = 100;
 const int MIN_COUNT = 0;
 const int MAX_COUNT = 100;
+
+// komunikace
+const int WINDOWS_MAX_COM = 12;;
+const QString LINUX_DEV_DIR = "/dev";
+const QStringList LINUX_DEV_MASK = QString("ttyU*;ttyA*;ttyS*;rfcomm*").split(';');

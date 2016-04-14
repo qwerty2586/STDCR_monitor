@@ -35,7 +35,9 @@ private:
     QGroupBox *portGroup;
     QHBoxLayout *portLayout;
     QComboBox *portCombo;
-    QPushButton *portConnectDisconnect;
+    QPushButton *portConnectDisconnectButton, *portRefreshButton;
+
+
 
     bool portConnected, experimentRunning;
     Stimulator *port;
@@ -75,6 +77,8 @@ private slots:
     void onExperimentStateChanged(bool state);
 
     void debugpacket(char, QByteArray);
+
+    void refreshPortList();
 
 
 };

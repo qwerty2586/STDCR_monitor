@@ -8,6 +8,8 @@
 #include <stdcr_monitor/experiments/TEST_MODE.h>
 #include <stdcr_comm/serials.h>
 #include <iostream>
+#include <QStyle>
+#include <QApplication>
 
 
 const QString TEXT_CONNECT = "CONNECT";
@@ -58,15 +60,22 @@ void MainWindow::initItems() {
     portGroup = new QGroupBox("PORT");
     portLayout = new QHBoxLayout();
     portCombo = new QComboBox();
-    portCombo->addItems(listOfAvailableSerials());
+    connect(portCombo, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(refreshPortList()));
     portLayout->addWidget(portCombo);
-    portConnectDisconnect = new QPushButton(TEXT_CONNECT);
-    portConnectDisconnect->setStyleSheet("color: green");
-    QObject::connect(portConnectDisconnect, SIGNAL(released()), this, SLOT(portConnectDisconnectClick()));
-
-
-    portLayout->addWidget(portConnectDisconnect);
+    portRefreshButton = new QPushButton();
+    portRefreshButton->setIcon(QApplication::style()->standardIcon(QStyle::SP_BrowserReload));
+    portLayout->addWidget(portRefreshButton);
+    connect(portRefreshButton, SIGNAL(released()), this, SLOT(refreshPortList()));
+    refreshPortList(); // pridame polozky
+    portConnectDisconnectButton = new QPushButton(TEXT_CONNECT);
+    portConnectDisconnectButton->setStyleSheet("color: green");
+    QObject::connect(portConnectDisconnectButton, SIGNAL(released()), this, SLOT(portConnectDisconnectClick()));
+    portLayout->addWidget(portConnectDisconnectButton);
+    portLayout->setStretch(0, 2);
+    portLayout->setStretch(1, 0);
+    portLayout->setStretch(2, 1);
     portGroup->setLayout(portLayout);
+
 
     backButton = new QPushButton("BACK TO MENU");
     QObject::connect(backButton, SIGNAL(released()), this, SLOT(backClick()));
@@ -206,14 +215,15 @@ void MainWindow::portConnectDisconnectClick() {
 void MainWindow::onPortConnected(bool connected) {
     portConnected = connected;
     portCombo->setEnabled(!connected);
+    portRefreshButton->setEnabled(!connected);
     startStopButton->setEnabled(connected);
     if (connected) {
-        portConnectDisconnect->setText(TEXT_DISCONNECT);
-        portConnectDisconnect->setStyleSheet("color: red");
+        portConnectDisconnectButton->setText(TEXT_DISCONNECT);
+        portConnectDisconnectButton->setStyleSheet("color: red");
 
     } else {
-        portConnectDisconnect->setText(TEXT_CONNECT);
-        portConnectDisconnect->setStyleSheet("color: green");
+        portConnectDisconnectButton->setText(TEXT_CONNECT);
+        portConnectDisconnectButton->setStyleSheet("color: green");
     }
 }
 
@@ -231,8 +241,8 @@ void MainWindow::onExperimentStateChanged(bool state) {
 }
 
 void MainWindow::debugpacket(char c, QByteArray a) {
-    std::cout << c << ":  ";
-    std::cout << a.data();
+    std::cout << QByteArray::fromRawData(&c, 1).toHex().data() << ":  ";
+    std::cout << a.toHex().data();
     std::cout << std::endl;
 
 }
@@ -241,6 +251,13 @@ MainWindow::~MainWindow() {
     port->portDisconnect();
     delete port;
 }
+
+void MainWindow::refreshPortList() {
+    portCombo->clear();
+    portCombo->addItems(listOfAvailableSerials());
+}
+
+
 
 
 

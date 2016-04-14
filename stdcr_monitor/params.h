@@ -4,10 +4,10 @@
 
 
 #include <QString>
+#include <QStringList>
 
 extern const int MAIN_WIDTH;
 extern const int MAIN_HEIGHT;
-extern const QString CONN_FILE;
 extern const int MAX_LEDS;
 extern const QString SCHEMAS_DIR;
 extern const QString SCHEMAS_EXTENSION;
@@ -22,7 +22,8 @@ extern const int MAX_P;
 extern const int MIN_COUNT;
 extern const int MAX_COUNT;
 
-
-
+extern const int WINDOWS_MAX_COM;
+extern const QString LINUX_DEV_DIR;
+extern const QStringList LINUX_DEV_MASK;
 
 #endif //STDCR_MONITOR_PARAMS_H
