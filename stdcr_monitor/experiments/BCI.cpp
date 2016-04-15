@@ -70,6 +70,7 @@ void BCI::initItems() {
 
     cvepLayout->addWidget(new QLabel("STIMULI COUNT"), 0, 0);
     q_stimuli_count = new QSpinBox();
+    q_stimuli_count->setRange(0, MAX_LEDS);
     cvepLayout->addWidget(q_stimuli_count, 0, 1);
 
     cvepLayout->addWidget(new QLabel("PATTERN"), 1, 0);

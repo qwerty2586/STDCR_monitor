@@ -29,7 +29,8 @@ private:
     //TEST SETUP
     QSpinBox *led_count, *cycles, *wait_time_fixed, *wait_time_random, *miss_time, *brightness;
     QRadioButton *cont, *wait;
-    QCheckBox *m, *f, *a, *w, *h;
+    QRadioButton *male, *female;
+    QSpinBox *age, *body_weight, *body_height;
 
     //TEST MODE
     QLineEdit *count_cycle, *last_time, *average_time, *miss_counter, *fail_counter;

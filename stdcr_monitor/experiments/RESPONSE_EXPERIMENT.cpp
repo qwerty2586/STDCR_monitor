@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QXmlStreamWriter>
 #include <QtXml/QDomDocument>
+#include <QGroupBox>
 #include "../params.h"
 
 RESPONSE_EXPERIMENT::RESPONSE_EXPERIMENT(QWidget *parent) : Experiment(parent) {
@@ -61,33 +62,56 @@ void RESPONSE_EXPERIMENT::initItems() {
     testSetupLayout->addWidget(new QLabel(TEXT_MS), 4, 2);
 
     testSetupLayout->addWidget(new QLabel("On fail"), 5, 0);
+    QVBoxLayout *qvBoxLayout = new QVBoxLayout();
+    QGroupBox *qGroubBox = new QGroupBox();
+    qGroubBox->setFlat(true); // udelame maly groupbox
+    qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
     cont = new QRadioButton("Continue");
     cont->setChecked(true);
-    testSetupLayout->addWidget(cont, 5, 1);
-
+    qvBoxLayout->addWidget(cont);
     wait = new QRadioButton("Wait");
-    testSetupLayout->addWidget(wait, 6, 1);
+    qvBoxLayout->addWidget(wait);
+    qGroubBox->setLayout(qvBoxLayout);
+    testSetupLayout->addWidget(qGroubBox, 5, 1);
 
-    testSetupLayout->addWidget(new QLabel("Brightness"), 7, 0);
+
+    testSetupLayout->addWidget(new QLabel("Brightness"), 6, 0);
     brightness = new QSpinBox();
     brightness->setRange(MIN_P, MAX_P);
-    testSetupLayout->addWidget(brightness, 7, 1);
-    testSetupLayout->addWidget(new QLabel(TEXT_PERCENT), 7, 2);
+    testSetupLayout->addWidget(brightness, 6, 1);
+    testSetupLayout->addWidget(new QLabel(TEXT_PERCENT), 6, 2);
 
-    m = new QCheckBox("M");
-    testSetupLayout->addWidget(m, 8, 0);
+    testSetupLayout->addWidget(new QLabel("Sex"), 7, 0);
+    QHBoxLayout *qhBoxLayout = new QHBoxLayout();
+    qGroubBox = new QGroupBox();
+    qGroubBox->setFlat(true); // udelame maly groupbox
+    qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
+    male = new QRadioButton("male");
+    male->setChecked(true);
+    qhBoxLayout->addWidget(male);
+    female = new QRadioButton("female");
+    qhBoxLayout->addWidget(female);
+    qGroubBox->setLayout(qhBoxLayout);
+    testSetupLayout->addWidget(qGroubBox, 7, 1);
 
-    f = new QCheckBox("F");
-    testSetupLayout->addWidget(f, 8, 1);
+    testSetupLayout->addWidget(new QLabel("Age"), 8, 0);
+    age = new QSpinBox();
+    age->setRange(MIN_AGE, MAX_AGE);
+    testSetupLayout->addWidget(age, 8, 1);
+    testSetupLayout->addWidget(new QLabel(TEXT_YEARS), 8, 2);
 
-    a = new QCheckBox("A");
-    testSetupLayout->addWidget(a, 9, 0);
+    testSetupLayout->addWidget(new QLabel("Weight"), 9, 0);
+    body_weight = new QSpinBox();
+    body_weight->setRange(MIN_BODY_WEIGHT, MAX_BODY_WEIGHT);
+    testSetupLayout->addWidget(body_weight, 9, 1);
+    testSetupLayout->addWidget(new QLabel(TEXT_KG), 9, 2);
 
-    w = new QCheckBox("W");
-    testSetupLayout->addWidget(w, 9, 1);
+    testSetupLayout->addWidget(new QLabel("Height"), 10, 0);
+    body_height = new QSpinBox();
+    body_height->setRange(MIN_BODY_HEIGHT, MAX_BODY_HEIGHT);
+    testSetupLayout->addWidget(body_height, 10, 1);
+    testSetupLayout->addWidget(new QLabel(TEXT_CM), 10, 2);
 
-    h = new QCheckBox("H");
-    testSetupLayout->addWidget(h, 9, 2);
 
     //TEST MODE
     QGridLayout *test_mode_layout = new QGridLayout();
@@ -155,11 +179,12 @@ const QString DATA_ONFAIL_WAIT = "wait";
 const QString DATA_BRIGHTNESS = "brightness";
 const QString DATA_TRUE = "true";
 const QString DATA_FALSE = "false";
-const QString DATA_M = "m";
-const QString DATA_F = "f";
-const QString DATA_A = "a";
-const QString DATA_W = "w";
-const QString DATA_H = "h";
+const QString DATA_SEX = "sex";
+const QString DATA_SEX_M = "male";
+const QString DATA_SEX_F = "female";
+const QString DATA_AGE = "age";
+const QString DATA_WEIGHT = "weight";
+const QString DATA_HEIGHT = "height";
 
 bool dataBool(QString s) {
     return (DATA_TRUE == s);
@@ -188,12 +213,12 @@ void RESPONSE_EXPERIMENT::loadFile(QString filepathname) {
     if (value == DATA_ONFAIL_WAIT) wait->setChecked(true);
     brightness->setValue(root.firstChildElement(DATA_BRIGHTNESS).text().toInt());
 
-    m->setChecked(dataBool(root.firstChildElement(DATA_M).text()));
-    f->setChecked(dataBool(root.firstChildElement(DATA_F).text()));
-    a->setChecked(dataBool(root.firstChildElement(DATA_A).text()));
-    w->setChecked(dataBool(root.firstChildElement(DATA_W).text()));
-    h->setChecked(dataBool(root.firstChildElement(DATA_H).text()));
-
+    value = root.firstChildElement(DATA_SEX).text().toLower();
+    if (value == DATA_SEX_M) male->setChecked(true);
+    if (value == DATA_SEX_F) female->setChecked(true);
+    age->setValue(root.firstChildElement(DATA_AGE).text().toInt());
+    body_weight->setValue(root.firstChildElement(DATA_WEIGHT).text().toInt());
+    body_height->setValue(root.firstChildElement(DATA_HEIGHT).text().toInt());
     file.close();
 }
 
@@ -216,11 +241,13 @@ void RESPONSE_EXPERIMENT::saveFile(QString filepathname) {
         xml.writeTextElement(DATA_ONFAIL, value);
         xml.writeTextElement(DATA_BRIGHTNESS, brightness->text());
 
-        xml.writeTextElement(DATA_M, dataBool(m->isChecked()));
-        xml.writeTextElement(DATA_F, dataBool(f->isChecked()));
-        xml.writeTextElement(DATA_A, dataBool(a->isChecked()));
-        xml.writeTextElement(DATA_W, dataBool(w->isChecked()));
-        xml.writeTextElement(DATA_H, dataBool(h->isChecked()));
+        if (male->isChecked()) value = DATA_SEX_M;
+        if (female->isChecked()) value = DATA_SEX_F;
+        xml.writeTextElement(DATA_SEX, value);
+
+        xml.writeTextElement(DATA_AGE, age->text());
+        xml.writeTextElement(DATA_WEIGHT, body_weight->text());
+        xml.writeTextElement(DATA_HEIGHT, body_height->text());
 
         xml.writeEndElement();
         xml.writeEndDocument();
