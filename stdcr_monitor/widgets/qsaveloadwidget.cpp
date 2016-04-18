@@ -24,10 +24,12 @@ void QSaveLoadWidget::initItems() {
     list = new QListWidget();
     layout->addWidget(list, 1);
     QHBoxLayout *qhBoxLayout = new QHBoxLayout();
-    qhBoxLayout->addWidget(new QLabel(prefix));
+    prefix_label = new QLabel(prefix);
+    qhBoxLayout->addWidget(prefix_label);
     name_edit = new QLineEdit();
     qhBoxLayout->addWidget(name_edit, 1); // roztahneme jmeno souboru
-    qhBoxLayout->addWidget(new QLabel(suffix));
+    suffix_label = new QLabel(suffix);
+    qhBoxLayout->addWidget(suffix_label);
     load_button = new QPushButton("LOAD");
     qhBoxLayout->addWidget(load_button);
     save_button = new QPushButton("SAVE");
@@ -112,6 +114,16 @@ void QSaveLoadWidget::loadClick() {
     fullpath += prefix + name_edit->text() + suffix;
     emit load(fullpath);
 }
+
+void QSaveLoadWidget::setPrefix(const QString prefix) {
+    if (this->prefix.compare(prefix) != 0) {
+        this->prefix = prefix;
+        prefix_label->setText(prefix);
+        refreshList();
+    }
+}
+
+
 
 
 

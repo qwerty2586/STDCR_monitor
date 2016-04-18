@@ -14,11 +14,12 @@
 class QSaveLoadWidget : public QWidget {
 Q_OBJECT
 
-
 public:
 
 
     explicit QSaveLoadWidget(const QString directory, const QString prefix, const QString suffix, QWidget *parent = 0);
+
+    void setPrefix(const QString qString);
 
 public slots:
 
@@ -39,6 +40,7 @@ private:
     QListWidget *list;
     QPushButton *save_button, *load_button;
     QLineEdit *name_edit;
+    QLabel *prefix_label, *suffix_label;
 
     void initItems();
 

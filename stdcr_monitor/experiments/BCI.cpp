@@ -1,4 +1,3 @@
-#include <stdcr_monitor/widgets/qsaveloadwidget.h>
 #include <QtXml/QDomDocument>
 #include <QFile>
 #include <QXmlStreamWriter>
@@ -8,6 +7,20 @@
 
 const int DEFAULT_LENGTH = 8;
 const int MAX_LENGTH = 32;
+
+const QString TEXT_FVEP = "F-VEP";
+const QString TEXT_TVEP = "T-VEP";
+const QString TEXT_CVEP = "C-VEP";
+
+const QString FILE_PREFIX_TVEP = "bci_tvep_";
+const QString FILE_PREFIX_FVEP = "bci_fvep_";
+const QString FILE_PREFIX_CVEP = "bci_cvep_";
+
+
+const int INDEX_FVEP = 0;
+const int INDEX_TVEP = 1;
+const int INDEX_CVEP = 2;
+
 
 BCI::BCI(QWidget *parent) : Experiment(parent) {
     initItems();
@@ -20,10 +33,10 @@ void BCI::initItems() {
 
     tabs = new QTabWidget();
     f_tabs = new QTabWidget();
-    tabs->addTab(f_tabs, "F-VEP");
+    tabs->addTab(f_tabs, TEXT_FVEP);
     t_tabs = new QTabWidget();
-    tabs->addTab(t_tabs, "T-VEP");
-    tabs->addTab(new QWidget(), "C-VEP");
+    tabs->addTab(t_tabs, TEXT_TVEP);
+    tabs->addTab(new QWidget(), TEXT_CVEP);
     tabs->addTab(new QWidget(), "SCHEMA");
     l->addWidget(tabs);
     this->setLayout(l);
@@ -62,7 +75,7 @@ void BCI::initItems() {
     // c-vep
 
     QGridLayout *cvepLayout = new QGridLayout();
-    tabs->widget(2)->setLayout(cvepLayout);
+    tabs->widget(INDEX_CVEP)->setLayout(cvepLayout);
 
     cvepLayout->setColumnStretch(0, 2);
     cvepLayout->setColumnStretch(1, 1);
@@ -112,13 +125,27 @@ void BCI::initItems() {
 
     QGridLayout *schemaLayout = new QGridLayout();
     tabs->widget(3)->setLayout(schemaLayout);
-    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget(SCHEMAS_DIR, "bci_", SCHEMAS_EXTENSION);
-    schemaLayout->addWidget(qSaveLoadWidget, 0, 0);
-    connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
-    connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
-    connect(qSaveLoadWidget, SIGNAL(save(QString)), qSaveLoadWidget, SLOT(refreshList()));
+    q_save_load_widget = new QSaveLoadWidget(SCHEMAS_DIR, "bci_", SCHEMAS_EXTENSION);
+    schemaLayout->addWidget(q_save_load_widget, 1, 0, 1, 3);
+    connect(q_save_load_widget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
+    connect(q_save_load_widget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
+    connect(q_save_load_widget, SIGNAL(save(QString)), q_save_load_widget, SLOT(refreshList()));
 
+    q_scheme_radio_fvep = new QRadioButton(TEXT_FVEP);
+    q_scheme_radio_fvep->setChecked(true);
+    schemaLayout->addWidget(q_scheme_radio_fvep, 0, 0);
 
+    q_scheme_radio_tvep = new QRadioButton(TEXT_TVEP);
+    schemaLayout->addWidget(q_scheme_radio_tvep, 0, 1);
+
+    q_scheme_radio_cvep = new QRadioButton(TEXT_CVEP);
+    schemaLayout->addWidget(q_scheme_radio_cvep, 0, 2);
+
+    connect(q_scheme_radio_fvep, SIGNAL(toggled(bool)), this, SLOT(schemeRadioChanged()));
+    connect(q_scheme_radio_tvep, SIGNAL(toggled(bool)), this, SLOT(schemeRadioChanged()));
+    connect(q_scheme_radio_fvep, SIGNAL(toggled(bool)), this, SLOT(schemeRadioChanged()));
+
+    connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
 }
 
@@ -381,41 +408,48 @@ void BCI::loadFile(QString filepathname) {
     if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file))
         return;
 
-    QDomNode cvepnode = doc.elementsByTagName(DATA_ROOT_CVEP).item(0);
-    q_stimuli_count->setValue(cvepnode.firstChildElement(DATA_STIMULI_COUNT).text().toInt());
-    value = cvepnode.firstChildElement(DATA_PATTERN).text();
-    q_pattern->fromString(value);
-    q_pulse_length->setValue(cvepnode.firstChildElement(DATA_PULSE_LENGTH).text().toInt());
-    q_pulse_skew->setValue(cvepnode.firstChildElement(DATA_PULSE_SKEW).text().toInt());
-    q_brightness->setValue(cvepnode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
-
-    QDomNode fvepnode = doc.elementsByTagName(DATA_ROOT_FVEP).item(0);
-    QDomNodeList fvepleds = fvepnode.toElement().elementsByTagName(DATA_LED);
-    clearFLeds();
-    for (int i = 0; i < fvepleds.size(); ++i) {
-        addFLed();
-        QDomNode lednode = fvepleds.item(i);
-        fleds[i]->time_on->setValue(lednode.firstChildElement(DATA_TIME_ON).text().toInt());
-        fleds[i]->time_off->setValue(lednode.firstChildElement(DATA_TIME_OFF).text().toInt());
-        fleds[i]->frequency->setValue(lednode.firstChildElement(DATA_FREQUENCY).text().toInt());
-        fleds[i]->duty_cycle->setValue(lednode.firstChildElement(DATA_DUTY_CYCLE).text().toInt());
-        fleds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+    QDomNodeList cveplist = doc.elementsByTagName(DATA_ROOT_CVEP);
+    if (cveplist.size() > 0) {
+        QDomNode cvepnode = cveplist.item(0);
+        q_stimuli_count->setValue(cvepnode.firstChildElement(DATA_STIMULI_COUNT).text().toInt());
+        value = cvepnode.firstChildElement(DATA_PATTERN).text();
+        q_pattern->fromString(value);
+        q_pulse_length->setValue(cvepnode.firstChildElement(DATA_PULSE_LENGTH).text().toInt());
+        q_pulse_skew->setValue(cvepnode.firstChildElement(DATA_PULSE_SKEW).text().toInt());
+        q_brightness->setValue(cvepnode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+    }
+    QDomNodeList fveplist = doc.elementsByTagName(DATA_ROOT_FVEP);
+    if (fveplist.size() > 0) {
+        QDomNode fvepnode = fveplist.item(0);
+        QDomNodeList fvepleds = fvepnode.toElement().elementsByTagName(DATA_LED);
+        clearFLeds();
+        for (int i = 0; i < fvepleds.size(); ++i) {
+            addFLed();
+            QDomNode lednode = fvepleds.item(i);
+            fleds[i]->time_on->setValue(lednode.firstChildElement(DATA_TIME_ON).text().toInt());
+            fleds[i]->time_off->setValue(lednode.firstChildElement(DATA_TIME_OFF).text().toInt());
+            fleds[i]->frequency->setValue(lednode.firstChildElement(DATA_FREQUENCY).text().toInt());
+            fleds[i]->duty_cycle->setValue(lednode.firstChildElement(DATA_DUTY_CYCLE).text().toInt());
+            fleds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+        }
     }
 
-    QDomNode tvepnode = doc.elementsByTagName(DATA_ROOT_TVEP).item(0);
-    QDomNodeList tvepleds = tvepnode.toElement().elementsByTagName(DATA_LED);
-    clearTLeds();
-    for (int i = 0; i < tvepleds.size(); ++i) {
-        addTLed();
-        QDomNode lednode = tvepleds.item(i);
-        value = lednode.firstChildElement(DATA_PATTERN).text();
-        tleds[i]->pattern_length->setValue(value.length());
-        tleds[i]->pattern->fromString(value);
-        tleds[i]->pulse_length->setValue(lednode.firstChildElement(DATA_PULSE_LENGTH).text().toInt());
-        tleds[i]->pulse_skew->setValue(lednode.firstChildElement(DATA_PULSE_SKEW).text().toInt());
-        tleds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+    QDomNodeList tveplist = doc.elementsByTagName(DATA_ROOT_TVEP);
+    if (tveplist.size() > 0) {
+        QDomNode tvepnode = tveplist.item(0);
+        QDomNodeList tvepleds = tvepnode.toElement().elementsByTagName(DATA_LED);
+        clearTLeds();
+        for (int i = 0; i < tvepleds.size(); ++i) {
+            addTLed();
+            QDomNode lednode = tvepleds.item(i);
+            value = lednode.firstChildElement(DATA_PATTERN).text();
+            tleds[i]->pattern_length->setValue(value.length());
+            tleds[i]->pattern->fromString(value);
+            tleds[i]->pulse_length->setValue(lednode.firstChildElement(DATA_PULSE_LENGTH).text().toInt());
+            tleds[i]->pulse_skew->setValue(lednode.firstChildElement(DATA_PULSE_SKEW).text().toInt());
+            tleds[i]->brightness->setValue(lednode.firstChildElement(DATA_BRIGHTNESS).text().toInt());
+        }
     }
-
 
     file.close();
 
@@ -423,6 +457,7 @@ void BCI::loadFile(QString filepathname) {
 };
 
 void BCI::saveFile(QString filepathname) {
+    tabs->blockSignals(true);
     //musime zobrazit vsechny prvky jinak v nich nebudou hodnoty... just QT thing
     int backup = tabs->currentIndex();
     tabs->setCurrentIndex(0);
@@ -440,6 +475,7 @@ void BCI::saveFile(QString filepathname) {
     tabs->setCurrentIndex(2);
     tabs->setCurrentIndex(3);
     tabs->setCurrentIndex(backup);
+    tabs->blockSignals(false);
 
     QFile file(filepathname);
     QString value = "";
@@ -447,46 +483,79 @@ void BCI::saveFile(QString filepathname) {
         QXmlStreamWriter xml(&file);
         xml.setAutoFormatting(true);
         xml.writeStartDocument();
-        xml.writeStartElement(DATA_ROOT);
+        if (q_scheme_radio_fvep->isChecked()) {
+            xml.writeStartElement(DATA_ROOT_FVEP);
+            for (int i = 0; i < fleds.size(); i++) {
+                xml.writeStartElement(DATA_LED);
+                xml.writeTextElement(DATA_TIME_ON, fleds[i]->time_on->text());
+                xml.writeTextElement(DATA_TIME_OFF, fleds[i]->time_off->text());
+                xml.writeTextElement(DATA_FREQUENCY, fleds[i]->frequency->text());
+                xml.writeTextElement(DATA_DUTY_CYCLE, fleds[i]->duty_cycle->text());
+                xml.writeTextElement(DATA_BRIGHTNESS, fleds[i]->brightness->text());
+                xml.writeEndElement();
+            }
+            xml.writeEndElement();
+        };
 
-        xml.writeStartElement(DATA_ROOT_FVEP);
-        for (int i = 0; i < fleds.size(); i++) {
-            xml.writeStartElement(DATA_LED);
-            xml.writeTextElement(DATA_TIME_ON, fleds[i]->time_on->text());
-            xml.writeTextElement(DATA_TIME_OFF, fleds[i]->time_off->text());
-            xml.writeTextElement(DATA_FREQUENCY, fleds[i]->frequency->text());
-            xml.writeTextElement(DATA_DUTY_CYCLE, fleds[i]->duty_cycle->text());
-            xml.writeTextElement(DATA_BRIGHTNESS, fleds[i]->brightness->text());
+        if (q_scheme_radio_tvep->isChecked()) {
+            xml.writeStartElement(DATA_ROOT_TVEP);
+            for (int i = 0; i < tleds.size(); i++) {
+                xml.writeStartElement(DATA_LED);
+                xml.writeTextElement(DATA_PATTERN, tleds[i]->pattern->toString()->toAscii());
+                xml.writeTextElement(DATA_PULSE_LENGTH, tleds[i]->pulse_length->text());
+                xml.writeTextElement(DATA_PULSE_SKEW, tleds[i]->pulse_skew->text());
+                xml.writeTextElement(DATA_BRIGHTNESS, tleds[i]->brightness->text());
+                xml.writeEndElement();
+            }
+            xml.writeEndElement();
+        };
+
+
+        if (q_scheme_radio_cvep->isChecked()) {
+            xml.writeStartElement(DATA_ROOT_CVEP);
+            xml.writeTextElement(DATA_STIMULI_COUNT, q_stimuli_count->text());
+            xml.writeTextElement(DATA_PATTERN, q_pattern->toString()->toAscii());
+            xml.writeTextElement(DATA_PULSE_LENGTH, q_pulse_length->text());
+            xml.writeTextElement(DATA_PULSE_SKEW, q_pulse_skew->text());
+            xml.writeTextElement(DATA_BRIGHTNESS, q_brightness->text());
+            xml.writeEndElement();
+
             xml.writeEndElement();
         }
-        xml.writeEndElement();
 
-        xml.writeStartElement(DATA_ROOT_TVEP);
-        for (int i = 0; i < tleds.size(); i++) {
-            xml.writeStartElement(DATA_LED);
-            xml.writeTextElement(DATA_PATTERN, tleds[i]->pattern->toString()->toAscii());
-            xml.writeTextElement(DATA_PULSE_LENGTH, tleds[i]->pulse_length->text());
-            xml.writeTextElement(DATA_PULSE_SKEW, tleds[i]->pulse_skew->text());
-            xml.writeTextElement(DATA_BRIGHTNESS, tleds[i]->brightness->text());
-            xml.writeEndElement();
-        }
-        xml.writeEndElement();
-
-
-        xml.writeStartElement(DATA_ROOT_CVEP);
-        xml.writeTextElement(DATA_STIMULI_COUNT, q_stimuli_count->text());
-        xml.writeTextElement(DATA_PATTERN, q_pattern->toString()->toAscii());
-        xml.writeTextElement(DATA_PULSE_LENGTH, q_pulse_length->text());
-        xml.writeTextElement(DATA_PULSE_SKEW, q_pulse_skew->text());
-        xml.writeTextElement(DATA_BRIGHTNESS, q_brightness->text());
-        xml.writeEndElement();
-
-        xml.writeEndElement();
         xml.writeEndDocument();
-
         file.close();
     }
 }
+
+void BCI::schemeRadioChanged() {
+
+    if (q_scheme_radio_fvep->isChecked()) q_save_load_widget->setPrefix(FILE_PREFIX_FVEP);
+    if (q_scheme_radio_tvep->isChecked()) q_save_load_widget->setPrefix(FILE_PREFIX_TVEP);
+    if (q_scheme_radio_cvep->isChecked()) q_save_load_widget->setPrefix(FILE_PREFIX_CVEP);
+
+
+}
+
+void BCI::tabChanged(int tab_index) {
+    switch (tab_index) {
+        case INDEX_FVEP :
+            q_scheme_radio_fvep->setChecked(true);
+            break;
+        case INDEX_TVEP :
+            q_scheme_radio_tvep->setChecked(true);
+            break;
+        case INDEX_CVEP :
+            q_scheme_radio_cvep->setChecked(true);
+            break;
+    }
+
+
+}
+
+
+
+
 
 
 

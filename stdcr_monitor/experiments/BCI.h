@@ -6,6 +6,8 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QToolButton>
+#include <QRadioButton>
+#include <stdcr_monitor/widgets/qsaveloadwidget.h>
 #include "../widgets/qwaveform.h"
 #include "../widgets/qcheckgrid.h"
 
@@ -52,6 +54,8 @@ private:
     };
     std::vector<FLed *> fleds;
     std::vector<TLed *> tleds;
+    QSaveLoadWidget *q_save_load_widget;
+    QRadioButton *q_scheme_radio_cvep, *q_scheme_radio_fvep, *q_scheme_radio_tvep;
 
     void initItems();
 
@@ -74,6 +78,10 @@ private slots:
     void loadFile(QString filepathname);
 
     void saveFile(QString filepathname);
+
+    void schemeRadioChanged();
+
+    void tabChanged(int tab_index);
 
 
 };
