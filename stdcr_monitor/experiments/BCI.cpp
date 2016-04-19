@@ -125,7 +125,7 @@ void BCI::initItems() {
 
     QGridLayout *schemaLayout = new QGridLayout();
     tabs->widget(3)->setLayout(schemaLayout);
-    q_save_load_widget = new QSaveLoadWidget(SCHEMAS_DIR, "bci_", SCHEMAS_EXTENSION);
+    q_save_load_widget = new QSaveLoadWidget(SCHEMAS_DIR, FILE_PREFIX_FVEP, SCHEMAS_EXTENSION);
     schemaLayout->addWidget(q_save_load_widget, 1, 0, 1, 3);
     connect(q_save_load_widget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
     connect(q_save_load_widget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
