@@ -37,6 +37,7 @@ void QSaveLoadWidget::initItems() {
     delete_button = new QPushButton("DELETE");
     qhBoxLayout->addWidget(delete_button);
     qhBoxLayout->setStretch(1, 2); // roztahneme pole s nazvem souboru
+    qhBoxLayout->setStretch(1, 2); // roztahneme pole s nazvem souboru
     layout->addLayout(qhBoxLayout);
     refreshList();
 

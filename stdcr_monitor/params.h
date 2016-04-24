@@ -1,3 +1,8 @@
+/**
+ * V tomto hlavickovem souboru, prosim o udrzovani pouzivanych konstant napric projektem
+ * do budoucna je zde planovana featura nacitani techto konstant z XML souboru
+ */
+
 
 #ifndef STDCR_MONITOR_PARAMS_H
 #define STDCR_MONITOR_PARAMS_H
@@ -6,6 +11,7 @@
 #include <QString>
 #include <QStringList>
 
+///velikost okna
 extern const int MAIN_WIDTH;
 extern const int MAIN_HEIGHT;
 extern const int MAX_LEDS;
