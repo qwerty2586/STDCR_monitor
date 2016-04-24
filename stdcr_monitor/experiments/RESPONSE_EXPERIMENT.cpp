@@ -34,79 +34,79 @@ void RESPONSE_EXPERIMENT::initItems() {
     testSetupLayout->setColumnStretch(1, 1);
     testSetupLayout->setColumnStretch(2, 1);
 
-    testSetupLayout->addWidget(new QLabel("LED Count"), 0, 0);
+    testSetupLayout->addWidget(new QLabel("LED COUNT"), 0, 0);
     led_count = new QSpinBox();
     led_count->setRange(1, MAX_LEDS);
     testSetupLayout->addWidget(led_count, 0, 1);
 
-    testSetupLayout->addWidget(new QLabel("Cycles"), 1, 0);
+    testSetupLayout->addWidget(new QLabel("CYCLES"), 1, 0);
     cycles = new QSpinBox();
     testSetupLayout->addWidget(cycles, 1, 1);
 
-    testSetupLayout->addWidget(new QLabel("Wait time - fixed"), 2, 0);
+    testSetupLayout->addWidget(new QLabel("WAIT TIME - FIXED"), 2, 0);
     wait_time_fixed = new QSpinBox();
     wait_time_fixed->setRange(MIN_MS, MAX_MS);
     testSetupLayout->addWidget(wait_time_fixed, 2, 1);
     testSetupLayout->addWidget(new QLabel(TEXT_MS), 2, 2);
 
-    testSetupLayout->addWidget(new QLabel("Wait time - random"), 3, 0);
+    testSetupLayout->addWidget(new QLabel("WAIT TIME - RANDOM"), 3, 0);
     wait_time_random = new QSpinBox();
     wait_time_random->setRange(MIN_MS, MAX_MS);
     testSetupLayout->addWidget(wait_time_random, 3, 1);
     testSetupLayout->addWidget(new QLabel(TEXT_MS), 3, 2);
 
-    testSetupLayout->addWidget(new QLabel("Miss time"), 4, 0);
+    testSetupLayout->addWidget(new QLabel("MISS TIME"), 4, 0);
     miss_time = new QSpinBox();
     miss_time->setRange(MIN_MS, MAX_MS);
     testSetupLayout->addWidget(miss_time, 4, 1);
     testSetupLayout->addWidget(new QLabel(TEXT_MS), 4, 2);
 
-    testSetupLayout->addWidget(new QLabel("On fail"), 5, 0);
+    testSetupLayout->addWidget(new QLabel("ON FAIL"), 5, 0);
     QVBoxLayout *qvBoxLayout = new QVBoxLayout();
     QGroupBox *qGroubBox = new QGroupBox();
     qGroubBox->setFlat(true); // udelame maly groupbox
     qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
-    cont = new QRadioButton("Continue");
+    cont = new QRadioButton("CONTINUE");
     cont->setChecked(true);
     qvBoxLayout->addWidget(cont);
-    wait = new QRadioButton("Wait");
+    wait = new QRadioButton("WAIT");
     qvBoxLayout->addWidget(wait);
     qGroubBox->setLayout(qvBoxLayout);
     testSetupLayout->addWidget(qGroubBox, 5, 1);
 
 
-    testSetupLayout->addWidget(new QLabel("Brightness"), 6, 0);
+    testSetupLayout->addWidget(new QLabel("BRIGHTNESS"), 6, 0);
     brightness = new QSpinBox();
     brightness->setRange(MIN_P, MAX_P);
     testSetupLayout->addWidget(brightness, 6, 1);
     testSetupLayout->addWidget(new QLabel(TEXT_PERCENT), 6, 2);
 
-    testSetupLayout->addWidget(new QLabel("Sex"), 7, 0);
+    testSetupLayout->addWidget(new QLabel("SEX"), 7, 0);
     QHBoxLayout *qhBoxLayout = new QHBoxLayout();
     qGroubBox = new QGroupBox();
     qGroubBox->setFlat(true); // udelame maly groupbox
     qGroubBox->setStyleSheet("margin:0;padding:0;border:0;");
-    male = new QRadioButton("male");
+    male = new QRadioButton("MALE");
     male->setChecked(true);
     qhBoxLayout->addWidget(male);
-    female = new QRadioButton("female");
+    female = new QRadioButton("FEMALE");
     qhBoxLayout->addWidget(female);
     qGroubBox->setLayout(qhBoxLayout);
     testSetupLayout->addWidget(qGroubBox, 7, 1);
 
-    testSetupLayout->addWidget(new QLabel("Age"), 8, 0);
+    testSetupLayout->addWidget(new QLabel("AGE"), 8, 0);
     age = new QSpinBox();
     age->setRange(MIN_AGE, MAX_AGE);
     testSetupLayout->addWidget(age, 8, 1);
     testSetupLayout->addWidget(new QLabel(TEXT_YEARS), 8, 2);
 
-    testSetupLayout->addWidget(new QLabel("Weight"), 9, 0);
+    testSetupLayout->addWidget(new QLabel("WEIGHT"), 9, 0);
     body_weight = new QSpinBox();
     body_weight->setRange(MIN_BODY_WEIGHT, MAX_BODY_WEIGHT);
     testSetupLayout->addWidget(body_weight, 9, 1);
     testSetupLayout->addWidget(new QLabel(TEXT_KG), 9, 2);
 
-    testSetupLayout->addWidget(new QLabel("Height"), 10, 0);
+    testSetupLayout->addWidget(new QLabel("HEIGHT"), 10, 0);
     body_height = new QSpinBox();
     body_height->setRange(MIN_BODY_HEIGHT, MAX_BODY_HEIGHT);
     testSetupLayout->addWidget(body_height, 10, 1);
@@ -122,29 +122,29 @@ void RESPONSE_EXPERIMENT::initItems() {
     test_mode_layout->setColumnStretch(1, 1);
     test_mode_layout->setColumnStretch(2, 1);
 
-    test_mode_layout->addWidget(new QLabel("Count cycle"), 0, 0);
+    test_mode_layout->addWidget(new QLabel("COUNT CYCLE"), 0, 0);
     count_cycle= new QLineEdit();
     count_cycle->setReadOnly(true);
     test_mode_layout->addWidget(count_cycle, 0, 1);
 
-    test_mode_layout->addWidget(new QLabel("Last time"), 1, 0);
+    test_mode_layout->addWidget(new QLabel("LAST TIME"), 1, 0);
     last_time = new QLineEdit();
     last_time->setReadOnly(true);
     test_mode_layout->addWidget(last_time, 1, 1);
     test_mode_layout->addWidget(new QLabel(TEXT_MS), 1, 2);
 
-    test_mode_layout->addWidget(new QLabel("Average time"), 2, 0);
+    test_mode_layout->addWidget(new QLabel("AVERAGE TIME"), 2, 0);
     average_time = new QLineEdit();
     average_time->setReadOnly(true);
     test_mode_layout->addWidget(average_time, 2, 1);
     test_mode_layout->addWidget(new QLabel(TEXT_MS), 2, 2);
 
-    test_mode_layout->addWidget(new QLabel("Miss counter"), 3, 0);
+    test_mode_layout->addWidget(new QLabel("MISS COUNTER"), 3, 0);
     miss_counter = new QLineEdit();
     miss_counter->setReadOnly(true);
     test_mode_layout->addWidget(miss_counter, 3, 1);
 
-    test_mode_layout->addWidget(new QLabel("Fail counter"), 4, 0);
+    test_mode_layout->addWidget(new QLabel("FAIL COUNTER"), 4, 0);
     fail_counter = new QLineEdit();
     fail_counter->setReadOnly(true);
     test_mode_layout->addWidget(fail_counter, 4, 1);
