@@ -34,18 +34,24 @@ void QSaveLoadWidget::initItems() {
     qhBoxLayout->addWidget(load_button);
     save_button = new QPushButton("SAVE");
     qhBoxLayout->addWidget(save_button);
+    delete_button = new QPushButton("DELETE");
+    qhBoxLayout->addWidget(delete_button);
+    qhBoxLayout->setStretch(1, 2); // roztahneme pole s nazvem souboru
     layout->addLayout(qhBoxLayout);
     refreshList();
 
     save_button->setEnabled(false);
     load_button->setEnabled(
-            false); // pocatecni stav tlacitek je nestisknutelne az se zadanim prislusneho jmena se zpristupni
+            false);
+    delete_button->setEnabled(
+            false);// pocatecni stav tlacitek je nestisknutelne az se zadanim prislusneho jmena se zpristupni
 
     connect(list, SIGNAL(currentRowChanged(int)), this, SLOT(listItemSelected(int)));
     connect(name_edit, SIGNAL(textChanged(QString)), this, SLOT(nameEditChanged(QString)));
 
     connect(save_button, SIGNAL(released()), this, SLOT(saveClick()));
     connect(load_button, SIGNAL(released()), this, SLOT(loadClick()));
+    connect(delete_button, SIGNAL(released()), this, SLOT(deleteClick()));
 
 }
 
@@ -82,6 +88,7 @@ void QSaveLoadWidget::listItemSelected(int item) {
 void QSaveLoadWidget::nameEditChanged(const QString name) {
     if (name.size() <= 0) {
         load_button->setEnabled(false);
+        delete_button->setEnabled(false);
         save_button->setEnabled(false);
         if (list->currentRow() >= 0) list->item(list->currentRow())->setSelected(false);
         list->setCurrentRow(-1); // odselectnuti polozky v listu
@@ -93,12 +100,14 @@ void QSaveLoadWidget::nameEditChanged(const QString name) {
         if (longname == name_list[i]) {
             list->setCurrentRow(i);
             load_button->setEnabled(true);
+            delete_button->setEnabled(true);
             return;
         }
     }
     if (list->currentRow() >= 0) list->item(list->currentRow())->setSelected(false);
     list->setCurrentRow(-1);
     load_button->setEnabled(false);
+    delete_button->setEnabled(false);
 }
 
 void QSaveLoadWidget::saveClick() {
@@ -115,6 +124,16 @@ void QSaveLoadWidget::loadClick() {
     emit load(fullpath);
 }
 
+void QSaveLoadWidget::deleteClick() {
+    QString fullpath = directory;
+    if (fullpath.right(1).compare("/") != 0) fullpath += "/";
+    fullpath += prefix + name_edit->text() + suffix;
+    QFile file(fullpath);
+    file.remove();
+    refreshList();
+}
+
+
 void QSaveLoadWidget::setPrefix(const QString prefix) {
     if (this->prefix.compare(prefix) != 0) {
         this->prefix = prefix;
@@ -122,6 +141,8 @@ void QSaveLoadWidget::setPrefix(const QString prefix) {
         refreshList();
     }
 }
+
+
 
 
 

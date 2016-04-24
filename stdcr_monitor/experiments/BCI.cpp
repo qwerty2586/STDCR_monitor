@@ -519,8 +519,6 @@ void BCI::saveFile(QString filepathname) {
             xml.writeTextElement(DATA_PULSE_SKEW, q_pulse_skew->text());
             xml.writeTextElement(DATA_BRIGHTNESS, q_brightness->text());
             xml.writeEndElement();
-
-            xml.writeEndElement();
         }
 
         xml.writeEndDocument();

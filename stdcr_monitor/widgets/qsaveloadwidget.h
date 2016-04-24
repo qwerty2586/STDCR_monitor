@@ -38,7 +38,7 @@ private:
 
     QVBoxLayout *layout;
     QListWidget *list;
-    QPushButton *save_button, *load_button;
+    QPushButton *save_button, *load_button, *delete_button;
     QLineEdit *name_edit;
     QLabel *prefix_label, *suffix_label;
 
@@ -55,6 +55,8 @@ private slots:
     void saveClick();
 
     void loadClick();
+
+    void deleteClick();
 };
 
 #endif //STDCR_MONITOR_QSAVELOADWIDGET_H
