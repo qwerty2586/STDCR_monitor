@@ -13,7 +13,13 @@
 #include <stdcr_comm/stimulator.h>
 #include <stdcr_monitor/experiment.h>
 
-
+/**
+ * Hlavní okno
+ * duraz je kladen hlavne, aby bylo mozne menit obsah layoutu okna, z menu na experiment
+ * hlavni okno obsluhuje take udalosti tlaticka start stop pro zapnuti experimentu,
+ * ktere jsou predavany experientu, experiment pak muze vyslat signal o uspesnem zapnuti,
+ * na to hlavni okno reaguje zmenou stavu, a tlacika start na stop *
+ */
 
 class MainWindow : public QWidget {
 Q_OBJECT
@@ -38,25 +44,37 @@ private:
     QPushButton *portConnectDisconnectButton, *portRefreshButton;
 
 
-
+    /// stavove indikatory
     bool portConnected, experimentRunning;
+
+    /// komunikacni trida
     Stimulator *port;
 
-
+    /// seznam experimentu, v takovem poradi v jakem se zobrazi v menu
     std::vector<Experiment *> experiments;
 
+    /// index zobrazeneho experimentu, pokud jsme v menu wpak Experiment::NO_EXPERIMENT
     int activeExperiment;
+
+    /// index beziciho experimentu, pokud nebezi pak Experiment::NO_EXPERIMENT
     int runningExperimentIndex;
 
-
+    /// iniciace prvku okna ktere nesouvisi s experimenty
     void initItems();
 
+    /// iniciace seznamu experimentu a prirazeni komunikacni tridy stimulator
+    void initExperiments();
+
+    /// zobrazi prvky menu
     void showMenu();
 
+    /// zmeni zobrazeni okna Experiment::NO_EXPERIMENT znamena zobrazit menu
     void changeExperiment(const int experiment);
 
+    /// skryje menu a zonrazi
     void showExperiment(const int experiment);
 
+    /// vycisti mrizku layoutu - tedy vyhazi vsechny prvky
     void clearLayout();
 
 
@@ -68,8 +86,6 @@ private slots:
 
     void startStopClick();
 
-    void initExperiments();
-
     void portConnectDisconnectClick();
 
     void onPortConnected(bool connected);
@@ -79,8 +95,6 @@ private slots:
     void debugpacket(char, QByteArray);
 
     void refreshPortList();
-
-
 };
 
 
