@@ -5,7 +5,9 @@
 #include "../3rdparty/qextserialport/qextserialport.h"
 
 #define LEDS_COUNT 8
-
+/**
+ * namespace StimulatorMessage hrnuje konstanty zprav pouzivanych v komunikacnim protokolu
+ */
 namespace StimulatorMessage {
     static constexpr char LED_ENABLE = 0x01;
     static constexpr char LED_DISABLE = 0x02;
@@ -29,28 +31,33 @@ namespace StimulatorMessage {
 
 }
 
-
+/**
+ * Trida Stimulator zjednodusuje komunikaci se stimulatorem. Odesilane zpravy se obaluji do paketu.
+ * Prijate bajty se shromazduji do bufferu a kdyz je buffer delsi nez delka paketu tyto bajty se vyjmou a odeberou se
+ * prebytecna data a vyvola se signal, kterym se predavaji data programu.
+ */
 class Stimulator : public QObject {
 Q_OBJECT
 
 
 public:
-    // fakt by se to melo jmenovat start stop
-
+    ///standartni delka packetu v komunikacnim protokolu
     static const int PACKET_SIZE = 64;
-
-
-
 
     explicit Stimulator(const QString filename = 0);
 
+    /// zmena nazvu souboru
     void setFile(const QString filename);
 
-    void fileConnect();
+    ///pripojeni k souboru
+    void portConnect();
 
+    /// odpojeni od souboru
     void portDisconnect();
 
+    /// vraci stav pripojeni
     bool isPortConnected();
+
 
     void sendMessage(char messageType);
 
@@ -58,13 +65,16 @@ public:
 
     void sendMessage(char messageType, int messageData);
 
+    /// odesle data do souboru
     void sendMessage(char messageType, QByteArray messageData);
 
 
 signals:
 
+    /// notifukuje o prijeti zpravy
     void incomingMessage(char, QByteArray);
 
+    /// notikuje o uspesnem pripojeni odpojeni
     void connected(bool);
 
 

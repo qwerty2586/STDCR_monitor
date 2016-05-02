@@ -1,7 +1,3 @@
-//
-// Created by qwerty on 28. 3. 2016.
-//
-
 #include <QListWidget>
 #include <QLabel>
 #include <QDir>
@@ -37,7 +33,8 @@ void QSaveLoadWidget::initItems() {
     delete_button = new QPushButton("DELETE");
     qhBoxLayout->addWidget(delete_button);
     qhBoxLayout->setStretch(1, 2); // roztahneme pole s nazvem souboru
-    qhBoxLayout->setStretch(1, 2); // roztahneme pole s nazvem souboru
+    qhBoxLayout->setStretch(5, 0); // roztahneme pole s nazvem souboru
+    qhBoxLayout->setStretchFactor(delete_button, 0);
     layout->addLayout(qhBoxLayout);
     refreshList();
 

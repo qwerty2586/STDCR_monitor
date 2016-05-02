@@ -13,11 +13,11 @@ Stimulator::Stimulator(const QString filename) {
 
 void Stimulator::setFile(const QString filename) {
     m_port->setPortName(filename);
-    fileConnect();
+    portConnect();
 
 }
 
-void Stimulator::fileConnect() {
+void Stimulator::portConnect() {
     bool lastState = opened;
     opened = m_port->open(QIODevice::ReadWrite);
     if (lastState != opened) emit connected(opened);

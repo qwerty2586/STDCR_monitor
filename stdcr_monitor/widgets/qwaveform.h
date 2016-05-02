@@ -4,6 +4,9 @@
 
 #include <QWidget>
 
+/**
+ * QWaveForm vizualizuje bitove pole do formy vlny stvercoveo signalu.
+ */
 class QWaveForm : public QWidget {
 Q_OBJECT
 
@@ -12,7 +15,7 @@ public:
 
     explicit QWaveForm(int length, QWidget *parent = 0);
 
-
+    /// vyska vlny
     static const int HEIGHT = 10;
 
 

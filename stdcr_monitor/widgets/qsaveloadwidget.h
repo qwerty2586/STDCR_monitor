@@ -1,7 +1,3 @@
-//
-// Created by qwerty on 28. 3. 2016.
-//
-
 #ifndef STDCR_MONITOR_QSAVELOADWIDGET_H
 #define STDCR_MONITOR_QSAVELOADWIDGET_H
 
@@ -11,6 +7,13 @@
 #include <QLineEdit>
 #include <QListWidget>
 
+/**
+ * Widget QSaveLoadWidget prinasi uzivatelske rozhrani pro vyber souboru
+ * v adresari, ktery je fitrovan pomoci prefixu a suffixu. Tlacitka SAVE a LOAD
+ * emituji signaly, kterymi predavaji nazev souboru. Stisk tlacika DELETE
+ * se provadi funkci widgetu a neodesila se.
+ */
+
 class QSaveLoadWidget : public QWidget {
 Q_OBJECT
 
@@ -19,6 +22,7 @@ public:
 
     explicit QSaveLoadWidget(const QString directory, const QString prefix, const QString suffix, QWidget *parent = 0);
 
+    /// zmeni prefix
     void setPrefix(const QString qString);
 
 public slots:
@@ -27,8 +31,10 @@ public slots:
 
 signals:
 
+    /// signal o stisku tlacitka SAVE
     void save(QString);
 
+    /// signal o stisku tlacitka LOAD
     void load(QString);
 
 private:
