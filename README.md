@@ -5,7 +5,7 @@ Raspberry pi utility for controling and monitoring Stimulation device for cognit
 
 To compile in clean raspbian you need to install dependencies.
 ```
-apt-get install qt4-default cmake
+sudo apt-get install qt4-default cmake
 ```
 
 Then you are ready to download source
@@ -27,5 +27,4 @@ Now you can run your binary
 
 ## Troubleshooting
 
-If you have trouble to make your bluetooth working, follow these steps.
-[https://www.raspberrypi.org/learning/robo-butler/bluetooth-setup/]
+If you have trouble to make your bluetooth working, follow [these steps](https://www.raspberrypi.org/learning/robo-butler/bluetooth-setup/).
