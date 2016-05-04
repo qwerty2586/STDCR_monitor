@@ -20,6 +20,8 @@ void Stimulator::setFile(const QString filename) {
 void Stimulator::portConnect() {
     bool lastState = opened;
     opened = m_port->open(QIODevice::ReadWrite);
+    //if (opened) m_port->setBaudRate(BAUD9600);
+    // v pripade zmeny baudove rychlosti
     if (lastState != opened) emit connected(opened);
 }
 
@@ -73,7 +75,7 @@ void Stimulator::sendMessage(char messageType) {
 }
 
 void Stimulator::sendMessage(char messageType, char messageData) {
-    sendMessage(messageType, QByteArray(1, messageData));
+    sendMessage(messageType, QByteArray(1, messageData)); // vytvoreni QByteArray o delce 1
 }
 
 void Stimulator::sendMessage(char messageType, int messageData) {
@@ -81,7 +83,7 @@ void Stimulator::sendMessage(char messageType, int messageData) {
     char high = (char) ((messageData >> 8) & 0xFF); //rozdeleni na dva bajty
     QByteArray array;
     array.append(high);
-    array.append(low);
+    array.append(low);  // naplneni horniho a dolniho bytu
     sendMessage(messageType, array);
 }
 

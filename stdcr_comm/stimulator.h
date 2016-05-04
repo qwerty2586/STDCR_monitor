@@ -79,16 +79,34 @@ signals:
 
 
 private:
-    QByteArray buffer, incoming_data;
+
+    /// odchozi buffer
+    QByteArray buffer;
+
+    /// prichozi buffer
+    QByteArray incoming_data;
+
+    /// typ prichozi zpravy - viz namespace StimulatorMessage
     char incoming_type;
+
+    /// instance tridy QextSerialPort zajistujici obsluhu serioveho portu
     QextSerialPort *m_port;
-    bool opened, deviceOn;
+
+    /// stav pripojeni k seriovemu portu
+    bool opened;
+
+    /// stav ochoziho zarizeni - zda je k portu pripojene zarizeni
+    bool deviceOn;
+
 private slots:
 
+    /// obsluha prichozich dat pri jakekoli prichozi komunikaci
     void onReadyRead();
 
+    /// zmena stavu na druhem konci serioveho kabelu
     void onDsrChanged(bool status);
 
+    /// obsluha prichozich dat pokud je v prichozim bufferu vice
     void checkBuffer();
 };
 
