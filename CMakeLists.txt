@@ -60,13 +60,12 @@ set(SOURCE_FILES_LINUX
 
 if (WIN32)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_WIN})
+    add_executable(STDCR_monitor WIN32 ${SOURCE_FILES})
 endif (WIN32)
 
 if (LINUX)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX})
+    add_executable(STDCR_monitor ${SOURCE_FILES})
 endif (LINUX)
-
-
-add_executable(STDCR_monitor ${SOURCE_FILES})
 
 target_link_libraries(STDCR_monitor Qt4::QtGui Qt4::QtXml)
