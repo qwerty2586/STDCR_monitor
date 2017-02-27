@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(STDCR_monitor)
+project(stimulator_gui)
 
 # definice LINUX
 if (UNIX AND NOT APPLE)
@@ -27,45 +27,45 @@ find_package(Qt4 4.4.3 REQUIRED QtGui QtXml)
 
 
 set(SOURCE_FILES
-        stdcr_monitor/main.cpp
-        stdcr_monitor/params.cpp
-        stdcr_monitor/main_window.cpp
+        stimulator_gui/main.cpp
+        stimulator_gui/params.cpp
+        stimulator_gui/main_window.cpp
 
-        stdcr_monitor/experiment.cpp
-        stdcr_monitor/experiments/ERP.cpp
-        stdcr_monitor/experiments/BCI.cpp
-        stdcr_monitor/experiments/AUTOSTIMULATION.h
-        stdcr_monitor/experiments/BIOSENSOR_LOGGER.h
-        stdcr_monitor/experiments/TEST_MODE.cpp
+        stimulator_gui/experiment.cpp
+        stimulator_gui/experiments/ERP.cpp
+        stimulator_gui/experiments/BCI.cpp
+        stimulator_gui/experiments/AUTOSTIMULATION.h
+        stimulator_gui/experiments/BIOSENSOR_LOGGER.h
+        stimulator_gui/experiments/TEST_MODE.cpp
 
-        stdcr_monitor/widgets/qcheckgrid.cpp
-        stdcr_monitor/widgets/qwaveform.cpp
-        stdcr_monitor/experiments/RESPONSE_EXPERIMENT.cpp
-        stdcr_monitor/widgets/qsaveloadwidget.cpp
+        stimulator_gui/widgets/qcheckgrid.cpp
+        stimulator_gui/widgets/qwaveform.cpp
+        stimulator_gui/experiments/RESPONSE_EXPERIMENT.cpp
+        stimulator_gui/widgets/qsaveloadwidget.cpp
         )
 
 set(SOURCE_FILES_WIN
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_win.cpp
 
-        stdcr_comm/stimulator.cpp
-        stdcr_comm/serials_win.cpp)
+        stimulator_comm/stimulator.cpp
+        stimulator_comm/serials_win.cpp)
 
 set(SOURCE_FILES_LINUX
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_unix.cpp
 
-        stdcr_comm/stimulator.cpp
-        stdcr_comm/serials_linux.cpp)
+        stimulator_comm/stimulator.cpp
+        stimulator_comm/serials_linux.cpp)
 
 if (WIN32)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_WIN})
-    add_executable(STDCR_monitor WIN32 ${SOURCE_FILES})
+    add_executable(stimulator_gui WIN32 ${SOURCE_FILES})
 endif (WIN32)
 
 if (LINUX)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX})
-    add_executable(STDCR_monitor ${SOURCE_FILES})
+    add_executable(stimulator_gui ${SOURCE_FILES})
 endif (LINUX)
 
-target_link_libraries(STDCR_monitor Qt4::QtGui Qt4::QtXml)
+target_link_libraries(stimulator_gui Qt4::QtGui Qt4::QtXml)

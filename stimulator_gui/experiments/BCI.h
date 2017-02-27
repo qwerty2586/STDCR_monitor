@@ -7,7 +7,7 @@
 #include <QLabel>
 #include <QToolButton>
 #include <QRadioButton>
-#include <stdcr_monitor/widgets/qsaveloadwidget.h>
+#include "../widgets/qsaveloadwidget.h"
 #include "../widgets/qwaveform.h"
 #include "../widgets/qcheckgrid.h"
 

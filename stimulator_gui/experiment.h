@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QString>
-#include <stdcr_comm/stimulator.h>
+#include <stimulator_comm/stimulator.h>
 
 /**
  * Interface Experiment, predstavuje abtraktni tridu widgetu,

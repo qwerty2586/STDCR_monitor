@@ -2,12 +2,12 @@
 #ifndef STDCR_MONITOR_ERP_H
 #define STDCR_MONITOR_ERP_H
 
-#include <stdcr_monitor/experiment.h>
+#include <stimulator_gui/experiment.h>
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QRadioButton>
 #include <QPushButton>
-#include <stdcr_comm/stimulator.h>
+#include <stimulator_comm/stimulator.h>
 
 
 class ERP : public Experiment {

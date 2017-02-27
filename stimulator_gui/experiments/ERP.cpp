@@ -7,9 +7,8 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
-#include <stdcr_monitor/widgets/qsaveloadwidget.h>
-#include <stdcr_monitor/params.h>
-#include <stdcr_comm/stimulator.h>
+#include "../widgets/qsaveloadwidget.h"
+#include "../params.h"
 
 
 ERP::ERP(QWidget *parent) : Experiment(parent) {

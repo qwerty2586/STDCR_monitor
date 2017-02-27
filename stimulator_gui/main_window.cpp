@@ -1,12 +1,12 @@
 #include "main_window.h"
-#include <stdcr_monitor/params.h>
-#include <stdcr_monitor/experiments/ERP.h>
-#include <stdcr_monitor/experiments/BCI.h>
-#include <stdcr_monitor/experiments/RESPONSE_EXPERIMENT.h>
-#include <stdcr_monitor/experiments/AUTOSTIMULATION.h>
-#include <stdcr_monitor/experiments/BIOSENSOR_LOGGER.h>
-#include <stdcr_monitor/experiments/TEST_MODE.h>
-#include <stdcr_comm/serials.h>
+#include <stimulator_gui/params.h>
+#include <stimulator_gui/experiments/ERP.h>
+#include <stimulator_gui/experiments/BCI.h>
+#include <stimulator_gui/experiments/RESPONSE_EXPERIMENT.h>
+#include <stimulator_gui/experiments/AUTOSTIMULATION.h>
+#include <stimulator_gui/experiments/BIOSENSOR_LOGGER.h>
+#include <stimulator_gui/experiments/TEST_MODE.h>
+#include <stimulator_comm/serials.h>
 #include <iostream>
 #include <QStyle>
 #include <QApplication>
@@ -98,18 +98,12 @@ void MainWindow::initItems() {
 }
 
 void MainWindow::initExperiments() {
-    ERP *erp = new ERP();
-    experiments.push_back(erp);
-    BCI *bci = new BCI();
-    experiments.push_back(bci);
-    RESPONSE_EXPERIMENT *response_experiment = new RESPONSE_EXPERIMENT();
-    experiments.push_back(response_experiment);
-    AUTOSTIMULATION *autostimulation = new AUTOSTIMULATION();
-    experiments.push_back(autostimulation);
-    BIOSENSOR_LOGGER *biosensor_logger = new BIOSENSOR_LOGGER();
-    experiments.push_back(biosensor_logger);
-    TEST_MODE *test_mode = new TEST_MODE();
-    experiments.push_back(test_mode);
+    experiments.push_back(new ERP());
+    experiments.push_back(new BCI());
+    experiments.push_back(new RESPONSE_EXPERIMENT());
+    experiments.push_back(new AUTOSTIMULATION());
+    experiments.push_back(new BIOSENSOR_LOGGER());
+    experiments.push_back(new TEST_MODE());
     for (int i = 0; i < experiments.size(); i++) {
         experiments[i]->setStimulator(port);
         connect(experiments[i], SIGNAL(experimentStateChanged(bool)), this, SLOT(onExperimentStateChanged(bool)));

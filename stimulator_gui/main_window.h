@@ -10,8 +10,8 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QGroupBox>
-#include <stdcr_comm/stimulator.h>
-#include <stdcr_monitor/experiment.h>
+#include <stimulator_comm/stimulator.h>
+#include <stimulator_gui/experiment.h>
 
 /**
  * Hlavní okno

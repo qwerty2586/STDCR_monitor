@@ -1,5 +1,5 @@
 /**
- * STDCR_monitor
+ * stimulator_gui
  *
  * Program slouzi k nastaveni stimulatoru vyvijem Zapadoceskou univerzitou v Plzni
  * Jedna se u uzivatelske rozhrani, primarne urcene k chodu na raspberry pi,
@@ -9,6 +9,7 @@
  *
  * github projektu
  * https://github.com/neurofishteam/STDCR_monitor
+ * https://github.com/qwerty2586/stimulator_control
  *
  * V programu je pouzita knihovna QextSerialPort, dekuji vyvojarum za funkci komunikacni knihovnu
  * https://github.com/qextserialport/qextserialport

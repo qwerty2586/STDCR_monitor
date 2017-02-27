@@ -6,7 +6,7 @@
 
 #define LEDS_COUNT 8
 /**
- * namespace StimulatorMessage hrnuje konstanty zprav pouzivanych v komunikacnim protokolu
+ * namespace StimulatorMessage shrnuje konstanty zprav pouzivanych v komunikacnim protokolu
  */
 namespace StimulatorMessage {
     static constexpr char LED_ENABLE = 0x01;
