@@ -1,0 +1,5 @@
+hello
+cd
+list
+
+bye

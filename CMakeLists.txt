@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(stimulator_gui)
+project(stimulator_control)
 
 # definice LINUX
 if (UNIX AND NOT APPLE)
@@ -42,6 +42,8 @@ set(SOURCE_FILES
         stimulator_gui/widgets/qwaveform.cpp
         stimulator_gui/experiments/RESPONSE_EXPERIMENT.cpp
         stimulator_gui/widgets/qsaveloadwidget.cpp
+        stimulator_fileserver/transfer_protocol.cpp
+        stimulator_fileserver/transfer_protocol.h
         )
 
 set(SOURCE_FILES_WIN
@@ -64,7 +66,7 @@ if (WIN32)
 endif (WIN32)
 
 if (LINUX)
-    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX})
+    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
     add_executable(stimulator_gui ${SOURCE_FILES})
 endif (LINUX)
 
