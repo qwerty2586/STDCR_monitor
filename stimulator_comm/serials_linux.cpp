@@ -1,6 +1,6 @@
 #include "serials.h"
 #include <QDir>
-#include <stdcr_monitor/params.h>
+#include <stimulator_gui/params.h>
 
 
 QStringList listOfAvailableSerials() {
