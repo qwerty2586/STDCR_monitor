@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     port = new Stimulator();
     connect(port, SIGNAL(connected(bool)), this, SLOT(onPortConnected(bool)));
 
+    fileserver = new Fileserver("","");
+
     initExperiments();
     initItems();
     windowLayout = new QVBoxLayout(this);

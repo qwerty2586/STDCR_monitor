@@ -26,6 +26,9 @@ namespace StimulatorMessage {
     static constexpr char PULSE_EDGE_DOWN = 0x01;
     static constexpr char SYNC_PULSE_INTERVAL = 0x20;
 
+    static constexpr char COMMUNICATION_CODE = 0xBF;
+
+
     static constexpr char RANDOM_ENABLE = 0x04;
     static constexpr char RANDOM_DISABLE = 0x05;
 
@@ -73,6 +76,9 @@ signals:
 
     /// notifukuje o prijeti zpravy
     void incomingMessage(char, QByteArray);
+
+    /// notifukuje o prijeti zpravy
+    void incomingRelayedMessage(QByteArray);
 
     /// notikuje o uspesnem pripojeni odpojeni
     void connected(bool);

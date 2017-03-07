@@ -42,8 +42,14 @@ set(SOURCE_FILES
         stimulator_gui/widgets/qwaveform.cpp
         stimulator_gui/experiments/RESPONSE_EXPERIMENT.cpp
         stimulator_gui/widgets/qsaveloadwidget.cpp
+
         stimulator_fileserver/transfer_protocol.cpp
         stimulator_fileserver/transfer_protocol.h
+        stimulator_fileserver/fileserver.cpp
+        stimulator_fileserver/fileserver.h
+
+        3rdparty/sha1/sha1.cpp
+        3rdparty/sha1/sha1.h
         )
 
 set(SOURCE_FILES_WIN
@@ -66,7 +72,7 @@ if (WIN32)
 endif (WIN32)
 
 if (LINUX)
-    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
+    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX}  )
     add_executable(stimulator_gui ${SOURCE_FILES})
 endif (LINUX)
 

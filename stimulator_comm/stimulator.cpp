@@ -49,7 +49,10 @@ void Stimulator::checkBuffer() {
         } else {
             incoming_data.append(buffer.mid(2, incoming_length));
             buffer.remove(0, PACKET_SIZE);
-            emit incomingMessage(incoming_type, incoming_data); // odesleme signal
+            if (incoming_type == StimulatorMessage::COMMUNICATION_CODE)
+                emit incomingRelayedMessage(incoming_data); // pro fileserver
+            else
+                emit incomingMessage(incoming_type, incoming_data); // odesleme signal
             incoming_data.clear();
         }
     }

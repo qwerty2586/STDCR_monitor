@@ -8,6 +8,10 @@
 // v protokolu definovan jako posledni z bloku reserved
 
 
+
+#define TRASFER_DATA_SIZE 60
+// pri prijeti nevidim prvni dva byte musim je tedy odecist
+#define PREFIX 2
 // indexy bytu
 #define INDEX_COMMAND           2
 #define INDEX_ITER              3
@@ -21,7 +25,7 @@
 // to co posila server klientu
 #define TYPE_DOWNLOAD   0x80
 // smerem do klieta
-#define TYPE_UPLOAD    0xC0
+#define TYPE_UPLOAD     0xC0
 //smerem od klienta
 // prenosy jsou vzdy uvozeny prikazy GET PUT LS v pripade GET a PUT jeste i responsem s delkou a hashem
 
@@ -49,11 +53,11 @@
 // nahrava soubor, parametry: delka souboru(4 byte),sha-1(20 byte),nazev souboru na serveru
 #define OP_DEL          0x07
 // smaze polozku - prazdny adresar nebo soubor
-#define OP_START    0x08
+#define OP_START        0x08
 // startne proces s obrazem a zvuky na serveru, jako parametr je cesta ke config.xml
-#define OP_STOP 0x09
+#define OP_STOP         0x09
 // stopne proces
-#define OP_GET_PREVIEW 0x10
+#define OP_GET_PREVIEW  0x10
 // vraci soubor s nahledem obrazku, je ve formatu jpg s nizkym rozlisenim , prenos probiha stejne jako GET
 
 #define RESPONSE_OK     0x00
@@ -61,9 +65,16 @@
 // nenulova znamena ze se to nejak nepovedlo, soubor se nepodarilo ulozit, mas jinou verzi protokolu, hash nesedi
 // response kody budu postupne doplnovat, tobe zatim staci !=0 je chyba
 
+//dalsi response kody
+#define RESPONSE_MD_DIR_EXIST       0x01
+#define RESPONSE_MD_FAIL            0x02
+#define RESPONSE_LS_DIR_NOT_FOUND   0x03
+#define RESPONSE_DEL_FAIL           0x04
+
 /*
  Kazdy respose od serveru ma prakticky stejny format,
  stejny command jenom TYPE_RESPONSE bit a stejny ITER byte(ITER si urcuje klient)
+ nasleduje response kod RESPONSE_OK pokud se povedlo
 
  Priklad navazujeme spojeni se serverem
  0. byte 0x3E - tim rikam stimulatoru ze zprava ma 62 znaku - cely paket
@@ -99,7 +110,7 @@
  ...
  3E BF E0 02 DATA
  server odpovi
- 3E BF 66 02 00*
+ 3E BF 66 02 00
 */
 
 

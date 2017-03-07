@@ -12,6 +12,7 @@
 #include <QGroupBox>
 #include <stimulator_comm/stimulator.h>
 #include <stimulator_gui/experiment.h>
+#include <stimulator_fileserver/fileserver.h>
 
 /**
  * Hlavní okno
@@ -42,6 +43,7 @@ private:
     QHBoxLayout *portLayout;
     QComboBox *portCombo;
     QPushButton *portConnectDisconnectButton, *portRefreshButton;
+    Fileserver *fileserver;
 
 
     /// stavove indikatory
@@ -76,6 +78,7 @@ private:
 
     /// vycisti mrizku layoutu - tedy vyhazi vsechny prvky
     void clearLayout();
+
 
 
 private slots:
