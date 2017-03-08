@@ -4,6 +4,7 @@
 #include <QBuffer>
 #include "fileserver.h"
 #include "transfer_protocol.h"
+#include <QDebug>
 
 Fileserver::Fileserver(const QString &server_name, const QString &path) {
     this->start_path = path;
@@ -24,7 +25,7 @@ void Fileserver::incomingMessage(QByteArray message_data) {
                 unfinished_requests.erase(iter);
             }
             char op = (message_data[INDEX_COMMAND - PREFIX] & SECTION_OP);
-            incomingRequest(op, iter, message_data);
+            incomingRequest(op, iter, message_data.mid(PREFIX));
         } else {
             if (unfinished_requests.find(iter) == unfinished_requests.end()) {
                 unfinished_requests[iter] = QByteArray();
@@ -41,8 +42,10 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
     switch (op) {
         case OP_HELLO: {
             resetAll();
+            qDebug() << QString(message_data.toHex());
             client_ver = message_data[0];
             client_name = dataToStr(message_data, 1);
+            qDebug() << client_name;
             response(OP_HELLO, iter, RESPONSE_OK, strToData(server_name));
             break;
         }
@@ -187,9 +190,8 @@ void Fileserver::response(char op, char iter, char response, QByteArray data) {
     data.prepend(response);
     if (data.size() % 60 != 0) {
         int new_size = ((data.size() / 60) + 1) * 60;
-        data.leftJustified(new_size, '\0');
+        data.append(QByteArray().fill('\0',new_size-data.size()));
     }
-
     int count = data.size() / 60;
     QByteArray two_first_bytes;
     two_first_bytes.append(op + (char)TYPE_RESPONSE);
@@ -213,7 +215,7 @@ QString Fileserver::dataToStr(QByteArray data, int start) {
 void Fileserver::send_download(char iter, QByteArray data) {
     if (data.size() % 60 != 0) {
         int new_size = ((data.size() / 60) + 1) * 60;
-        data.leftJustified(new_size, '\0');
+        data.append(QByteArray().fill('\0',new_size-data.size()));
     }
 
     int count = data.size() / 60;

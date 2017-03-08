@@ -77,5 +77,6 @@ if (LINUX)
 endif (LINUX)
 
 
+add_subdirectory(stimulator_tests/qt_tests)
 
 target_link_libraries(stimulator_gui Qt4::QtGui Qt4::QtXml)
