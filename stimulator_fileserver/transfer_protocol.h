@@ -70,6 +70,7 @@
 #define RESPONSE_MD_FAIL            0x02
 #define RESPONSE_LS_DIR_NOT_FOUND   0x03
 #define RESPONSE_DEL_FAIL           0x04
+#define RESPONSE_PUT_SHA1_FAIL      0x05
 
 /*
  Kazdy respose od serveru ma prakticky stejny format,

@@ -47,9 +47,8 @@ set(SOURCE_FILES
         stimulator_fileserver/transfer_protocol.h
         stimulator_fileserver/fileserver.cpp
         stimulator_fileserver/fileserver.h
-
-        3rdparty/sha1/sha1.cpp
-        3rdparty/sha1/sha1.h
+        stimulator_fileserver/upload_container.cpp
+        stimulator_fileserver/upload_container.h
         )
 
 set(SOURCE_FILES_WIN
@@ -72,8 +71,10 @@ if (WIN32)
 endif (WIN32)
 
 if (LINUX)
-    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX}  )
+    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
     add_executable(stimulator_gui ${SOURCE_FILES})
 endif (LINUX)
+
+add_subdirectory(stimulator_tests)
 
 target_link_libraries(stimulator_gui Qt4::QtGui Qt4::QtXml)
