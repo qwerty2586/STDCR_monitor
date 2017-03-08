@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All in HelloFixture" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="stimulator_control" TARGET_NAME="runFileserverTests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="stimulator_control" RUN_TARGET_NAME="runFileserverTests" TEST_MODE="SUITE_TEST">
+    <envs />
+    <method />
+  </configuration>
+</component>

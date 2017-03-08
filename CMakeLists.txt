@@ -73,8 +73,9 @@ endif (WIN32)
 if (LINUX)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
     add_executable(stimulator_gui ${SOURCE_FILES})
+    add_subdirectory(stimulator_tests)
 endif (LINUX)
 
-add_subdirectory(stimulator_tests)
+
 
 target_link_libraries(stimulator_gui Qt4::QtGui Qt4::QtXml)
