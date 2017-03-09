@@ -14,6 +14,10 @@ Q_OBJECT
 public:
     explicit Fileserver(const QString &server_name, const QString &path);
 
+
+    std::map<int,QByteArray> unfinished_requests;
+    std::map<int,UploadContainer> unfinished_uploads;
+
 public slots:
 
     void incomingMessage(QByteArray message_data);
@@ -24,9 +28,9 @@ signals:
     void startSdlOutput(QString configfile);
     void stopSdlOutput();
 
+
 private:
-   std::map<int,QByteArray> unfinished_requests;
-   std::map<int,UploadContainer> unfinished_uploads;
+
     QString server_name;
     QString start_path;
 

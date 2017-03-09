@@ -14,7 +14,8 @@ Fileserver::Fileserver(const QString &server_name, const QString &path) {
 
 
 void Fileserver::incomingMessage(QByteArray message_data) {
-    bool finite = (message_data[INDEX_COMMAND - PREFIX] & SECTION_PART == PART_LAST);
+
+    bool finite = ((message_data[INDEX_COMMAND - PREFIX] & SECTION_PART) == PART_LAST);
     char iter = message_data[INDEX_ITER - PREFIX];
     char type = (message_data[INDEX_COMMAND - PREFIX] & SECTION_TYPE);
 
@@ -42,10 +43,8 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
     switch (op) {
         case OP_HELLO: {
             resetAll();
-            qDebug() << QString(message_data.toHex());
             client_ver = message_data[0];
             client_name = dataToStr(message_data, 1);
-            qDebug() << client_name;
             response(OP_HELLO, iter, RESPONSE_OK, strToData(server_name));
             break;
         }

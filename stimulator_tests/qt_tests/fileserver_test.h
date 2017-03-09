@@ -16,8 +16,8 @@ private slots:
 
     void helloTest();
 
-    void mySecondTest()
-    { QVERIFY(1 != 2); }
+    void byeTest();
+
     void cleanupTestCase();
 };
 
