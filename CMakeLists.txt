@@ -73,7 +73,6 @@ endif (WIN32)
 if (LINUX)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
     add_executable(stimulator_gui ${SOURCE_FILES})
-    add_subdirectory(stimulator_tests)
 endif (LINUX)
 
 
