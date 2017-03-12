@@ -1,6 +1,8 @@
 #ifndef STIMULATOR_FILESERVER_TRANSFER_PROTOCOL_H
 #define STIMULATOR_FILESERVER_TRANSFER_PROTOCOL_H
 
+#include <cstdint>
+
 #define FULL_LENGTH_MESSAGE 0x3E
 // v protokolu znamena 62 znaku dlouhou zpravu
 
@@ -34,7 +36,7 @@
 #define PART_LAST       0x20
 
 #define SECTION_OP      0x1F
-#define OP_ZERO         0x00 // v pripade
+#define OP_ZERO         0x00 // v pripade transferu
 #define OP_HELLO        0x01
 // oznamuji serveru ze existuji zaroven testuji jestli tam vubec malina je
 // 1. parametr verze protokolu, nechat 0
@@ -71,6 +73,12 @@
 #define RESPONSE_LS_DIR_NOT_FOUND   0x03
 #define RESPONSE_DEL_FAIL           0x04
 #define RESPONSE_PUT_SHA1_FAIL      0x05
+#define RESPONSE_GET_FILE_NOT_FOUND 0x06
+
+// LS flagy
+#define LS_FLAG_DIRS                0x01
+
+
 
 /*
  Kazdy respose od serveru ma prakticky stejny format,

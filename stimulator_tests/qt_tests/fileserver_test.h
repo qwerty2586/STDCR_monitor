@@ -3,11 +3,12 @@
 
 #include <QtTest/QtTest>
 #include "../../stimulator_fileserver/fileserver.h"
-#include "qtester.h"
+#include "qsignaltester.h"
 
 class FileserverTest: public QObject
 {
     Q_OBJECT
+public:
 
 
 
@@ -15,8 +16,18 @@ private slots:
     void initTestCase();
 
     void helloTest();
-
     void byeTest();
+    void mdTest();
+    void putTest();
+    void putLongerTest();
+    void putShaTest();
+    void getTest();
+    void getLongerTest();
+    void delTest();
+    void getPreviewTest();
+    void startTest();
+    void stopTest();
+    void lsTest();
 
     void cleanupTestCase();
 };

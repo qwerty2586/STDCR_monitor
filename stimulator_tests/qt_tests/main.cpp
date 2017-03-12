@@ -9,7 +9,9 @@ int main(int argc, char **argv) {
 //    QTest::qExec(testTest);
 
     FileserverTest *fileserverTest = new FileserverTest();
+
     QTest::qExec(fileserverTest);
+
 
 
 

@@ -10,14 +10,16 @@ Fileserver::Fileserver(const QString &server_name, const QString &path) {
     this->start_path = path;
     if (start_path.right(1).contains('/')) start_path = start_path.left(start_path.size() - 1);
     this->server_name = server_name;
+
+
 }
 
 
 void Fileserver::incomingMessage(QByteArray message_data) {
 
     bool finite = ((message_data[INDEX_COMMAND - PREFIX] & SECTION_PART) == PART_LAST);
-    char iter = message_data[INDEX_ITER - PREFIX];
-    char type = (message_data[INDEX_COMMAND - PREFIX] & SECTION_TYPE);
+    unsigned char iter = message_data[INDEX_ITER - PREFIX];
+    unsigned char type = (message_data[INDEX_COMMAND - PREFIX] & SECTION_TYPE);
 
     if (type == TYPE_REQUEST) {
         if (finite) {
@@ -35,7 +37,7 @@ void Fileserver::incomingMessage(QByteArray message_data) {
         }
     }
     if (type == TYPE_UPLOAD) {
-        incomingUpload(finite,iter,message_data.mid(PREFIX));
+        incomingUpload(finite, iter, message_data.mid(PREFIX));
     }
 }
 
@@ -71,13 +73,17 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
             break;
         }
         case OP_LS: {
-            QString dir_path = dataToStr(message_data);
+            bool dirs = ((message_data[0] & LS_FLAG_DIRS) > 0);
+            QString dir_path = dataToStr(message_data, 1);
+            QString name_filters = dataToStr(message_data, 1 + dir_path.size() + 1);
             dir_path.replace('~', start_path);
             QDir dir(dir_path);
             if (!dir.exists()) {
-                response(OP_MD, iter, RESPONSE_LS_DIR_NOT_FOUND);
+                response(OP_LS, iter, RESPONSE_LS_DIR_NOT_FOUND);
+                break;
             }
-            // MAGIC
+
+            ls(iter, dir_path, dirs, name_filters.split(";"));
             break;
         }
         case OP_DEL: {
@@ -102,11 +108,16 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
             QString path = dataToStr(message_data);
             path.replace('~', start_path);
             QFile file(path);
+            if (!file.exists()) {
+                response(OP_GET, iter, RESPONSE_GET_FILE_NOT_FOUND);
+                break;
+            }
+            file.open(QIODevice::ReadOnly);
             QByteArray bytes = file.readAll();
-            QByteArray sha1 = QCryptographicHash::hash(bytes,QCryptographicHash::Sha1);
+            QByteArray sha1 = QCryptographicHash::hash(bytes, QCryptographicHash::Sha1);
             QByteArray size = intToSizeBytes(bytes.size());
 
-            response(OP_GET,iter,RESPONSE_OK,size.append(sha1));
+            response(OP_GET, iter, RESPONSE_OK, size.append(sha1));
             send_download(iter, bytes);
             break;
         }
@@ -116,16 +127,16 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
 
             QImage image;
             image.load(path);
-            image = image.scaled(100,100,Qt::KeepAspectRatio);
+            image = image.scaled(100, 100, Qt::KeepAspectRatio);
             QByteArray bytes;
             QBuffer buffer(&bytes);
             buffer.open(QIODevice::WriteOnly);
             image.save(&buffer, "JPG");
 
-            QByteArray sha1 = QCryptographicHash::hash(bytes,QCryptographicHash::Sha1);
+            QByteArray sha1 = QCryptographicHash::hash(bytes, QCryptographicHash::Sha1);
             QByteArray size = intToSizeBytes(bytes.size());
 
-            response(OP_GET_PREVIEW,iter,RESPONSE_OK,size.append(sha1));
+            response(OP_GET_PREVIEW, iter, RESPONSE_OK, size.append(sha1));
             send_download(iter, bytes);
             break;
         }
@@ -133,22 +144,23 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
             QString path = dataToStr(message_data);
             path.replace('~', start_path);
             emit startSdlOutput(path);
-            response(OP_START,iter,RESPONSE_OK);
+            response(OP_START, iter, RESPONSE_OK);
             break;
         }
 
         case OP_STOP: {
             emit stopSdlOutput();
-            response(OP_STOP,iter,RESPONSE_OK);
+            response(OP_STOP, iter, RESPONSE_OK);
             break;
         }
 
         case OP_PUT: {
 
             UploadContainer upload;
-            upload.target_size = sizeBytesToInt(message_data.mid(0,4));
-            upload.sha1 = message_data.mid(4,20);
-            upload.target_path = dataToStr(message_data,4+20+1);
+            upload.target_size = sizeBytesToInt(message_data.mid(0, 4));
+            upload.sha1 = message_data.mid(4, 20);
+            upload.target_path = dataToStr(message_data, 4 + 20);
+            upload.target_path.replace('~', start_path);
             unfinished_uploads[iter] = upload;
             break;
         }
@@ -166,12 +178,15 @@ void Fileserver::incomingUpload(bool finite, char iter, QByteArray message_data)
         unfinished_uploads[iter].data.truncate(unfinished_uploads[iter].target_size);
         if (unfinished_uploads[iter].testSha1()) {
             QFile file(unfinished_uploads[iter].target_path);
+            file.open(QIODevice::WriteOnly);
             file.write(unfinished_uploads[iter].data);
             file.close();
-            response(OP_PUT,iter,RESPONSE_OK);
+            response(OP_PUT, iter, RESPONSE_OK);
+
         } else {
-            response(OP_PUT,iter,RESPONSE_PUT_SHA1_FAIL);
+            response(OP_PUT, iter, RESPONSE_PUT_SHA1_FAIL);
         }
+        unfinished_uploads.erase(iter);
     }
 };
 
@@ -189,11 +204,11 @@ void Fileserver::response(char op, char iter, char response, QByteArray data) {
     data.prepend(response);
     if (data.size() % 60 != 0) {
         int new_size = ((data.size() / 60) + 1) * 60;
-        data.append(QByteArray().fill('\0',new_size-data.size()));
+        data.append(QByteArray().fill('\0', new_size - data.size()));
     }
     int count = data.size() / 60;
     QByteArray two_first_bytes;
-    two_first_bytes.append(op + (char)TYPE_RESPONSE);
+    two_first_bytes.append(op + (char) TYPE_RESPONSE);
     two_first_bytes.append(iter);
     for (int i = 0; i < count; ++i) {
         if (i == (count - 1)) two_first_bytes[0] = two_first_bytes[0] + PART_LAST;
@@ -212,14 +227,14 @@ QString Fileserver::dataToStr(QByteArray data, int start) {
 }
 
 void Fileserver::send_download(char iter, QByteArray data) {
-    if (data.size() % 60 != 0) {
+    if ((data.size() % 60) != 0) {
         int new_size = ((data.size() / 60) + 1) * 60;
-        data.append(QByteArray().fill('\0',new_size-data.size()));
+        data.append(QByteArray().fill('\0', new_size - data.size()));
     }
 
     int count = data.size() / 60;
     QByteArray two_first_bytes;
-    two_first_bytes.append((char)TYPE_DOWNLOAD);
+    two_first_bytes.append((char) TYPE_DOWNLOAD);
     two_first_bytes.append(iter);
     for (int i = 0; i < count; ++i) {
         if (i == (count - 1)) two_first_bytes[0] = two_first_bytes[0] + PART_LAST;
@@ -236,21 +251,54 @@ QByteArray Fileserver::intToSizeBytes(int size) {
     stream << qsize;
 */
     qint32 qsize = size;
-    QByteArray array(4,0);
-    array[0] = (qsize << 8*3) & 0xFF;
-    array[0] = (qsize << 8*2) & 0xFF;
-    array[0] = (qsize << 8*1) & 0xFF;
-    array[0] = (qsize << 8*0) & 0xFF;
+    QByteArray array(4, 0);
+    array[0] = (qsize >> 8 * 3) & 0xFF;
+    array[1] = (qsize >> 8 * 2) & 0xFF;
+    array[2] = (qsize >> 8 * 1) & 0xFF;
+    array[3] = (qsize >> 8 * 0) & 0xFF;
     return array;
 }
 
 int Fileserver::sizeBytesToInt(QByteArray bytes) {
-    int size =
-    bytes[0] * 0x01000000 +
-    bytes[1] * 0x00010000 +
-    bytes[2] * 0x00000100 +
-    bytes[3] * 0x00000001 ;
+    int size = (int) (
+            (unsigned char) bytes[0] * 0x01000000 +
+            (unsigned char) bytes[1] * 0x00010000 +
+            (unsigned char) bytes[2] * 0x00000100 +
+            (unsigned char) bytes[3] * 0x00000001);
     return size;
+}
+
+void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QStringList &name_filters) {
+    QDir dir(dir_path);
+    QDir::Filters filters = QDir::Files & QDir::NoDotAndDotDot & QDir::NoSymLinks;
+    if (dirs) filters &= QDir::Dirs & QDir::AllDirs;
+    QStringList file_names = dir.entryList(name_filters, filters, QDir::NoSort);
+    QByteArray transfer_data;
+    int count = file_names.size();
+    transfer_data.append((char)(count/256)).append((char)(count%256));
+    for (int i = 0; i < count; ++i) {
+        if (QFileInfo(dir,file_names[i]).isDir()) {
+            transfer_data.append(QByteArray().fromHex("FFFFFFFF"));
+            transfer_data.append(QByteArray(20,(char)0));
+            transfer_data.append(file_names[i]);
+            transfer_data.append("\0");
+            continue;
+        }
+        QFile file(dir.filePath(file_names[i]));
+        file.open(QIODevice::ReadOnly);
+        QByteArray bytes = file.readAll();
+        file.close();
+        transfer_data.append(intToSizeBytes(bytes.size()));
+        transfer_data.append(QCryptographicHash::hash(bytes,QCryptographicHash::Sha1));
+        transfer_data.append(file_names[i]);
+        transfer_data.append("\0");
+    }
+
+
+    QByteArray sha1 = QCryptographicHash::hash(transfer_data, QCryptographicHash::Sha1);
+    QByteArray size = intToSizeBytes(transfer_data.size());
+    response(OP_LS, iter, RESPONSE_OK, size.append(sha1));
+    send_download(iter,transfer_data);
 }
 
 

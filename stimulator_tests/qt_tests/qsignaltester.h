@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-class QTester : public QObject {
+class QSignalTester : public QObject {
 Q_OBJECT
 
 public:
-    QByteArray input_buffer;
+    QList<QByteArray> input_buffer;
 
     void emit_data(QByteArray data) { emit output(data);};
     void clear() {input_buffer.clear();};
