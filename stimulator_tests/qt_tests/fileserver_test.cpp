@@ -404,10 +404,10 @@ void FileserverTest::lsTest() {
     hello.append((char) 0x00); //defaultni flagy
     hello.append("~/");
     hello.append((char)0);//vypis domovskej adresar
-    hello.append(MASK); //vypis domovskej adresar
-    hello.append((char)0);
+    hello.append(MASK);
+    hello.append((char)0); //maska
     QVERIFY(hello.size() == 2 + 1 + 3 + MASK.size() + 1);
-    hello.append(QByteArray().fill('\0', 62 - hello.size()));
+    hello.append(QByteArray().fill('\0', 62 - hello.size())); //doplnit na 62 bajtu
     tester->emit_data(hello);
 
     QByteArray response = tester->input_buffer[0];
@@ -423,7 +423,37 @@ void FileserverTest::lsTest() {
     int size = (uchar) response[6] + (256) * (uchar) response[5] + (256) * (256) * (uchar) response[4];
     response_data.truncate(size);
     QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Sha1) == response.mid(7, 20));
-    qDebug()<< response_data.toHex();
+    int count = (uchar)response_data[0] * (256) + (uchar)response_data[1];
+
+    QList<int> sizes;
+    QList<QString> names;
+    QList<QByteArray> hashs;
+
+    int i = 0;
+    int c = 2; // preskakujem prvni dva byty
+    while (i<count) {
+        int size = (int) (
+                (unsigned char) response_data[c+0] * 0x01000000 +
+                (unsigned char) response_data[c+1] * 0x00010000 +
+                (unsigned char) response_data[c+2] * 0x00000100 +
+                (unsigned char) response_data[c+3] * 0x00000001);
+        c +=4;
+        sizes.append(size);
+        hashs.append(response_data.mid(c,20));
+        c+=20;
+        int end = response_data.indexOf((char)'\0',c);
+        names.append(response_data.mid(c,end-c));
+        c = end+1;
+        qDebug() << names[i] << " " << hashs[i].toHex() << " " << sizes[i];
+        i++;
+
+    }
+    qDebug(QString("directory listing by mask ").append(MASK).toStdString().c_str());
+    for (i = 0; i < count; i++) {
+        qDebug() << names[i] << " " << hashs[i].toHex() << " " << sizes[i];
+    }
+
+
 
 
 }

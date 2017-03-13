@@ -46,28 +46,29 @@ set(SOURCE_FILES
         stimulator_fileserver/transfer_protocol.cpp
         stimulator_fileserver/transfer_protocol.h
         stimulator_fileserver/fileserver.cpp
-        stimulator_fileserver/fileserver.h
         stimulator_fileserver/upload_container.cpp
-        stimulator_fileserver/upload_container.h
+
+        stimulator_comm/stimulator.cpp
         )
 
 set(SOURCE_FILES_WIN
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_win.cpp
 
-        stimulator_comm/stimulator.cpp
-        stimulator_comm/serials_win.cpp)
+        stimulator_comm/serials_win.cpp
+        stimulator_comm/sysname_win.cpp
+        )
 
 set(SOURCE_FILES_LINUX
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_unix.cpp
 
-        stimulator_comm/stimulator.cpp
-        stimulator_comm/serials_linux.cpp)
+        stimulator_comm/serials_linux.cpp
+        stimulator_comm/sysname_linux.cpp)
 
 if (WIN32)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_WIN})
-    add_executable(stimulator_gui WIN32 ${SOURCE_FILES})
+    add_executable(stimulator_gui  ${SOURCE_FILES})
 endif (WIN32)
 
 if (LINUX)

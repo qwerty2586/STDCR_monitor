@@ -71,14 +71,18 @@ public:
     /// odesle data do souboru
     void sendMessage(char messageType, QByteArray messageData);
 
+public slots:
+
+    // fileserver pouziva signaly namisto volani
+    void sendFileserverMessage(QByteArray message);
 
 signals:
 
     /// notifukuje o prijeti zpravy
     void incomingMessage(char, QByteArray);
 
-    /// notifukuje o prijeti zpravy
-    void incomingRelayedMessage(QByteArray);
+    /// notifukuje o prijeti zpravy s daty pro fileserver
+    void incomingFileserverMessage(QByteArray);
 
     /// notikuje o uspesnem pripojeni odpojeni
     void connected(bool);

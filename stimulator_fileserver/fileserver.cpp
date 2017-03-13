@@ -270,18 +270,19 @@ int Fileserver::sizeBytesToInt(QByteArray bytes) {
 
 void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QStringList &name_filters) {
     QDir dir(dir_path);
-    QDir::Filters filters = QDir::Files & QDir::NoDotAndDotDot & QDir::NoSymLinks;
-    if (dirs) filters &= QDir::Dirs & QDir::AllDirs;
+    QDir::Filters filters = QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks;
+    if (dirs) { filters = filters | QDir::Dirs | QDir::AllDirs; }
+
     QStringList file_names = dir.entryList(name_filters, filters, QDir::NoSort);
     QByteArray transfer_data;
     int count = file_names.size();
-    transfer_data.append((char)(count/256)).append((char)(count%256));
+    transfer_data.append((char) (count / 256)).append((char) (count % 256));
     for (int i = 0; i < count; ++i) {
-        if (QFileInfo(dir,file_names[i]).isDir()) {
+        if (QFileInfo(dir, file_names[i]).isDir()) {
             transfer_data.append(QByteArray().fromHex("FFFFFFFF"));
-            transfer_data.append(QByteArray(20,(char)0));
+            transfer_data.append(QByteArray(20, (char) 0));
             transfer_data.append(file_names[i]);
-            transfer_data.append("\0");
+            transfer_data.append((char)'\0');
             continue;
         }
         QFile file(dir.filePath(file_names[i]));
@@ -289,16 +290,16 @@ void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QString
         QByteArray bytes = file.readAll();
         file.close();
         transfer_data.append(intToSizeBytes(bytes.size()));
-        transfer_data.append(QCryptographicHash::hash(bytes,QCryptographicHash::Sha1));
+        transfer_data.append(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1));
         transfer_data.append(file_names[i]);
-        transfer_data.append("\0");
+        transfer_data.append((char)'\0');
     }
 
 
     QByteArray sha1 = QCryptographicHash::hash(transfer_data, QCryptographicHash::Sha1);
     QByteArray size = intToSizeBytes(transfer_data.size());
     response(OP_LS, iter, RESPONSE_OK, size.append(sha1));
-    send_download(iter,transfer_data);
+    send_download(iter, transfer_data);
 }
 
 

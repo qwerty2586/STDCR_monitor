@@ -50,7 +50,7 @@ void Stimulator::checkBuffer() {
             incoming_data.append(buffer.mid(2, incoming_length));
             buffer.remove(0, PACKET_SIZE);
             if (incoming_type == StimulatorMessage::COMMUNICATION_CODE)
-                emit incomingRelayedMessage(incoming_data); // pro fileserver
+                emit incomingFileserverMessage(incoming_data); // pro fileserver
             else
                 emit incomingMessage(incoming_type, incoming_data); // odesleme signal
             incoming_data.clear();
@@ -110,6 +110,11 @@ void Stimulator::sendMessage(char messageType, QByteArray messageData) {
     m_port->write(output);
 
 
+}
+
+void Stimulator::sendFileserverMessage(QByteArray message) {
+    Q_ASSERT(message.length() == 62); // musi bejt plna zprava
+    sendMessage(StimulatorMessage::COMMUNICATION_CODE,message);
 }
 
 

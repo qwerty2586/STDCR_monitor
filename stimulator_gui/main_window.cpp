@@ -7,8 +7,8 @@
 #include <stimulator_gui/experiments/BIOSENSOR_LOGGER.h>
 #include <stimulator_gui/experiments/TEST_MODE.h>
 #include <stimulator_comm/serials.h>
+#include <stimulator_comm/sysname.h>
 #include <iostream>
-#include <QStyle>
 #include <QApplication>
 
 
@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     port = new Stimulator();
     connect(port, SIGNAL(connected(bool)), this, SLOT(onPortConnected(bool)));
 
-    fileserver = new Fileserver("","");
+    fileserver = new Fileserver(FILESERVER_DIR,getSystemName());
 
     initExperiments();
     initItems();

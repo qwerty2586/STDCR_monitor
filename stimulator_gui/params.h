@@ -41,6 +41,7 @@ extern const int MAX_BODY_HEIGHT;
 extern const int WINDOWS_MAX_COM;
 extern const QString LINUX_DEV_DIR;
 extern const QStringList LINUX_DEV_MASK;
+extern const QString FILESERVER_DIR;
 
 
 #endif //STDCR_MONITOR_PARAMS_H

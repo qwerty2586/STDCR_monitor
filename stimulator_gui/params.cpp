@@ -29,3 +29,5 @@ const int MAX_BODY_HEIGHT = 250;
 const int WINDOWS_MAX_COM = 12;;
 const QString LINUX_DEV_DIR = "/dev";
 const QStringList LINUX_DEV_MASK = QString("ttyU*;ttyA*;ttyS*;rfcomm*").split(';');
+
+const QString FILESERVER_DIR = "~/remote_stimulator_control_files/";
