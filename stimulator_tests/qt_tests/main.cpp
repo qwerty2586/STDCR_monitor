@@ -1,4 +1,3 @@
-#include <QApplication>
 #include <test_test.h>
 #include <fileserver_test.h>
 

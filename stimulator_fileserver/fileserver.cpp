@@ -10,8 +10,6 @@ Fileserver::Fileserver(const QString &server_name, const QString &path) {
     this->start_path = path;
     if (start_path.right(1).contains('/')) start_path = start_path.left(start_path.size() - 1);
     this->server_name = server_name;
-
-
 }
 
 

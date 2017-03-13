@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     port = new Stimulator();
     connect(port, SIGNAL(connected(bool)), this, SLOT(onPortConnected(bool)));
 
-    fileserver = new Fileserver(FILESERVER_DIR,getSystemName());
+    fileserver = new Fileserver(getSystemName(),FILESERVER_DIR);
 
     initExperiments();
     initItems();
