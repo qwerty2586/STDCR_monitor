@@ -6,10 +6,12 @@
 #include <stimulator_gui/experiments/AUTOSTIMULATION.h>
 #include <stimulator_gui/experiments/BIOSENSOR_LOGGER.h>
 #include <stimulator_gui/experiments/TEST_MODE.h>
+#include <stimulator_gui/experiments/STIMULATOR_OUTPUTS.h>
 #include <stimulator_comm/serials.h>
 #include <stimulator_comm/sysname.h>
 #include <iostream>
 #include <QApplication>
+#include <QLibraryInfo>
 
 
 const QString TEXT_CONNECT = "CONNECT";
@@ -30,13 +32,26 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     fileserver = new Fileserver(getSystemName(),FILESERVER_DIR);
 
+    connect(port, SIGNAL(incomingFileserverMessage(QByteArray)), fileserver, SLOT(incomingMessage(QByteArray)));
+    connect(fileserver, SIGNAL(outcomingMessage(QByteArray)), port, SLOT(sendFileserverMessage(QByteArray)));
+
     initExperiments();
     initItems();
     windowLayout = new QVBoxLayout(this);
     this->setLayout(windowLayout);
 
+    statusBar = new QStatusBar(this);
+    statusBar->addWidget(new QLabel("hello"));
+    statusBar->setSizeGripEnabled(false);
+    statusBar->show();
+    statusBar->setMinimumWidth(this->width());
+    statusBar->setMaximumWidth(this->width());
+    statusBar->move(0,this->height()-statusBar->height());
+
 
     changeExperiment(Experiment::NO_EXPERIMENT);
+
+    setStyleSheet("border: 1px solid red"); // debugging
 
 
 };
@@ -106,6 +121,7 @@ void MainWindow::initExperiments() {
     experiments.push_back(new AUTOSTIMULATION());
     experiments.push_back(new BIOSENSOR_LOGGER());
     experiments.push_back(new TEST_MODE());
+    experiments.push_back(new STIMULATOR_OUTPUTS);
     for (int i = 0; i < experiments.size(); i++) {
         experiments[i]->setStimulator(port);
         connect(experiments[i], SIGNAL(experimentStateChanged(bool)), this, SLOT(onExperimentStateChanged(bool)));
@@ -124,6 +140,7 @@ void MainWindow::showMenu() {
 
     }
     layout()->addWidget(portGroup);
+    layout()->addItem(new QSpacerItem(0,statusBar->height()));
     portGroup->show();
     ((QVBoxLayout *) layout())->addStretch(1);
 }
@@ -154,6 +171,7 @@ void MainWindow::showExperiment(const int experiment) {
     experiments[experiment]->show();
     ((QVBoxLayout *) layout())->addStretch(1);
     layout()->addWidget(experimentButtonsWidget);
+    layout()->addItem(new QSpacerItem(0,statusBar->height()));
     experimentButtonsWidget->show();
 
 
@@ -251,6 +269,13 @@ MainWindow::~MainWindow() {
 void MainWindow::refreshPortList() {
     portCombo->clear();
     portCombo->addItems(listOfAvailableSerials());
+}
+
+void MainWindow::resizeEvent(QResizeEvent *resizeEvent) {
+    QWidget::resizeEvent(resizeEvent);
+    statusBar->setMinimumWidth(this->width());
+    statusBar->setMaximumWidth(this->width());
+    statusBar->move(0,this->height()-statusBar->height());
 }
 
 

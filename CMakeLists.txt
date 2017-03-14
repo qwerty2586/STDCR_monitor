@@ -19,7 +19,7 @@ endif (WIN32)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
@@ -36,11 +36,12 @@ set(SOURCE_FILES
         stimulator_gui/experiments/BCI.cpp
         stimulator_gui/experiments/AUTOSTIMULATION.h
         stimulator_gui/experiments/BIOSENSOR_LOGGER.h
+        stimulator_gui/experiments/RESPONSE_EXPERIMENT.cpp
         stimulator_gui/experiments/TEST_MODE.cpp
+        stimulator_gui/experiments/STIMULATOR_OUTPUTS.cpp
 
         stimulator_gui/widgets/qcheckgrid.cpp
         stimulator_gui/widgets/qwaveform.cpp
-        stimulator_gui/experiments/RESPONSE_EXPERIMENT.cpp
         stimulator_gui/widgets/qsaveloadwidget.cpp
 
         stimulator_fileserver/transfer_protocol.cpp

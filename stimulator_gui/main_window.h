@@ -13,6 +13,7 @@
 #include <stimulator_comm/stimulator.h>
 #include <stimulator_gui/experiment.h>
 #include <stimulator_fileserver/fileserver.h>
+#include <QStatusBar>
 
 /**
  * Hlavní okno
@@ -31,6 +32,7 @@ public:
     ~MainWindow();
 
 
+
 private:
 
     QVBoxLayout *windowLayout;
@@ -44,6 +46,9 @@ private:
     QComboBox *portCombo;
     QPushButton *portConnectDisconnectButton, *portRefreshButton;
     Fileserver *fileserver;
+    QStatusBar *statusBar;
+
+    void resizeEvent(QResizeEvent *resizeEvent) override;
 
 
     /// stavove indikatory
@@ -78,7 +83,6 @@ private:
 
     /// vycisti mrizku layoutu - tedy vyhazi vsechny prvky
     void clearLayout();
-
 
 
 private slots:
