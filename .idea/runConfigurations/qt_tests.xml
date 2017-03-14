@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="qt_tests" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="stimulator_control" TARGET_NAME="qt_tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="stimulator_control" RUN_TARGET_NAME="qt_tests">
+  <configuration default="false" name="qt_tests" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://C:/qt/qt4env" PASS_PARENT_ENVS_2="true" PROJECT_NAME="stimulator_control" TARGET_NAME="qt_tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="stimulator_control" RUN_TARGET_NAME="qt_tests">
     <envs />
     <method />
   </configuration>

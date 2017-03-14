@@ -444,9 +444,7 @@ void FileserverTest::lsTest() {
         int end = response_data.indexOf((char)'\0',c);
         names.append(response_data.mid(c,end-c));
         c = end+1;
-        qDebug() << names[i] << " " << hashs[i].toHex() << " " << sizes[i];
         i++;
-
     }
     qDebug(QString("directory listing by mask ").append(MASK).toStdString().c_str());
     for (i = 0; i < count; i++) {

@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     this->setLayout(windowLayout);
 
     statusBar = new QStatusBar(this);
-    statusBar->addWidget(new QLabel("hello"));
+  //  statusBar->addWidget(new QLabel("hello"));
     statusBar->setSizeGripEnabled(false);
     statusBar->show();
     statusBar->setMinimumWidth(this->width());
@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     changeExperiment(Experiment::NO_EXPERIMENT);
 
-    setStyleSheet("border: 1px solid red"); // debugging
+    //setStyleSheet("border: 1px solid red"); // debugging
 
 
 };
