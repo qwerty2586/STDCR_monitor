@@ -58,30 +58,24 @@ void STIMULATOR_OUTPUTS::initItems() {
         group_box->setLayout(group_hbox);
         group_box->setMaximumWidth(group_box->width());
         item->radio_led->setChecked(true);
-
-
         item_grid->addWidget(group_box, 0, 1, 1, 1);
 
         QLineEdit *path_line = new QLineEdit();
         path_line->setStyleSheet("padding-bottom: 0px; margin-bottom: 0px;");
         item_grid->addWidget(path_line, 1, 0, 1, 2);
-        item->image = new QGraphicsView();
+
+        item->image = new QLabel();
         item->image->setFixedSize(75, 75);
-        QFile file(":/res/led.png");
-        QDir dir(":/res");
-        qDebug() << dir.entryList();
-        file.open(QIODevice::ReadOnly);
-        qDebug() << file.size();
-
-
-
-        item->image->setBackgroundBrush(QPixmap::fromImage(QImage(":/res/led.png")));
-
-
+        item->image->setStyleSheet("background: #FFF");
+        item->image->setAlignment(Qt::AlignCenter);
+        item->image->setPixmap(QPixmap::fromImage(QImage(":/res/led.png")));
         item_grid->addWidget(item->image, 0, 2, 2, 1);
+
+
         item_grid->setRowStretch(0, 10);
         item_grid->setRowStretch(1, 0);
-        if (i != 7) {
+
+        if (i != LEDS_COUNT - 1) {
             QFrame *line = new QFrame();
             line->setFrameShape(QFrame::HLine);
             line->setFrameShadow(QFrame::Sunken);

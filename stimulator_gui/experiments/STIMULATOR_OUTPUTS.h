@@ -30,7 +30,7 @@ private:
         QLabel *label;
         QRadioButton *radio_led,*radio_image,*radio_audio;
         QLineEdit *path_line;
-        QGraphicsView *image;
+        QLabel *image;
     };
     std::vector<Output *> outputs;
 
