@@ -9,7 +9,7 @@
 #include <QGraphicsView>
 
 class STIMULATOR_OUTPUTS : public Experiment {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
@@ -28,11 +28,13 @@ private:
 
     struct Output {
         QLabel *label;
-        QRadioButton *radio_led,*radio_image,*radio_audio;
+        QRadioButton *radio_led, *radio_image, *radio_audio;
         QLineEdit *path_line;
         QLabel *image;
     };
     std::vector<Output *> outputs;
+private slots:
+    void outputs_changed();
 
 };
 

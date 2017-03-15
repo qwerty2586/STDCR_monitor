@@ -64,6 +64,11 @@ void STIMULATOR_OUTPUTS::initItems() {
         path_line->setStyleSheet("padding-bottom: 0px; margin-bottom: 0px;");
         item_grid->addWidget(path_line, 1, 0, 1, 2);
 
+
+        connect(item->radio_led,SIGNAL(toggled(bool)),this,SLOT(outputs_changed()));
+        connect(item->radio_image,SIGNAL(toggled(bool)),this,SLOT(outputs_changed()));
+        connect(item->radio_audio,SIGNAL(toggled(bool)),this,SLOT(outputs_changed()));
+
         item->image = new QLabel();
         item->image->setFixedSize(75, 75);
         item->image->setStyleSheet("background: #FFF");
@@ -87,5 +92,19 @@ void STIMULATOR_OUTPUTS::initItems() {
     scrollArea->setWidget(scrolling_widget);
 
 
+}
 
+void STIMULATOR_OUTPUTS::outputs_changed() {
+    for (int i = 0; i < LEDS_COUNT; ++i) {
+        if (outputs[i]->radio_led->isChecked()) {
+            outputs[i]->image->setPixmap(QPixmap::fromImage(QImage(":/res/led.png")));
+        }
+        if (outputs[i]->radio_image->isChecked()) {
+            outputs[i]->image->setPixmap(QPixmap::fromImage(QImage(":/res/image.png")));
+        }
+        if (outputs[i]->radio_audio->isChecked()) {
+            outputs[i]->image->setPixmap(QPixmap::fromImage(QImage(":/res/audio.png")));
+        }
+
+    }
 }

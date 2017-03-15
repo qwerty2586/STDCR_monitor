@@ -79,15 +79,15 @@ set(SOURCE_FILES_LINUX
 
 if (WIN32)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_WIN})
-    add_executable(stimulator_gui ${SOURCE_FILES})
+    add_executable(stimulator_control ${SOURCE_FILES})
 endif (WIN32)
 
 if (LINUX)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} stimulator_gui/widgets/qverticalscrollarea.cpp stimulator_gui/widgets/qverticalscrollarea.h)
-    add_executable(stimulator_gui ${SOURCE_FILES})
+    add_executable(stimulator_control ${SOURCE_FILES})
 endif (LINUX)
 
 
 add_subdirectory(stimulator_tests/qt_tests)
 
-target_link_libraries(stimulator_gui Qt4::QtGui Qt4::QtXml)
+target_link_libraries(stimulator_control Qt4::QtGui Qt4::QtXml)
