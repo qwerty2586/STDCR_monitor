@@ -1,0 +1,5 @@
+<qresource prefix="/res">
+    <file alias="led.png">diode.png</file>
+    <file alias="image.png">picture.png</file>
+    <file alias="audio.png">music-player.png</file>
+</qresource>
