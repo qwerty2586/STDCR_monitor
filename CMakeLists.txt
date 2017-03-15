@@ -25,6 +25,13 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 find_package(Qt4 4.4.3 REQUIRED QtGui QtXml)
 
+QT4_ADD_RESOURCES(RESOURCES_RCC
+        stimulator_gui/resources/images.qrc
+        )
+
+message("hellllllllllllllllllllllllllllllllllllll")
+message(${RESOURCES_RCC})
+
 
 set(SOURCE_FILES
         stimulator_gui/main.cpp
@@ -43,6 +50,7 @@ set(SOURCE_FILES
         stimulator_gui/widgets/qcheckgrid.cpp
         stimulator_gui/widgets/qwaveform.cpp
         stimulator_gui/widgets/qsaveloadwidget.cpp
+        stimulator_gui/widgets/qverticalscrollarea.cpp
 
         stimulator_fileserver/transfer_protocol.cpp
         stimulator_fileserver/transfer_protocol.h
@@ -50,6 +58,8 @@ set(SOURCE_FILES
         stimulator_fileserver/upload_container.cpp
 
         stimulator_comm/stimulator.cpp
+
+        ${RESOURCES_RCC}
         )
 
 set(SOURCE_FILES_WIN
@@ -69,11 +79,11 @@ set(SOURCE_FILES_LINUX
 
 if (WIN32)
     set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_WIN})
-    add_executable(stimulator_gui  ${SOURCE_FILES})
+    add_executable(stimulator_gui ${SOURCE_FILES})
 endif (WIN32)
 
 if (LINUX)
-    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
+    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} stimulator_gui/widgets/qverticalscrollarea.cpp stimulator_gui/widgets/qverticalscrollarea.h)
     add_executable(stimulator_gui ${SOURCE_FILES})
 endif (LINUX)
 

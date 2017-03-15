@@ -1,10 +1,10 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
-#include <QLabel>
-#include <QRadioButton>
-#include <QTextEdit>
-#include <QGraphicsView>
-#include <QLineEdit>
+#include <stimulator_gui/widgets/qverticalscrollarea.h>
+#include <QGroupBox>
+#include <QFile>
+#include <QDebug>
+#include <QDir>
 #include "STIMULATOR_OUTPUTS.h"
 
 STIMULATOR_OUTPUTS::STIMULATOR_OUTPUTS(QWidget *parent) : Experiment(parent) {
@@ -16,37 +16,80 @@ void STIMULATOR_OUTPUTS::initItems() {
 
     QVBoxLayout *l = new QVBoxLayout();
 
+    QVerticalScrollArea *scrollArea = new QVerticalScrollArea();
 
     tabs = new QTabWidget();
-    tabs->addTab(new QWidget(), "OUTPUTS SETUP");
+    tabs->addTab(scrollArea, "OUTPUTS SETUP");
     tabs->addTab(new QWidget(), "SCHEMA");
     l->addWidget(tabs);
     this->setLayout(l);
 
 
-    QVBoxLayout *outputs_layout =  new QVBoxLayout();
+    QVBoxLayout *outputs_layout = new QVBoxLayout();
 
-    tabs->widget(0)->setLayout(outputs_layout);
-    tabs->setStyleSheet("background: #cccccc");
+    QWidget *scrolling_widget = new QWidget();
 
-    QGridLayout *test_grid = new QGridLayout();
-    outputs_layout->addLayout(test_grid);
+    scrolling_widget->setLayout(outputs_layout);
 
 
-    QLabel *label = new QLabel("<b>OUTPUT 1</b>");
-    test_grid->addWidget(label,0,0,3,1);
-    test_grid->addWidget(new QRadioButton("LED"),0,1,1,1);
-    test_grid->addWidget(new QRadioButton("AUDIO"),1,1,1,1);
-    test_grid->addWidget(new QRadioButton("IMAGE"),2,1,1,1);
-    test_grid->addWidget(new QLineEdit(),3,0,1,2);
-    QGraphicsView *graphicsView = new QGraphicsView();
-    graphicsView->setFixedSize(100,100);
-    //graphicsView->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    test_grid->addWidget(graphicsView,0,2,4,1);
+    for (int i = 0; i < LEDS_COUNT; ++i) {
+
+
+        Output *item = new Output();
+        outputs.push_back(item);
+
+        QGridLayout *item_grid = new QGridLayout();
+        outputs_layout->addLayout(item_grid);
+        item->label = new QLabel(QString("<b>OUTPUT ").append(QString::number(i)).append("</b>"));
+
+        item_grid->addWidget(item->label, 0, 0, 1, 1);
+
+        QHBoxLayout *group_hbox = new QHBoxLayout();
+        QGroupBox *group_box = new QGroupBox();
+        group_box->setFlat(true); // udelame maly groupbox
+        group_box->setStyleSheet("margin:0;padding:0;border:0;");
+        group_box->setAlignment(Qt::AlignLeft);
+        item->radio_led = new QRadioButton("LED");
+        item->radio_image = new QRadioButton("IMAGE");
+        item->radio_audio = new QRadioButton("AUDIO");
+        group_hbox->addWidget(item->radio_led);
+        group_hbox->addWidget(item->radio_image);
+        group_hbox->addWidget(item->radio_audio);
+        group_box->setLayout(group_hbox);
+        group_box->setMaximumWidth(group_box->width());
+        item->radio_led->setChecked(true);
+
+
+        item_grid->addWidget(group_box, 0, 1, 1, 1);
+
+        QLineEdit *path_line = new QLineEdit();
+        path_line->setStyleSheet("padding-bottom: 0px; margin-bottom: 0px;");
+        item_grid->addWidget(path_line, 1, 0, 1, 2);
+        item->image = new QGraphicsView();
+        item->image->setFixedSize(75, 75);
+        QFile file(":/res/led.png");
+        QDir dir(":/");
+        qDebug() << dir.entryList();
+        file.open(QIODevice::ReadOnly);
+        qDebug() << file.size();
 
 
 
+        item->image->setBackgroundBrush(QImage(":/res/led.png"));
+        item->image->setCacheMode(QGraphicsView::CacheBackground);
+        item_grid->addWidget(item->image, 0, 2, 2, 1);
+        item_grid->setRowStretch(0, 10);
+        item_grid->setRowStretch(1, 0);
+        if (i != 7) {
+            QFrame *line = new QFrame();
+            line->setFrameShape(QFrame::HLine);
+            line->setFrameShadow(QFrame::Sunken);
+            outputs_layout->addWidget(line);
+        }
+    }
 
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(scrolling_widget);
 
 
 

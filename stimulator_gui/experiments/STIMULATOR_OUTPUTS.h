@@ -3,6 +3,10 @@
 
 #include <QString>
 #include <stimulator_gui/experiment.h>
+#include <QLabel>
+#include <QRadioButton>
+#include <QLineEdit>
+#include <QGraphicsView>
 
 class STIMULATOR_OUTPUTS : public Experiment {
     Q_OBJECT
@@ -21,6 +25,14 @@ private:
     void initItems();
 
     QTabWidget *tabs;
+
+    struct Output {
+        QLabel *label;
+        QRadioButton *radio_led,*radio_image,*radio_audio;
+        QLineEdit *path_line;
+        QGraphicsView *image;
+    };
+    std::vector<Output *> outputs;
 
 };
 
