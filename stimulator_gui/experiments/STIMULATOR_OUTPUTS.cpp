@@ -68,15 +68,16 @@ void STIMULATOR_OUTPUTS::initItems() {
         item->image = new QGraphicsView();
         item->image->setFixedSize(75, 75);
         QFile file(":/res/led.png");
-        QDir dir(":/");
+        QDir dir(":/res");
         qDebug() << dir.entryList();
         file.open(QIODevice::ReadOnly);
         qDebug() << file.size();
 
 
 
-        item->image->setBackgroundBrush(QImage(":/res/led.png"));
-        item->image->setCacheMode(QGraphicsView::CacheBackground);
+        item->image->setBackgroundBrush(QPixmap::fromImage(QImage(":/res/led.png")));
+
+
         item_grid->addWidget(item->image, 0, 2, 2, 1);
         item_grid->setRowStretch(0, 10);
         item_grid->setRowStretch(1, 0);
