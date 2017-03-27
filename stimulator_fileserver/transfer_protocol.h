@@ -73,7 +73,7 @@
 #define OP_GET          0x05
 // nahrava soubor, parametry: delka souboru(4 byte),sha-1(20 byte),nazev souboru na serveru
 #define OP_PUT          0x06
-// smaze polozku - prazdny adresar nebo soubor
+// smaze polozku - prazdnPUTy adresar nebo soubor
 #define OP_DEL          0x07
 // startne proces s obrazem a zvuky na serveru, jako parametr je cesta ke config.xml
 #define OP_START        0x08

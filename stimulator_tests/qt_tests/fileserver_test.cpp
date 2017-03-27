@@ -369,7 +369,7 @@ void FileserverTest::startTest() {
     QVERIFY(response[1] == (char) (0xaa));
     QVERIFY((char) response[2] == RESPONSE_OK);
 
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.count(), 1); // tohle testuje jestli vazne neco zapnul
     QList<QVariant> arguments = spy.takeFirst();
     QVERIFY(arguments.at(0).toString().contains(FILENAME, Qt::CaseSensitive) == true);
 }
