@@ -70,7 +70,7 @@ void FileserverTest::mdTest() {
 
     QByteArray md;
     md.append(TYPE_REQUEST + OP_MD + PART_LAST); // nejdriv mu dame do bufferu nedokoncenou zpravu
-    md.append((char) 0x10);
+    md.append((char) 0x10); //iterator
     md.append("~/testdir\0");
     md.append(QByteArray().fill('\0', 62 - md.size()));
     tester->emit_data(md);
@@ -400,8 +400,8 @@ void FileserverTest::lsTest() {
     QByteArray hello;
     QString MASK = "*.jpg;*.gif;*.png";
     hello.append((char)(TYPE_REQUEST + OP_LS + PART_LAST)); // nejdriv mu dame do bufferu nedokoncenou zpravu
-    hello.append((char) 0x35);
-    hello.append((char) 0x00); //defaultni flagy
+    hello.append((char) 0x35); // iterator
+    hello.append((char) 0x00); //defaultni flagy ,kdyby 1 tak je to s adresarema
     hello.append("~/");
     hello.append((char)0);//vypis domovskej adresar
     hello.append(MASK);
@@ -412,7 +412,7 @@ void FileserverTest::lsTest() {
 
     QByteArray response = tester->input_buffer[0];
     QVERIFY(response[0] == (char) (TYPE_RESPONSE + OP_LS + PART_LAST));
-    QVERIFY(response[1] == (char) (0x35));
+    QVERIFY(response[1] == (char) (0x35)); //iterator
     QVERIFY((char) response[2] == RESPONSE_OK);
 
 

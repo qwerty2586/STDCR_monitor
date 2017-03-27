@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     connect(port, SIGNAL(incomingFileserverMessage(QByteArray)), fileserver, SLOT(incomingMessage(QByteArray)));
     connect(fileserver, SIGNAL(outcomingMessage(QByteArray)), port, SLOT(sendFileserverMessage(QByteArray)));
 
+    
+
     initExperiments();
     initItems();
     windowLayout = new QVBoxLayout(this);
