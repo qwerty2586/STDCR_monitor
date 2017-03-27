@@ -5,6 +5,7 @@
 #include "fileserver.h"
 #include "transfer_protocol.h"
 #include <QDebug>
+#include <iostream>
 
 Fileserver::Fileserver(const QString &server_name, const QString &path) {
     this->start_path = path;
@@ -14,6 +15,8 @@ Fileserver::Fileserver(const QString &server_name, const QString &path) {
 
 
 void Fileserver::incomingMessage(QByteArray message_data) {
+
+    std::cout << message_data.toHex().data() << std::endl;
 
     bool finite = ((message_data[INDEX_COMMAND - PREFIX] & SECTION_PART) == PART_LAST);
     unsigned char iter = message_data[INDEX_ITER - PREFIX];
@@ -112,10 +115,10 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
             }
             file.open(QIODevice::ReadOnly);
             QByteArray bytes = file.readAll();
-            QByteArray sha1 = QCryptographicHash::hash(bytes, QCryptographicHash::Sha1);
+            QByteArray md5 = QCryptographicHash::hash(bytes, QCryptographicHash::Md5);
             QByteArray size = intToSizeBytes(bytes.size());
 
-            response(OP_GET, iter, RESPONSE_OK, size.append(sha1));
+            response(OP_GET, iter, RESPONSE_OK, size.append(md5));
             send_download(iter, bytes);
             break;
         }
@@ -131,10 +134,10 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
             buffer.open(QIODevice::WriteOnly);
             image.save(&buffer, "JPG");
 
-            QByteArray sha1 = QCryptographicHash::hash(bytes, QCryptographicHash::Sha1);
+            QByteArray md5 = QCryptographicHash::hash(bytes, QCryptographicHash::Md5);
             QByteArray size = intToSizeBytes(bytes.size());
 
-            response(OP_GET_PREVIEW, iter, RESPONSE_OK, size.append(sha1));
+            response(OP_GET_PREVIEW, iter, RESPONSE_OK, size.append(md5));
             send_download(iter, bytes);
             break;
         }
@@ -156,8 +159,8 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
 
             UploadContainer upload;
             upload.target_size = sizeBytesToInt(message_data.mid(0, 4));
-            upload.sha1 = message_data.mid(4, 20);
-            upload.target_path = dataToStr(message_data, 4 + 20);
+            upload.md5 = message_data.mid(4, 16);
+            upload.target_path = dataToStr(message_data, 4 + 16);
             upload.target_path.replace('~', start_path);
             unfinished_uploads[iter] = upload;
             break;
@@ -174,7 +177,7 @@ void Fileserver::incomingUpload(bool finite, char iter, QByteArray message_data)
     unfinished_uploads[iter].data.append(message_data);
     if (finite) {
         unfinished_uploads[iter].data.truncate(unfinished_uploads[iter].target_size);
-        if (unfinished_uploads[iter].testSha1()) {
+        if (unfinished_uploads[iter].testMd5()) {
             QFile file(unfinished_uploads[iter].target_path);
             file.open(QIODevice::WriteOnly);
             file.write(unfinished_uploads[iter].data);
@@ -278,7 +281,7 @@ void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QString
     for (int i = 0; i < count; ++i) {
         if (QFileInfo(dir, file_names[i]).isDir()) {
             transfer_data.append(QByteArray().fromHex("FFFFFFFF"));
-            transfer_data.append(QByteArray(20, (char) 0));
+            transfer_data.append(QByteArray(16, (char) 0));
             transfer_data.append(file_names[i]);
             transfer_data.append((char)'\0');
             continue;
@@ -288,15 +291,15 @@ void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QString
         QByteArray bytes = file.readAll();
         file.close();
         transfer_data.append(intToSizeBytes(bytes.size()));
-        transfer_data.append(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1));
+        transfer_data.append(QCryptographicHash::hash(bytes, QCryptographicHash::Md5));
         transfer_data.append(file_names[i]);
         transfer_data.append((char)'\0');
     }
 
 
-    QByteArray sha1 = QCryptographicHash::hash(transfer_data, QCryptographicHash::Sha1);
+    QByteArray md5 = QCryptographicHash::hash(transfer_data, QCryptographicHash::Md5);
     QByteArray size = intToSizeBytes(transfer_data.size());
-    response(OP_LS, iter, RESPONSE_OK, size.append(sha1));
+    response(OP_LS, iter, RESPONSE_OK, size.append(md5));
     send_download(iter, transfer_data);
 }
 
