@@ -1,5 +1,5 @@
 
- ## datovy protokol
+ # datovy protokol
  
 nasledujici dokument popisuje struktury datoveho protokolu.
 Kazdy paket ma na zacatku dva byty 
@@ -41,7 +41,7 @@ LONG UPLOAD
 ```
 
 
-## definicice paketu
+## definice paketu
 Nasledujici definice nepopisuji jak se zpravy deli do paketu, je zapotrebi zkombinovat s definici nahore.
 
 
