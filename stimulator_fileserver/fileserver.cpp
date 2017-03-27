@@ -16,7 +16,7 @@ Fileserver::Fileserver(const QString &server_name, const QString &path) {
 
 void Fileserver::incomingMessage(QByteArray message_data) {
 
-    std::cout << message_data.toHex().data() << std::endl;
+ //   std::cout << message_data.toHex().data() << std::endl;
 
     bool finite = ((message_data[INDEX_COMMAND - PREFIX] & SECTION_PART) == PART_LAST);
     unsigned char iter = message_data[INDEX_ITER - PREFIX];
@@ -185,7 +185,7 @@ void Fileserver::incomingUpload(bool finite, char iter, QByteArray message_data)
             response(OP_PUT, iter, RESPONSE_OK);
 
         } else {
-            response(OP_PUT, iter, RESPONSE_PUT_SHA1_FAIL);
+            response(OP_PUT, iter, RESPONSE_PUT_MD5_FAIL);
         }
         unfinished_uploads.erase(iter);
     }

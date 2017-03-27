@@ -24,8 +24,8 @@ void FileserverTest::helloTest() {
     hello.append(TYPE_REQUEST + OP_HELLO + PART_LAST);
     hello.append((char) 0x01);
     hello.append((char) 0x00); // verze protokolu
-    hello.append("hello world!\0");
-    hello.append(QByteArray().fill('\0', 62 - hello.size()));
+    hello.append("hello world!\0"); //zprava zakoncena nulou
+    hello.append(QByteArray().fill('\0', 62 - hello.size())); // doplnime na 62
 
     tester->emit_data(hello);
     QByteArray result = tester->input_buffer[0];
@@ -103,22 +103,22 @@ void FileserverTest::putTest() {
 
     QByteArray hello;
     hello.append(TYPE_REQUEST + OP_PUT + PART_LAST); // nejdriv mu dame do bufferu nedokoncenou zpravu
-    hello.append((char) 0x11);
+    hello.append((char) 0x11); //iterator
     hello.append((char) 0x00);          //
     hello.append((char) 0x00);          //
     hello.append((char) 0x00);          //
     hello.append((char) bytes.size());  // < -- delka souboru
-    hello.append(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1));
+    hello.append(QCryptographicHash::hash(bytes, QCryptographicHash::Md5));
     hello.append("~/");
     hello.append(FILENAME);
     hello.append((char) '\0');
-    QVERIFY(hello.size() == (2 + 4 + 20 + 3 + FILENAME.size()));
-    hello.append(QByteArray().fill('\0', 62 - hello.size()));
+    QVERIFY(hello.size() == (2 + 4 + 16 + 3 + FILENAME.size()));
+    hello.append(QByteArray().fill('\0', 62 - hello.size())); //prodlouzime na 62 bajtu
     tester->emit_data(hello);
     QByteArray data;
     data.append(TYPE_UPLOAD + PART_LAST);
-    data.append((char) 0x11); // stejna iter
-    data.append(bytes);
+    data.append((char) 0x11); // interator
+    data.append(bytes); // datove bajty
     data.append(QByteArray().fill('\0', 62 - data.size()));
     tester->emit_data(data);
 
@@ -130,7 +130,7 @@ void FileserverTest::putTest() {
         QFAIL("File not exist");
 }
 
-void FileserverTest::putShaTest() {
+void FileserverTest::putMd5Test() {
     tester->clear();
 
     const QString FILENAME = "hellosha.txt";
@@ -151,20 +151,20 @@ void FileserverTest::putShaTest() {
     hello.append((char) 0x00);          //
     hello.append((char) 0x00);          //
     hello.append((char) bytes.size());  // < -- delka souboru
-    hello.append(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1));
+    hello.append(QCryptographicHash::hash(bytes, QCryptographicHash::Md5));
     hello.append("~/");
     hello.append(FILENAME);
     hello.append((char) '\0');
-    QVERIFY(hello.size() == (2 + 4 + 20 + 3 + FILENAME.size()));
+    QVERIFY(hello.size() == (2 + 4 + 16 + 3 + FILENAME.size()));
     hello.append(QByteArray().fill('\0', 62 - hello.size()));
     tester->emit_data(hello);
     QByteArray data;
     data.append((char) (TYPE_UPLOAD + PART_LAST));
-    data.append((char) 0x11); // stejna iter
+    data.append((char) 0x11); // iterator
     data.append(QByteArray("hello world?")); // < -- zmeneno
     data.append(QByteArray().fill('\0', 62 - data.size()));
     tester->emit_data(data);
-    QVERIFY(tester->input_buffer.last()[INDEX_RESPONSE - PREFIX] == (char) RESPONSE_PUT_SHA1_FAIL);
+    QVERIFY(tester->input_buffer.last()[INDEX_RESPONSE - PREFIX] == (char) RESPONSE_PUT_MD5_FAIL);
 }
 
 void FileserverTest::putLongerTest() {
@@ -180,20 +180,20 @@ void FileserverTest::putLongerTest() {
         }
     }
 
-    QByteArray bytes(300, '!');
+    QByteArray bytes(300, '!'); // soubor s 300 !
 
     QByteArray hello;
     hello.append(TYPE_REQUEST + OP_PUT + PART_LAST); // nejdriv mu dame do bufferu nedokoncenou zpravu
-    hello.append((char) 0x11);
-    hello.append((char) 0x00);          //
-    hello.append((char) 0x00);          //
-    hello.append((char) (bytes.size() / 256));          //
-    hello.append((char) bytes.size());  // < -- delka souboru
-    hello.append(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1));
+    hello.append((char) 0x11); // iterator
+    hello.append((char) 0x00);                      //
+    hello.append((char) 0x00);                      //
+    hello.append((char) (bytes.size() / 256));      //
+    hello.append((char) bytes.size());              // < -- delka souboru
+    hello.append(QCryptographicHash::hash(bytes, QCryptographicHash::Md5));
     hello.append("~/");
     hello.append(FILENAME);
     hello.append((char) '\0');
-    QVERIFY(hello.size() == (2 + 4 + 20 + 3 + FILENAME.size()));
+    QVERIFY(hello.size() == (2 + 4 + 16 + 3 + FILENAME.size()));
     hello.append(QByteArray().fill('\0', 62 - hello.size()));
     tester->emit_data(hello);
     QByteArray head;
@@ -228,7 +228,7 @@ void FileserverTest::getTest() {
 
     QByteArray hello;
     hello.append(TYPE_REQUEST + OP_GET + PART_LAST); // nejdriv mu dame do bufferu nedokoncenou zpravu
-    hello.append((char) 0xff); // testnem unsigned
+    hello.append((char) 0xff); // testnem unsigned iterator
     hello.append("~/");
     hello.append(FILENAME);
     hello.append((char) '\0');
@@ -237,12 +237,12 @@ void FileserverTest::getTest() {
     tester->emit_data(hello);
     QByteArray response = tester->input_buffer[0];
     QVERIFY(response[0] == (char) (TYPE_RESPONSE + OP_GET + PART_LAST));
-    QVERIFY(response[1] == (char) (0xff));
+    QVERIFY(response[1] == (char) (0xff)); //iterator
     QVERIFY((char) response[2] == RESPONSE_OK);
     QByteArray response_data = tester->input_buffer[1];
     QVERIFY(response[6] == (char) bytes.size());
     QByteArray bytes2 = response_data.mid(2, bytes.size());
-    QVERIFY(QCryptographicHash::hash(bytes2, QCryptographicHash::Sha1) == response.mid(7, 20));
+    QVERIFY(QCryptographicHash::hash(bytes2, QCryptographicHash::Md5) == response.mid(7, 16));
 }
 
 void FileserverTest::getLongerTest() {
@@ -273,7 +273,7 @@ void FileserverTest::getLongerTest() {
     }
     int size = (uchar) response[6] + (256) * (uchar) response[5];
     response_data.truncate(size);
-    QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Sha1) == response.mid(7, 20));
+    QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Md5) == response.mid(7, 16));
 }
 
 void FileserverTest::delTest() {
@@ -291,7 +291,7 @@ void FileserverTest::delTest() {
 
     QByteArray hello;
     hello.append(TYPE_REQUEST + OP_DEL + PART_LAST); // nejdriv mu dame do bufferu nedokoncenou zpravu
-    hello.append((uchar) 0xcc); // testnem unsigned
+    hello.append((uchar) 0xcc); // iterator
     hello.append("~/");
     hello.append(FILENAME);
     hello.append((char) '\0');
@@ -301,7 +301,7 @@ void FileserverTest::delTest() {
 
     QByteArray response = tester->input_buffer[0];
     QVERIFY(response[0] == (char) (TYPE_RESPONSE + OP_DEL + PART_LAST));
-    QVERIFY(response[1] == (char) (0xcc));
+    QVERIFY(response[1] == (char) (0xcc)); // iterator
     QVERIFY((char) response[2] == (char) RESPONSE_OK);
     QFile del_file(FILENAME);
     QVERIFY(!del_file.exists());
@@ -338,7 +338,7 @@ void FileserverTest::getPreviewTest() {
     }
     int size = (uchar) response[6] + (256) * (uchar) response[5] + (256) * (256) * (uchar) response[4];
     response_data.truncate(size);
-    QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Sha1) == response.mid(7, 20));
+    QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Md5) == response.mid(7, 16));
     QFile preview(FILENAME2);
     preview.open(QIODevice::WriteOnly);
     preview.write(response_data);
@@ -422,7 +422,7 @@ void FileserverTest::lsTest() {
     }
     int size = (uchar) response[6] + (256) * (uchar) response[5] + (256) * (256) * (uchar) response[4];
     response_data.truncate(size);
-    QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Sha1) == response.mid(7, 20));
+    QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Md5) == response.mid(7, 16));
     int count = (uchar)response_data[0] * (256) + (uchar)response_data[1];
 
     QList<int> sizes;
@@ -439,8 +439,8 @@ void FileserverTest::lsTest() {
                 (unsigned char) response_data[c+3] * 0x00000001);
         c +=4;
         sizes.append(size);
-        hashs.append(response_data.mid(c,20));
-        c+=20;
+        hashs.append(response_data.mid(c,16));
+        c+=16;
         int end = response_data.indexOf((char)'\0',c);
         names.append(response_data.mid(c,end-c));
         c = end+1;

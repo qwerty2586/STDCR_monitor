@@ -1,8 +1,8 @@
 #ifndef STIMULATOR_CONTROL_STIMULATOR_OUTPUTS_H
 #define STIMULATOR_CONTROL_STIMULATOR_OUTPUTS_H
 
-#include <QString>
 #include <stimulator_gui/experiment.h>
+#include <QString>
 #include <QLabel>
 #include <QRadioButton>
 #include <QLineEdit>
@@ -33,8 +33,11 @@ private:
         QLabel *image;
     };
     std::vector<Output *> outputs;
+
+    QPalette LINEEDIT_READONLY_PALLETE,LINEEDIT_PALLETE;
+
 private slots:
-    void outputs_changed();
+    void outputs_changed(bool output_enable);
 
 };
 

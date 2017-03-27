@@ -20,7 +20,7 @@ private slots:
     void mdTest();
     void putTest();
     void putLongerTest();
-    void putShaTest();
+    void putMd5Test();
     void getTest();
     void getLongerTest();
     void delTest();

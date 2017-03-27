@@ -9,6 +9,13 @@
 
 STIMULATOR_OUTPUTS::STIMULATOR_OUTPUTS(QWidget *parent) : Experiment(parent) {
 
+    {
+        LINEEDIT_PALLETE = QLineEdit().palette();
+        LINEEDIT_READONLY_PALLETE = QLineEdit().palette();
+        LINEEDIT_READONLY_PALLETE.setColor(QPalette::Base,LINEEDIT_READONLY_PALLETE.color(QPalette::Button));
+        LINEEDIT_READONLY_PALLETE.setColor(QPalette::Text,LINEEDIT_READONLY_PALLETE.color(QPalette::HighlightedText));
+        // palety pro neditovatelny LineEdit
+    }
     initItems();
 }
 
@@ -26,9 +33,7 @@ void STIMULATOR_OUTPUTS::initItems() {
 
 
     QVBoxLayout *outputs_layout = new QVBoxLayout();
-
     QWidget *scrolling_widget = new QWidget();
-
     scrolling_widget->setLayout(outputs_layout);
 
 
@@ -60,14 +65,14 @@ void STIMULATOR_OUTPUTS::initItems() {
         item->radio_led->setChecked(true);
         item_grid->addWidget(group_box, 0, 1, 1, 1);
 
-        QLineEdit *path_line = new QLineEdit();
-        path_line->setStyleSheet("padding-bottom: 0px; margin-bottom: 0px;");
-        item_grid->addWidget(path_line, 1, 0, 1, 2);
+        item->path_line = new QLineEdit();
+        item->path_line->setStyleSheet("padding-bottom: 0px; margin-bottom: 0px;");
+        item_grid->addWidget(item->path_line, 1, 0, 1, 2);
 
 
-        connect(item->radio_led,SIGNAL(toggled(bool)),this,SLOT(outputs_changed()));
-        connect(item->radio_image,SIGNAL(toggled(bool)),this,SLOT(outputs_changed()));
-        connect(item->radio_audio,SIGNAL(toggled(bool)),this,SLOT(outputs_changed()));
+        connect(item->radio_led,SIGNAL(toggled(bool)),this,SLOT(outputs_changed(bool)));
+        connect(item->radio_image,SIGNAL(toggled(bool)),this,SLOT(outputs_changed(bool)));
+        connect(item->radio_audio,SIGNAL(toggled(bool)),this,SLOT(outputs_changed(bool)));
 
         item->image = new QLabel();
         item->image->setFixedSize(75, 75);
@@ -75,6 +80,8 @@ void STIMULATOR_OUTPUTS::initItems() {
         item->image->setAlignment(Qt::AlignCenter);
         item->image->setPixmap(QPixmap::fromImage(QImage(":/res/led.png")));
         item_grid->addWidget(item->image, 0, 2, 2, 1);
+        item->path_line->setReadOnly(false);
+        item->path_line->setPalette(LINEEDIT_READONLY_PALLETE);
 
 
         item_grid->setRowStretch(0, 10);
@@ -92,19 +99,39 @@ void STIMULATOR_OUTPUTS::initItems() {
     scrollArea->setWidget(scrolling_widget);
 
 
+
 }
 
-void STIMULATOR_OUTPUTS::outputs_changed() {
-    for (int i = 0; i < LEDS_COUNT; ++i) {
-        if (outputs[i]->radio_led->isChecked()) {
-            outputs[i]->image->setPixmap(QPixmap::fromImage(QImage(":/res/led.png")));
-        }
-        if (outputs[i]->radio_image->isChecked()) {
-            outputs[i]->image->setPixmap(QPixmap::fromImage(QImage(":/res/image.png")));
-        }
-        if (outputs[i]->radio_audio->isChecked()) {
-            outputs[i]->image->setPixmap(QPixmap::fromImage(QImage(":/res/audio.png")));
-        }
+void STIMULATOR_OUTPUTS::outputs_changed(bool output_enable) {
+    if (!output_enable)
+        return; // odstrani dvojita volani
 
+    int sender_index = 0;
+    for (int i = 0; i < LEDS_COUNT; ++i) {
+        if (sender() == outputs[i]->radio_led || sender() == outputs[i]->radio_image ||
+            sender() == outputs[i]->radio_audio) {
+            sender_index = i;
+            break;
+        }
     }
+    if (outputs[sender_index]->radio_led->isChecked()) {
+        outputs[sender_index]->image->setPixmap(QPixmap::fromImage(QImage(":/res/led.png")));
+        outputs[sender_index]->path_line->setReadOnly(true);
+    }
+    if (outputs[sender_index]->radio_image->isChecked()) {
+        outputs[sender_index]->image->setPixmap(QPixmap::fromImage(QImage(":/res/image.png")));
+        outputs[sender_index]->path_line->setReadOnly(false);
+    }
+    if (outputs[sender_index]->radio_audio->isChecked()) {
+        outputs[sender_index]->image->setPixmap(QPixmap::fromImage(QImage(":/res/audio.png")));
+        outputs[sender_index]->path_line->setReadOnly(false);
+    }
+
+    if (outputs[sender_index]->path_line->isReadOnly()) {
+        outputs[sender_index]->path_line->setPalette(LINEEDIT_READONLY_PALLETE);
+    } else {
+        outputs[sender_index]->path_line->setPalette(LINEEDIT_PALLETE);
+    }
+
+
 }
