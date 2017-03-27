@@ -3,13 +3,12 @@
 
 #include <cstdint>
 
-#define FULL_LENGTH_MESSAGE 0x3E
 // v protokolu znamena 62 znaku dlouhou zpravu
+#define FULL_LENGTH_MESSAGE 0x3E
 
-#define COMMUNICATION_OP_CODE 0xBF
+
 // v protokolu definovan jako posledni z bloku reserved
-
-
+#define COMMUNICATION_OP_CODE 0xBF //TODO domluvit se na jinou konstantu
 
 #define TRASFER_DATA_SIZE 60
 // pri prijeti nevidim prvni dva byte musim je tedy odecist
@@ -19,53 +18,74 @@
 #define INDEX_ITER              3
 #define INDEX_HELLO_VERSION     4
 #define INDEX_RESPONSE          4
+// prichozi zprava od nove prihlaseneho klienta
+#define INDEX_HELLO_DATA        5
+// data v nomalnim requestu
+#define INDEX_DATA              4
 
+
+// MD5 ma delku 16
+#define HASH_SIZE               16
+
+// na velikosti souboru a zaroven soucast hlavicek u prenosu je velikost uvadena 4 bajty
+// poradi je Big-endian
+#define SIZE_BYTES_COUNT        4
+// na pocet polozek v LS 2 bajty, Big-Endian
+#define LS_lENGHT_BYTES_COUNT   2
+
+// SECTION_* se da pouzit na parsovani z COMMAND bytu pomoci &
 #define SECTION_TYPE    0xC0
-#define TYPE_REQUEST    0x00
 // to co posila klient serveru
-#define TYPE_RESPONSE   0x40
+#define TYPE_REQUEST    0x00
 // to co posila server klientu
+#define TYPE_RESPONSE   0x40
+// presun dat smerem do klieta
 #define TYPE_DOWNLOAD   0x80
-// smerem do klieta
+// resun dat smerem od klienta
 #define TYPE_UPLOAD     0xC0
-//smerem od klienta
-// prenosy jsou vzdy uvozeny prikazy GET PUT LS v pripade GET a PUT jeste i responsem s delkou a hashem
+
+// prenosy jsou vzdy uvozeny prikazy GET PUT LS GET_PREVIEW v pripade GET a PUT jeste i responsem s delkou a hashem
+
 
 #define SECTION_PART    0x20
+// zprave pokracuje dalsim paketem
 #define PART_CONTINUE   0x00
+// posledni paket zpravy
 #define PART_LAST       0x20
 
 #define SECTION_OP      0x1F
-#define OP_ZERO         0x00 // v pripade transferu
-#define OP_HELLO        0x01
+
+// v pripade transferu; zadny prikaz
+#define OP_ZERO         0x00
 // oznamuji serveru ze existuji zaroven testuji jestli tam vubec malina je
 // 1. parametr verze protokolu, nechat 0
 // 2. parametr jmeno kliena
+#define OP_HELLO        0x01
+// rozlouceni, zadny parametr
 #define OP_BYE          0x02
-// zadny parametr
-#define OP_MD           0x03
 // vytvoreni adresare, parametr cela vzdalena cesta
-#define OP_LS           0x04
+#define OP_MD           0x03
 // listuje adresar jako parametr ma cestu k adresari ~ je domovsky adresar pro soubory
 // v odpovedi posilam delku souboru a sha-1 hash, pak zahajim transfer
-#define OP_GET          0x05
+#define OP_LS           0x04
 // stahne soubor parametr je nazev souboru na serveru vcetne cesty
 // v odpovedi posilam delku souboru a sha-1 hash, pak zahajim transfer
-#define OP_PUT          0x06
+#define OP_GET          0x05
 // nahrava soubor, parametry: delka souboru(4 byte),sha-1(20 byte),nazev souboru na serveru
-#define OP_DEL          0x07
+#define OP_PUT          0x06
 // smaze polozku - prazdny adresar nebo soubor
-#define OP_START        0x08
+#define OP_DEL          0x07
 // startne proces s obrazem a zvuky na serveru, jako parametr je cesta ke config.xml
-#define OP_STOP         0x09
+#define OP_START        0x08
 // stopne proces
-#define OP_GET_PREVIEW  0x10
+#define OP_STOP         0x09
 // vraci soubor s nahledem obrazku, je ve formatu jpg s nizkym rozlisenim , prenos probiha stejne jako GET
+#define OP_GET_PREVIEW  0x10
 
-#define RESPONSE_OK     0x00
 // operace probehla v poradku
 // nenulova znamena ze se to nejak nepovedlo, soubor se nepodarilo ulozit, mas jinou verzi protokolu, hash nesedi
 // response kody budu postupne doplnovat, tobe zatim staci !=0 je chyba
+#define RESPONSE_OK     0x00
 
 //dalsi response kody
 #define RESPONSE_MD_DIR_EXIST       0x01
@@ -76,6 +96,7 @@
 #define RESPONSE_GET_FILE_NOT_FOUND 0x06
 
 // LS flagy
+#define LS_FLAG_NODIRS              0x00
 #define LS_FLAG_DIRS                0x01
 
 
@@ -104,7 +125,7 @@
  jiny priklad... stahuji soubor ze serveru
  3E BF 25 01 "dir/obrazek.png\0"
  server odpovi
- 3E BF 65 01 00(OK) 000035bf(4byte delka souboru) cf23df2207d99a74fbe169e3eba035e633b65d94(sha1)
+ 3E BF 65 01 00(OK) 000035bf(4byte delka souboru) cf23df2207d99a74fbe169e3eba035e633b65d94(md5)
  3E BF 80 01 DATA
  3E BF 80 01 DATA
  3E BF 80 01 DATA
@@ -112,7 +133,7 @@
  3E BF A0 01 DATA konec je vystlan nulami
 
  upload probehne takle
- 3E BF 26 02 000035bf(4byte delka souboru) cf23df2207d99a74fbe169e3eba035e633b65d94(sha1) "dir/obrazek.jpg\0"
+ 3E BF 26 02 000035bf(4byte delka souboru) cf23df2207d99a74fbe169e3eba035e633b65d94(md5) "dir/obrazek.jpg\0"
  3E BF C0 02 DATA
  3E BF C0 02 DATA
  3E BF C0 02 DATA

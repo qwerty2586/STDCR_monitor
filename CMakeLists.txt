@@ -29,8 +29,6 @@ QT4_ADD_RESOURCES(RESOURCES_RCC
         stimulator_gui/resources/images.qrc
         )
 
-message("hellllllllllllllllllllllllllllllllllllll")
-message(${RESOURCES_RCC})
 
 
 set(SOURCE_FILES
