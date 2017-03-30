@@ -18,7 +18,7 @@ void FileserverTest::initTestCase() {
     QVERIFY(tester != nullptr);
     QObject::connect(fs, SIGNAL(outcomingMessage(QByteArray)), tester, SLOT(input(QByteArray)));
     QObject::connect(tester, SIGNAL(output(QByteArray)), fs, SLOT(incomingMessage(QByteArray)));
-
+/*
     QWidget * widget = new QWidget();
     QLabel *label = new QLabel("Ahoj");
     label->setFixedSize(200,50);
@@ -26,7 +26,7 @@ void FileserverTest::initTestCase() {
     widget->setLayout(layout);
     layout->addWidget(label);
     widget->show();
-
+*/
 }
 
 void FileserverTest::helloTest() {

@@ -1,11 +1,10 @@
 #include <test_test.h>
 #include <fileserver_test.h>
+#include <QLabel>
 
 int main(int argc, char **argv) {
 
-
-//    TestTest *testTest = new TestTest();
-//    QTest::qExec(testTest);
+    QApplication app(argc, argv);
 
     FileserverTest *fileserverTest = new FileserverTest();
 
