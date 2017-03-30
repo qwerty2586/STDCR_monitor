@@ -1,3 +1,6 @@
+#include <QLabel>
+#include <QHBoxLayout>
+#include <qstringbuilder.h>
 #include "fileserver_test.h"
 #include "../../stimulator_fileserver/transfer_protocol.h"
 
@@ -5,9 +8,10 @@ Fileserver *fs;
 QByteArray *buffer;
 QSignalTester *tester;
 
+#define DIR_PREFIX "./qtest/"
 
 void FileserverTest::initTestCase() {
-    fs = new Fileserver("test_server", "./");
+    fs = new Fileserver("test_server", DIR_PREFIX);
     QVERIFY(fs != nullptr);
     buffer = new QByteArray(62, (char) 0);
     tester = new QSignalTester;
@@ -15,6 +19,13 @@ void FileserverTest::initTestCase() {
     QObject::connect(fs, SIGNAL(outcomingMessage(QByteArray)), tester, SLOT(input(QByteArray)));
     QObject::connect(tester, SIGNAL(output(QByteArray)), fs, SLOT(incomingMessage(QByteArray)));
 
+    QWidget * widget = new QWidget();
+    QLabel *label = new QLabel("Ahoj");
+    label->setFixedSize(200,50);
+    QHBoxLayout *layout = new QHBoxLayout();
+    widget->setLayout(layout);
+    layout->addWidget(label);
+    widget->show();
 
 }
 
@@ -61,10 +72,12 @@ void FileserverTest::byeTest() {
 void FileserverTest::mdTest() {
     tester->clear();
 
+    QString path = QString(DIR_PREFIX) % "testdir";
+
     {
-        QDir dir("./testdir");
+        QDir dir(path);
         if (dir.exists()) {
-            QDir().rmdir("./testdir");
+            QDir().rmdir(path);
         }
     }
 
@@ -77,7 +90,7 @@ void FileserverTest::mdTest() {
 
     QVERIFY(tester->input_buffer[0][INDEX_RESPONSE - PREFIX] == (char) RESPONSE_OK);
 
-    QDir dir("./testdir");
+    QDir dir(path);
     QVERIFY(dir.exists());
     tester->clear();
     tester->emit_data(md);
@@ -122,7 +135,7 @@ void FileserverTest::putTest() {
     data.append(QByteArray().fill('\0', 62 - data.size()));
     tester->emit_data(data);
 
-    QFile hello_file(FILENAME);
+    QFile hello_file(DIR_PREFIX+FILENAME);
     if (hello_file.exists()) {
         QVERIFY(hello_file.size() == bytes.size());
         QVERIFY(tester->input_buffer.last()[INDEX_RESPONSE - PREFIX] == (char) RESPONSE_OK);
@@ -207,7 +220,7 @@ void FileserverTest::putLongerTest() {
     head.append(bytes.mid(i * 60, 60));
     tester->emit_data(head);
 
-    QFile hello_file(FILENAME);
+    QFile hello_file(DIR_PREFIX+FILENAME);
     if (hello_file.exists()) {
         QVERIFY(hello_file.size() == bytes.size());
         QVERIFY(tester->input_buffer.last()[INDEX_RESPONSE - PREFIX] == (char) RESPONSE_OK);
@@ -220,7 +233,7 @@ void FileserverTest::getTest() {
     QByteArray bytes = "hello world!";
     const QString FILENAME = "hello.txt";
     {
-        QFile hello_file(FILENAME);
+        QFile hello_file(DIR_PREFIX+FILENAME);
         if (!hello_file.exists()) {
             QSKIP("Run putTest() first!", SkipSingle);
         }
@@ -249,7 +262,7 @@ void FileserverTest::getLongerTest() {
     tester->clear();
     const QString FILENAME = "hellolong.txt";
     {
-        QFile hello_file(FILENAME);
+        QFile hello_file(DIR_PREFIX+FILENAME);
         if (!hello_file.exists()) {
             QSKIP("Run putLongerTest() first!", SkipSingle);
         }
@@ -280,7 +293,7 @@ void FileserverTest::delTest() {
     tester->clear();
     const QString FILENAME = "deltest.txt";
     {
-        QFile del_file(FILENAME);
+        QFile del_file(DIR_PREFIX+FILENAME);
         if (!del_file.exists()) {
             del_file.open(QIODevice::WriteOnly);
             del_file.write("del test");
@@ -303,7 +316,7 @@ void FileserverTest::delTest() {
     QVERIFY(response[0] == (char) (TYPE_RESPONSE + OP_DEL + PART_LAST));
     QVERIFY(response[1] == (char) (0xcc)); // iterator
     QVERIFY((char) response[2] == (char) RESPONSE_OK);
-    QFile del_file(FILENAME);
+    QFile del_file(DIR_PREFIX+FILENAME);
     QVERIFY(!del_file.exists());
 }
 
@@ -312,7 +325,7 @@ void FileserverTest::getPreviewTest() {
     const QString FILENAME1 = "preview_test_original.jpg";
     const QString FILENAME2 = "preview_test_response.jpg";
     {
-        QFile prev_file(FILENAME1);
+        QFile prev_file(DIR_PREFIX+FILENAME1);
         if (!prev_file.exists()) {
             QSKIP(QString("please prepare ").append(FILENAME1).append(
                     " file to test previewing!").toStdString().c_str(), SkipSingle);
@@ -339,7 +352,7 @@ void FileserverTest::getPreviewTest() {
     int size = (uchar) response[6] + (256) * (uchar) response[5] + (256) * (256) * (uchar) response[4];
     response_data.truncate(size);
     QVERIFY(QCryptographicHash::hash(response_data, QCryptographicHash::Md5) == response.mid(7, 16));
-    QFile preview(FILENAME2);
+    QFile preview(DIR_PREFIX+FILENAME2);
     preview.open(QIODevice::WriteOnly);
     preview.write(response_data);
     preview.close();
