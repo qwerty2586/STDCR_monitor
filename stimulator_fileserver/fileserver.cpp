@@ -5,22 +5,38 @@
 #include "fileserver.h"
 #include "transfer_protocol.h"
 #include <QDebug>
+#include <stimulator_log/log.h>
 #include <iostream>
 
 Fileserver::Fileserver(const QString &server_name, const QString &path) {
     this->start_path = path;
     if (start_path.right(1).contains('/')) start_path = start_path.left(start_path.size() - 1);
+    //ted zkusim jesli ten adresar je a pokud neni zkusim ho vyvorit
+    QDir dir(start_path);
+    if (!dir.exists()) {
+        std::cout << "Trying to create fileserver directory" << std::endl;
+        if (dir.mkpath(".")) {
+            std::cout << "Directory " << start_path.toStdString() << " succesfully created"  << std::endl;
+        } else {
+            std::cout << "Directory " << start_path.toStdString() << " cant be created!"  << std::endl;
+
+        }
+    }
     this->server_name = server_name;
 }
 
 
 void Fileserver::incomingMessage(QByteArray message_data) {
 
- //   std::cout << message_data.toHex().data() << std::endl;
+    Log::d("<< " + message_data.toHex());
 
     bool finite = ((message_data[INDEX_COMMAND - PREFIX] & SECTION_PART) == PART_LAST);
     unsigned char iter = message_data[INDEX_ITER - PREFIX];
     unsigned char type = (message_data[INDEX_COMMAND - PREFIX] & SECTION_TYPE);
+
+    Log::d(parse_to_log(message_data[INDEX_COMMAND - PREFIX]) + " ITER=" + QString::number(iter,16)); // loguju hlavicku
+
+
 
     if (type == TYPE_REQUEST) {
         if (finite) {
@@ -49,6 +65,7 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
             client_ver = message_data[0];
             client_name = dataToStr(message_data, 1);
             response(OP_HELLO, iter, RESPONSE_OK, strToData(server_name));
+            Log::d("HELLO from " + client_name);
             break;
         }
         case OP_BYE: {
@@ -159,8 +176,8 @@ void Fileserver::incomingRequest(char op, char iter, QByteArray message_data) {
 
             UploadContainer upload;
             upload.target_size = sizeBytesToInt(message_data.mid(0, 4));
-            upload.md5 = message_data.mid(4, 16);
-            upload.target_path = dataToStr(message_data, 4 + 16);
+            upload.md5 = message_data.mid(4, HASH_SIZE);
+            upload.target_path = dataToStr(message_data, 4 + HASH_SIZE);
             upload.target_path.replace('~', start_path);
             unfinished_uploads[iter] = upload;
             break;
@@ -203,17 +220,20 @@ void Fileserver::response(char op, char iter, char response) {
 
 void Fileserver::response(char op, char iter, char response, QByteArray data) {
     data.prepend(response);
-    if (data.size() % 60 != 0) {
-        int new_size = ((data.size() / 60) + 1) * 60;
+    if (data.size() % PACKET_DATA_SIZE != 0) {
+        int new_size = ((data.size() / PACKET_DATA_SIZE) + 1) * PACKET_DATA_SIZE;
         data.append(QByteArray().fill('\0', new_size - data.size()));
     }
-    int count = data.size() / 60;
+    int count = data.size() / PACKET_DATA_SIZE;
     QByteArray two_first_bytes;
     two_first_bytes.append(op + (char) TYPE_RESPONSE);
     two_first_bytes.append(iter);
     for (int i = 0; i < count; ++i) {
         if (i == (count - 1)) two_first_bytes[0] = two_first_bytes[0] + PART_LAST;
-        emit outcomingMessage(data.mid(i * 60, 60).prepend(two_first_bytes));
+        QByteArray output = data.mid(i * PACKET_DATA_SIZE, PACKET_DATA_SIZE).prepend(two_first_bytes);
+        emit outcomingMessage(output);
+        Log::d(">> "+output.toHex());
+        Log::d(parse_to_log(output[0]) + " ITER=" + QString::number(output[1],16)); // loguju hlavicku
     }
 }
 
@@ -228,18 +248,22 @@ QString Fileserver::dataToStr(QByteArray data, int start) {
 }
 
 void Fileserver::send_download(char iter, QByteArray data) {
-    if ((data.size() % 60) != 0) {
-        int new_size = ((data.size() / 60) + 1) * 60;
+    if ((data.size() % PACKET_DATA_SIZE) != 0) {
+        int new_size = ((data.size() / PACKET_DATA_SIZE) + 1) * PACKET_DATA_SIZE;
         data.append(QByteArray().fill('\0', new_size - data.size()));
     }
 
-    int count = data.size() / 60;
+    int count = data.size() / PACKET_DATA_SIZE;
     QByteArray two_first_bytes;
     two_first_bytes.append((char) TYPE_DOWNLOAD);
     two_first_bytes.append(iter);
     for (int i = 0; i < count; ++i) {
         if (i == (count - 1)) two_first_bytes[0] = two_first_bytes[0] + PART_LAST;
-        emit outcomingMessage(data.mid(i * 60, 60).prepend(two_first_bytes));
+        QByteArray output = data.mid(i * PACKET_DATA_SIZE, PACKET_DATA_SIZE).prepend(two_first_bytes);
+        emit outcomingMessage(output);
+        Log::d(">> "+output.toHex());
+        Log::d(parse_to_log(output[0]) + " ITER=" + QString::number(output[1],16)); // loguju hlavicku
+
     }
 }
 
@@ -277,11 +301,12 @@ void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QString
     QStringList file_names = dir.entryList(name_filters, filters, QDir::NoSort);
     QByteArray transfer_data;
     int count = file_names.size();
-    transfer_data.append((char) (count / 256)).append((char) (count % 256));
+    transfer_data.append((char) (count / 256)).append((char) (count % 256)); // 2 bajty s poctem polozek
     for (int i = 0; i < count; ++i) {
         if (QFileInfo(dir, file_names[i]).isDir()) {
+            // adresare, maji size FFFFFFFF a hash 00000000000000000000000000000000
             transfer_data.append(QByteArray().fromHex("FFFFFFFF"));
-            transfer_data.append(QByteArray(16, (char) 0));
+            transfer_data.append(QByteArray(HASH_SIZE, (char) 0));
             transfer_data.append(file_names[i]);
             transfer_data.append((char)'\0');
             continue;
@@ -290,6 +315,8 @@ void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QString
         file.open(QIODevice::ReadOnly);
         QByteArray bytes = file.readAll();
         file.close();
+
+        // pripojim velikost (4B), hash (16B), jmeno a zakoncim 00
         transfer_data.append(intToSizeBytes(bytes.size()));
         transfer_data.append(QCryptographicHash::hash(bytes, QCryptographicHash::Md5));
         transfer_data.append(file_names[i]);
@@ -301,6 +328,41 @@ void Fileserver::ls(char iter, const QString &dir_path, bool dirs, const QString
     QByteArray size = intToSizeBytes(transfer_data.size());
     response(OP_LS, iter, RESPONSE_OK, size.append(md5));
     send_download(iter, transfer_data);
+}
+
+const QString Fileserver::parse_to_log(char command) {
+
+    // ve finale tuhle funkci zakomentovat
+    QString r;
+
+    if ((command & SECTION_PART) == PART_LAST)
+        r.append("LAST");
+    else
+        r.append("CONT");
+
+    r.append(" ");
+    switch (command & SECTION_TYPE) {
+        case TYPE_DOWNLOAD : r.append("DOWNLOAD"); break;
+        case TYPE_UPLOAD   : r.append("UPLOAD  "); break;
+        case TYPE_REQUEST  : r.append("REQUEST "); break;
+        case TYPE_RESPONSE : r.append("RESPONSE"); break;
+    }
+    r.append(" ");
+    switch (command & SECTION_OP) {
+        case OP_HELLO      : r.append("HELLO"); break;
+        case OP_BYE        : r.append("BYE  "); break;
+        case OP_LS         : r.append("LS   "); break;
+        case OP_MD         : r.append("MD   "); break;
+        case OP_GET        : r.append("GET  "); break;
+        case OP_PUT        : r.append("PUT  "); break;
+        case OP_DEL        : r.append("DEL  "); break;
+        case OP_START      : r.append("START"); break;
+        case OP_STOP       : r.append("STOP "); break;
+        case OP_GET_PREVIEW: r.append("GETPR"); break;
+        default:             r.append("     ");
+    }
+
+    return r;
 }
 
 

@@ -26,7 +26,7 @@ const int MIN_BODY_HEIGHT = 1;
 const int MAX_BODY_HEIGHT = 250;
 
 // komunikace
-const int WINDOWS_MAX_COM = 12;;
+const int WINDOWS_MAX_COM = 20;;
 const QString LINUX_DEV_DIR = "/dev";
 const QStringList LINUX_DEV_MASK = QString("ttyU*;ttyA*;ttyS*;rfcomm*").split(';');
 

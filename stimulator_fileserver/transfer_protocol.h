@@ -10,7 +10,7 @@
 // v protokolu definovan jako posledni z bloku reserved
 #define COMMUNICATION_OP_CODE 0xBF //TODO domluvit se na jinou konstantu
 
-#define TRASFER_DATA_SIZE 60
+#define PACKET_DATA_SIZE 60
 // pri prijeti nevidim prvni dva byte musim je tedy odecist
 #define PREFIX 2
 // indexy bytu

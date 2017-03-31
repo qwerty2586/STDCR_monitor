@@ -50,12 +50,15 @@ set(SOURCE_FILES
         stimulator_gui/widgets/qsaveloadwidget.cpp
         stimulator_gui/widgets/qverticalscrollarea.cpp
 
+
         stimulator_fileserver/transfer_protocol.cpp
         stimulator_fileserver/transfer_protocol.h
         stimulator_fileserver/fileserver.cpp
         stimulator_fileserver/upload_container.cpp
 
         stimulator_comm/stimulator.cpp
+
+        stimulator_log/log.h
 
         ${RESOURCES_RCC}
         )
@@ -81,7 +84,7 @@ if (WIN32)
 endif (WIN32)
 
 if (LINUX)
-    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} stimulator_gui/widgets/qverticalscrollarea.cpp stimulator_gui/widgets/qverticalscrollarea.h)
+    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} stimulator_log/log.cpp)
     add_executable(stimulator_control ${SOURCE_FILES})
 endif (LINUX)
 

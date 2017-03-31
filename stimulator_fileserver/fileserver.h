@@ -59,6 +59,8 @@ private:
     void incomingUpload(bool finite, char iter, QByteArray message_data);
 
     void ls(char iter, const QString &dir_path, bool dirs, const QStringList &name_filters);
+
+    const QString parse_to_log(char command);
 };
 
 
