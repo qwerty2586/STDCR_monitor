@@ -56,12 +56,15 @@ set(SOURCE_FILES
         stimulator_fileserver/fileserver.cpp
         stimulator_fileserver/upload_container.cpp
 
+        stimulator_outputlauncher/sdl_output_launcher.cpp
+        stimulator_outputlauncher/sdl_output_launcher.h
+
         stimulator_comm/stimulator.cpp
 
         stimulator_log/log.h
 
         ${RESOURCES_RCC}
-        stimulator_outputlauncher/sdl_output_launcher.cpp stimulator_outputlauncher/sdl_output_launcher.h)
+        )
 
 set(SOURCE_FILES_WIN
         3rdparty/qextserialport/qextserialport.cpp
