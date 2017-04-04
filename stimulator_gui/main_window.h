@@ -14,6 +14,7 @@
 #include <stimulator_gui/experiment.h>
 #include <stimulator_fileserver/fileserver.h>
 #include <QStatusBar>
+#include <stimulator_outputlauncher/sdl_output_launcher.h>
 
 /**
  * Hlavní okno
@@ -32,7 +33,6 @@ public:
     ~MainWindow();
 
 
-
 private:
 
     QVBoxLayout *windowLayout;
@@ -46,6 +46,7 @@ private:
     QComboBox *portCombo;
     QPushButton *portConnectDisconnectButton, *portRefreshButton;
     Fileserver *fileserver;
+    SdlOutputLauncher *sdlOutputLauncher;
     QStatusBar *statusBar;
 
     void resizeEvent(QResizeEvent *resizeEvent) override;

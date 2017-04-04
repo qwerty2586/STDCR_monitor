@@ -35,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     connect(port, SIGNAL(incomingFileserverMessage(QByteArray)), fileserver, SLOT(incomingMessage(QByteArray)));
     connect(fileserver, SIGNAL(outcomingMessage(QByteArray)), port, SLOT(sendFileserverMessage(QByteArray)));
 
-    
+    auto sdlOutputLauncher = new SdlOutputLauncher();
+
+    connect(fileserver, SIGNAL(startSdlOutput(QString)), sdlOutputLauncher, SLOT(doStartSdlOutput(QString)));
+    connect(fileserver, SIGNAL(stopSdlOutput(QString)), sdlOutputLauncher, SLOT(doStopSdlOutput(QString)));
 
     initExperiments();
     initItems();
