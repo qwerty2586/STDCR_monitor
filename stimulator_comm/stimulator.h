@@ -26,7 +26,7 @@ namespace StimulatorMessage {
     static constexpr char PULSE_EDGE_DOWN = 0x01;
     static constexpr char SYNC_PULSE_INTERVAL = 0x20;
 
-    static constexpr char COMMUNICATION_CODE = 0xBF;
+    static constexpr char COMMUNICATION_CODE = 0xEF;
 
 
     static constexpr char RANDOM_ENABLE = 0x04;
