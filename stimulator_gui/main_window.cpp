@@ -12,6 +12,7 @@
 #include <iostream>
 #include <QApplication>
 #include <QLibraryInfo>
+#include <QDebug>
 
 
 const QString TEXT_CONNECT = "CONNECT";
@@ -38,7 +39,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     auto sdlOutputLauncher = new SdlOutputLauncher();
 
     connect(fileserver, SIGNAL(startSdlOutput(QString)), sdlOutputLauncher, SLOT(doStartSdlOutput(QString)));
-    connect(fileserver, SIGNAL(stopSdlOutput(QString)), sdlOutputLauncher, SLOT(doStopSdlOutput(QString)));
+    connect(fileserver, SIGNAL(stopSdlOutput()), sdlOutputLauncher, SLOT(doStopSdlOutput()));
+
+
 
     initExperiments();
     initItems();
@@ -84,6 +87,8 @@ void MainWindow::initItems() {
     portCombo = new QComboBox();
     connect(portCombo, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(refreshPortList()));
     portLayout->addWidget(portCombo);
+    portBaudCombo = new QComboBox();
+    portLayout->addWidget(portBaudCombo);
     portRefreshButton = new QPushButton();
     portRefreshButton->setIcon(QApplication::style()->standardIcon(QStyle::SP_BrowserReload));
     portLayout->addWidget(portRefreshButton);
@@ -224,7 +229,7 @@ void MainWindow::startStopClick() {
 
 void MainWindow::portConnectDisconnectClick() {
     if (!portConnected) { //CONNECT
-        port->setFile(portCombo->currentText());
+        port->setFile(portCombo->currentText(), listOfAvailableBaudSpeeds[portBaudCombo->currentIndex()]);
     } else {            //disconnect
         port->portDisconnect();
     }
@@ -234,6 +239,7 @@ void MainWindow::portConnectDisconnectClick() {
 void MainWindow::onPortConnected(bool connected) {
     portConnected = connected;
     portCombo->setEnabled(!connected);
+    portBaudCombo->setEnabled(!connected);
     portRefreshButton->setEnabled(!connected);
     startStopButton->setEnabled(connected);
     if (connected) {
@@ -274,6 +280,12 @@ MainWindow::~MainWindow() {
 void MainWindow::refreshPortList() {
     portCombo->clear();
     portCombo->addItems(listOfAvailableSerials());
+    QStringList baudspeeds;
+    for (int i : listOfAvailableBaudSpeeds) {
+        baudspeeds.push_back(QString::number(i));
+    }
+    portBaudCombo->addItems(baudspeeds);
+
 }
 
 void MainWindow::resizeEvent(QResizeEvent *resizeEvent) {

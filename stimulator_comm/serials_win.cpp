@@ -1,6 +1,7 @@
 #include "serials.h"
 #include <windows.h>
 #include <stimulator_gui/params.h>
+#include <3rdparty/qextserialport/qextserialport.h>
 
 QStringList listOfAvailableSerials() {
     QStringList r;

@@ -50,7 +50,7 @@ public:
     explicit Stimulator(const QString filename = 0);
 
     /// zmena nazvu souboru
-    void setFile(const QString filename);
+    void setFile(QString filename, int baudrate);
 
     ///pripojeni k souboru
     void portConnect();

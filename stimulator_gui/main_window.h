@@ -44,6 +44,7 @@ private:
     QGroupBox *portGroup;
     QHBoxLayout *portLayout;
     QComboBox *portCombo;
+    QComboBox *portBaudCombo;
     QPushButton *portConnectDisconnectButton, *portRefreshButton;
     Fileserver *fileserver;
     SdlOutputLauncher *sdlOutputLauncher;

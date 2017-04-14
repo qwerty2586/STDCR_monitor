@@ -62,6 +62,7 @@ set(SOURCE_FILES
         stimulator_comm/stimulator.cpp
 
         stimulator_log/log.h
+        stimulator_log/log.cpp
 
         ${RESOURCES_RCC}
         )
@@ -70,14 +71,17 @@ set(SOURCE_FILES_WIN
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_win.cpp
 
+        stimulator_comm/serials.cpp
         stimulator_comm/serials_win.cpp
         stimulator_comm/sysname_win.cpp
+
         )
 
 set(SOURCE_FILES_LINUX
         3rdparty/qextserialport/qextserialport.cpp
         3rdparty/qextserialport/qextserialport_unix.cpp
 
+        stimulator_comm/serials.cpp
         stimulator_comm/serials_linux.cpp
         stimulator_comm/sysname_linux.cpp)
 
@@ -87,7 +91,7 @@ if (WIN32)
 endif (WIN32)
 
 if (LINUX)
-    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} stimulator_log/log.cpp)
+    set(SOURCE_FILES ${SOURCE_FILES} ${SOURCE_FILES_LINUX} )
     add_executable(stimulator_control ${SOURCE_FILES})
 endif (LINUX)
 

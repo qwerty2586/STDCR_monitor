@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QObject>
 #include "stimulator.h"
 
 
@@ -7,12 +8,13 @@ Stimulator::Stimulator(const QString filename) {
     m_port = new QextSerialPort(QextSerialPort::EventDriven);
     connect(m_port, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(m_port, SIGNAL(dsrChanged(bool)), this, SLOT(onDsrChanged(bool)));
-    if (filename != 0) setFile(filename);
+    if (filename != 0) setFile(filename,  BAUD9600);
 
 }
 
-void Stimulator::setFile(const QString filename) {
+void Stimulator::setFile(QString filename, int baudrate) {
     m_port->setPortName(filename);
+    m_port->setBaudRate((BaudRateType) baudrate);
     portConnect();
 
 }
@@ -20,8 +22,6 @@ void Stimulator::setFile(const QString filename) {
 void Stimulator::portConnect() {
     bool lastState = opened;
     opened = m_port->open(QIODevice::ReadWrite);
-    //if (opened) m_port->setBaudRate(BAUD9600);
-    // v pripade zmeny baudove rychlosti
     if (lastState != opened) emit connected(opened);
 }
 

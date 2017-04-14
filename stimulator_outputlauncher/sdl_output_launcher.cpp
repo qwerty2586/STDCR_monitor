@@ -9,9 +9,9 @@
 
 void SdlOutputLauncher::doStartSdlOutput(QString configfile) {
     if (started) return;
-    const char* sdloutput_params = "\"~/SDL_output/SDL_output -x 600 -y 480 -w --config ~/output_test/config.xml\"";
-    const char** sudo_params = (const char*[]){"/usr/bin/sudo",sdloutput_params,NULL};
-    child_id = fork();
+ //   const char* sdloutput_params = "\"~/SDL_output/SDL_output -x 600 -y 480 -w --config ~/output_test/config.xml\"";
+  //  const char** sudo_params = (const char*[]){"/usr/bin/sudo",sdloutput_params,NULL};
+ //   child_id = fork();
     if (child_id==0) {
 
     }
@@ -23,6 +23,6 @@ void SdlOutputLauncher::doStartSdlOutput(QString configfile) {
 
 void SdlOutputLauncher::doStopSdlOutput() {
     if (!started) return;
-    kill(child_id,SIGKILL);
+  //  kill(child_id,SIGKILL);
 
 }
