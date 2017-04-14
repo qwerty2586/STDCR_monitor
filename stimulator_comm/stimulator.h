@@ -29,7 +29,7 @@ namespace StimulatorMessage {
     static constexpr char COMMUNICATION_CODE = 0xEF;
 
 
-    static constexpr char RANDOM_ENABLE = 0x04;
+         static constexpr char RANDOM_ENABLE = 0x04;
     static constexpr char RANDOM_DISABLE = 0x05;
 
 }

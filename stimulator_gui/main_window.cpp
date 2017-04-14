@@ -12,7 +12,6 @@
 #include <iostream>
 #include <QApplication>
 #include <QLibraryInfo>
-#include <QDebug>
 
 
 const QString TEXT_CONNECT = "CONNECT";
