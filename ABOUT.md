@@ -30,8 +30,12 @@ Umožňuje tak nahrávání a stahování souborů mobilní variantě programu [
  tak aby vyžadoval minimální zásah do původního protokolu stimulátoru a je hrubě nastíněn 
  [zde](https://github.com/qwerty2586/stimulator_control/blob/master/stimulator_fileserver/transfer_protocol.h)
  a [zde](https://github.com/qwerty2586/stimulator_control/blob/master/stimulator_fileserver/data_packets.md).
-Důvodem k implementaci tohoto souborového serveru bylo zpřístupnéní mobilnímu programu přístup ke konfiguraci a spuštění SDL_Output.
+Důvodem k implementaci tohoto souborového serveru bylo umožnit mobilnímu programu přístup ke konfiguraci a spuštění SDL_Output.
  
- ##SDL_Output
+ ## SDL_Output
  
-
+Tento program je napsán v C++ a používá knihovnu SDL k zobrazení obrázků a přehrání hudby. 
+Tyto jsou zobrazeny na základě TTL signálů přez GPIO. Přerušení na této sběrnici jsou zachytávány 
+pomocí knihovny [wiringPI](https://github.com/WiringPi/WiringPi) a je předán programu pomocí SDL_RegisterEvents a SDL_PushEvent.
+wiringPi vyžaduje aby tento program běžel pod právy roota.
+ 
