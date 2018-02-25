@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$/3rdparty" />
+      <file path="$PROJECT_DIR$/stimulator_comm" />
+      <file path="$PROJECT_DIR$/stimulator_conf" />
+      <file path="$PROJECT_DIR$/stimulator_fileserver" />
+      <file path="$PROJECT_DIR$/stimulator_gui" />
+      <file path="$PROJECT_DIR$/stimulator_log" />
+      <file path="$PROJECT_DIR$/stimulator_outputlauncher" />
+      <file path="$PROJECT_DIR$/stimulator_tests" />
+    </sourceRoots>
+  </component>
+</project>
