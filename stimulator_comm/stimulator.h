@@ -2,7 +2,7 @@
 #define STDCR_MONITOR_SERIAL_COMM_H
 
 #include <QObject>
-#include "../3rdparty/qextserialport/qextserialport.h"
+#include <QSerialPort>
 
 #define LEDS_COUNT 8
 /**
@@ -47,10 +47,16 @@ public:
     ///standartni delka packetu v komunikacnim protokolu
     static const int PACKET_SIZE = 64;
 
-    explicit Stimulator(const QString filename = 0);
+    explicit Stimulator();
 
-    /// zmena nazvu souboru
-    void setFile(QString filename, int baudrate);
+    // nastaveni portu
+    void setPort(QSerialPortInfo &info, qint32 baudrate);
+
+    // vrati seznam dostupnych seriovych portu
+    QList<QSerialPortInfo> getPortsList();
+
+    // vrati seznam podporovanych rychlosti
+    QList<qint32> getBaudrates();
 
     ///pripojeni k souboru
     void portConnect();
@@ -100,7 +106,7 @@ private:
     char incoming_type;
 
     /// instance tridy QextSerialPort zajistujici obsluhu serioveho portu
-    QextSerialPort *m_port;
+    QSerialPort *m_port;
 
     /// stav pripojeni k seriovemu portu
     bool opened;
@@ -114,7 +120,6 @@ private slots:
     void onReadyRead();
 
     /// zmena stavu na druhem konci serioveho kabelu
-    void onDsrChanged(bool status);
 
     /// obsluha prichozich dat pokud je v prichozim bufferu vice
     void checkBuffer();

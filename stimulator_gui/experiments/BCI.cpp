@@ -152,7 +152,7 @@ void BCI::initItems() {
 
 void BCI::patternChanged() {
 
-    q_target_bin->setText(q_pattern->toNiceString()->toAscii());
+    q_target_bin->setText(q_pattern->toNiceString()->toLatin1());
     q_target_wave->setValue(q_pattern->value());
 
 }
@@ -270,7 +270,7 @@ void BCI::addTLed() {
     l->bin_layout = new QHBoxLayout();
     l->label_bin = new QLabel("TARGET BIN      ");
     l->bin_layout->addWidget(l->label_bin);
-    l->bin = new QLabel(l->pattern->toNiceString()->toAscii());
+    l->bin = new QLabel(l->pattern->toNiceString()->toLatin1());
     l->bin_layout->addWidget(l->bin);
     tLedLayout->addLayout(l->bin_layout, 2, 0, 1, 3, Qt::AlignLeft);
 
@@ -361,7 +361,7 @@ void BCI::tPatternChanged() {
 
     }
 
-    tleds[index]->bin->setText(tleds[index]->pattern->toNiceString()->toAscii());
+    tleds[index]->bin->setText(tleds[index]->pattern->toNiceString()->toLatin1());
 
     tleds[index]->waveform->setValue(tleds[index]->pattern->value());
 
@@ -376,7 +376,7 @@ void BCI::tLengthChanged() {
         }
     }
     tleds[index]->pattern->patternResize(1, tleds[index]->pattern_length->value());
-    tleds[index]->bin->setText(tleds[index]->pattern->toNiceString()->toAscii());
+    tleds[index]->bin->setText(tleds[index]->pattern->toNiceString()->toLatin1());
 
 
 
@@ -501,7 +501,7 @@ void BCI::saveFile(QString filepathname) {
             xml.writeStartElement(DATA_ROOT_TVEP);
             for (int i = 0; i < tleds.size(); i++) {
                 xml.writeStartElement(DATA_LED);
-                xml.writeTextElement(DATA_PATTERN, tleds[i]->pattern->toString()->toAscii());
+                xml.writeTextElement(DATA_PATTERN, tleds[i]->pattern->toString()->toLatin1());
                 xml.writeTextElement(DATA_PULSE_LENGTH, tleds[i]->pulse_length->text());
                 xml.writeTextElement(DATA_PULSE_SKEW, tleds[i]->pulse_skew->text());
                 xml.writeTextElement(DATA_BRIGHTNESS, tleds[i]->brightness->text());
@@ -514,7 +514,7 @@ void BCI::saveFile(QString filepathname) {
         if (q_scheme_radio_cvep->isChecked()) {
             xml.writeStartElement(DATA_ROOT_CVEP);
             xml.writeTextElement(DATA_STIMULI_COUNT, q_stimuli_count->text());
-            xml.writeTextElement(DATA_PATTERN, q_pattern->toString()->toAscii());
+            xml.writeTextElement(DATA_PATTERN, q_pattern->toString()->toLatin1());
             xml.writeTextElement(DATA_PULSE_LENGTH, q_pulse_length->text());
             xml.writeTextElement(DATA_PULSE_SKEW, q_pulse_skew->text());
             xml.writeTextElement(DATA_BRIGHTNESS, q_brightness->text());

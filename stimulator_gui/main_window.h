@@ -15,6 +15,7 @@
 #include <stimulator_fileserver/fileserver.h>
 #include <QStatusBar>
 #include <stimulator_outputlauncher/sdl_output_launcher.h>
+#include <QSerialPortInfo>
 
 /**
  * Hlavní okno
@@ -43,6 +44,8 @@ private:
     QWidget *experimentButtonsWidget;
     QGroupBox *portGroup;
     QHBoxLayout *portLayout;
+    QList<QSerialPortInfo> port_infos;
+    QList<qint32> port_baudrates;
     QComboBox *portCombo;
     QComboBox *portBaudCombo;
     QPushButton *portConnectDisconnectButton, *portRefreshButton;

@@ -238,7 +238,7 @@ void Fileserver::response(char op, char iter, char response, QByteArray data) {
 }
 
 QByteArray Fileserver::strToData(QString string) {
-    return string.toAscii().append((char) '\0');
+    return string.toLatin1().append((char) '\0');
 };
 
 QString Fileserver::dataToStr(QByteArray data, int start) {

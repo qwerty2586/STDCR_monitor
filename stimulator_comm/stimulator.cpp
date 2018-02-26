@@ -1,23 +1,32 @@
 #include <QFile>
 #include <QObject>
+#include <QtSerialPort/QSerialPortInfo>
 #include "stimulator.h"
 
 
-Stimulator::Stimulator(const QString filename) {
+Stimulator::Stimulator() {
     opened = false;
-    m_port = new QextSerialPort(QextSerialPort::EventDriven);
+    m_port = new QSerialPort();
     connect(m_port, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-    connect(m_port, SIGNAL(dsrChanged(bool)), this, SLOT(onDsrChanged(bool)));
-    if (filename != 0) setFile(filename,  BAUD9600);
+  //  if (filename != 0) setFile(filename,  BAUD9600);
 
 }
 
-void Stimulator::setFile(QString filename, int baudrate) {
-    m_port->setPortName(filename);
-    m_port->setBaudRate((BaudRateType) baudrate);
+
+void Stimulator::setPort(QSerialPortInfo &info,qint32 baudrate) {
+    m_port->setPort(info);
+    m_port->setBaudRate(baudrate);
     portConnect();
-
 }
+
+QList<QSerialPortInfo> Stimulator::getPortsList() {
+    return QSerialPortInfo::availablePorts();
+}
+
+QList<qint32> Stimulator::getBaudrates() {
+    return QSerialPortInfo::standardBaudRates();
+}
+
 
 void Stimulator::portConnect() {
     bool lastState = opened;
@@ -35,9 +44,7 @@ void Stimulator::onReadyRead() {
         checkBuffer();
 }
 
-void Stimulator::onDsrChanged(bool status) {
-    deviceOn = status;
-}
+
 
 void Stimulator::checkBuffer() {
     while (buffer.size() >= PACKET_SIZE) {

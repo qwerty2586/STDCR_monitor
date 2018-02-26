@@ -228,7 +228,7 @@ void MainWindow::startStopClick() {
 
 void MainWindow::portConnectDisconnectClick() {
     if (!portConnected) { //CONNECT
-        port->setFile(portCombo->currentText(), listOfAvailableBaudSpeeds[portBaudCombo->currentIndex()]);
+        port->setPort(port_infos[portCombo->currentIndex()],port_baudrates[portBaudCombo->currentIndex()]);
     } else {            //disconnect
         port->portDisconnect();
     }
@@ -277,14 +277,34 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::refreshPortList() {
-    portCombo->clear();
-    portCombo->addItems(listOfAvailableSerials());
-    QStringList baudspeeds;
-    for (int i : listOfAvailableBaudSpeeds) {
-        baudspeeds.push_back(QString::number(i));
-    }
-    portBaudCombo->addItems(baudspeeds);
 
+    {
+        QString last = "";
+        if (portCombo->currentIndex() >= 0) {
+            last = port_infos[portCombo->currentIndex()].portName();
+        }
+        port_infos = port->getPortsList();
+        portCombo->blockSignals(true);
+        portCombo->clear();
+        for (const QSerialPortInfo &info : port_infos) {
+            portCombo->addItem(info.portName() + " " + info.description() + " " + info.manufacturer());
+            if (last.compare(info.portName()) == 0) portCombo->setCurrentIndex(portCombo->count() - 1);
+        }
+        portCombo->blockSignals(false);
+    }{
+        qint32 last = 9600;
+        if (portBaudCombo->currentIndex() >= 0) {
+            last = port_baudrates[portBaudCombo->currentIndex()];
+        }
+        port_baudrates = port->getBaudrates();
+        portBaudCombo->blockSignals(true);
+        portBaudCombo->clear();
+        for (qint32 speed : port_baudrates) {
+            portBaudCombo->addItem(QString::number(speed));
+            if (last == speed) portBaudCombo->setCurrentIndex(portBaudCombo->count() - 1);
+        }
+        portBaudCombo->blockSignals(false);
+    }
 }
 
 void MainWindow::resizeEvent(QResizeEvent *resizeEvent) {
