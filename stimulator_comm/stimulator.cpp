@@ -1,6 +1,7 @@
 #include <QFile>
 #include <QObject>
 #include <QtSerialPort/QSerialPortInfo>
+#include <iostream>
 #include "stimulator.h"
 
 
@@ -31,6 +32,9 @@ QList<qint32> Stimulator::getBaudrates() {
 void Stimulator::portConnect() {
     bool lastState = opened;
     opened = m_port->open(QIODevice::ReadWrite);
+    if (!opened) {
+        std::cout << "connection error " << m_port->error() << std::endl;
+    }
     if (lastState != opened) emit connected(opened);
 }
 

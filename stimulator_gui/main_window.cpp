@@ -7,7 +7,6 @@
 #include <stimulator_gui/experiments/BIOSENSOR_LOGGER.h>
 #include <stimulator_gui/experiments/TEST_MODE.h>
 #include <stimulator_gui/experiments/STIMULATOR_OUTPUTS.h>
-#include <stimulator_comm/serials.h>
 #include <stimulator_comm/sysname.h>
 #include <iostream>
 #include <QApplication>
