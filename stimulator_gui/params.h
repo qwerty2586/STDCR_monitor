@@ -17,6 +17,8 @@ extern const int MAIN_HEIGHT;
 extern const int MAX_LEDS;
 extern const QString SCHEMAS_DIR;
 extern const QString SCHEMAS_EXTENSION;
+extern const QString OUTPUTS_DIR;
+extern const QString OUTPUTS_EXTENSION;
 extern const QString TEXT_MS;
 extern const QString TEXT_PERCENT;
 extern const QString TEXT_CELSIUS;

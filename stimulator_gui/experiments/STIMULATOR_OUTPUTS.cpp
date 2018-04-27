@@ -5,6 +5,10 @@
 #include <QFile>
 #include <QDebug>
 #include <QDir>
+#include <stimulator_gui/widgets/qsaveloadwidget.h>
+#include <stimulator_gui/params.h>
+#include <QtXml/QDomDocument>
+#include <QtCore/QXmlStreamWriter>
 #include "STIMULATOR_OUTPUTS.h"
 
 STIMULATOR_OUTPUTS::STIMULATOR_OUTPUTS(QWidget *parent) : Experiment(parent) {
@@ -62,7 +66,7 @@ void STIMULATOR_OUTPUTS::initItems() {
         group_hbox->addWidget(item->radio_audio);
         group_box->setLayout(group_hbox);
         group_box->setMaximumWidth(group_box->width());
-        item->radio_led->setChecked(true);
+        item->radio_image->setChecked(true);
         item_grid->addWidget(group_box, 0, 1, 1, 1);
 
         item->path_line = new QLineEdit();
@@ -78,7 +82,7 @@ void STIMULATOR_OUTPUTS::initItems() {
         item->image->setFixedSize(75, 75);
         item->image->setStyleSheet("background: #FFF");
         item->image->setAlignment(Qt::AlignCenter);
-        item->image->setPixmap(QPixmap::fromImage(QImage(":/res/led.png")));
+        item->image->setPixmap(QPixmap::fromImage(QImage(":/res/image.png")));
         item_grid->addWidget(item->image, 0, 2, 2, 1);
         item->path_line->setReadOnly(false);
         item->path_line->setPalette(LINEEDIT_READONLY_PALLETE);
@@ -97,6 +101,14 @@ void STIMULATOR_OUTPUTS::initItems() {
 
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(scrolling_widget);
+
+    QGridLayout *schemaLayout = new QGridLayout();
+    tabs->widget(1)->setLayout(schemaLayout);
+    QSaveLoadWidget *qSaveLoadWidget = new QSaveLoadWidget(OUTPUTS_DIR, "", OUTPUTS_EXTENSION);
+    schemaLayout->addWidget(qSaveLoadWidget, 0, 0);
+    connect(qSaveLoadWidget, SIGNAL(load(QString)), this, SLOT(loadFile(QString)));
+    connect(qSaveLoadWidget, SIGNAL(save(QString)), this, SLOT(saveFile(QString)));
+    connect(qSaveLoadWidget, SIGNAL(save(QString)), qSaveLoadWidget, SLOT(refreshList()));
 
 
 
@@ -132,6 +144,89 @@ void STIMULATOR_OUTPUTS::outputs_changed(bool output_enable) {
     } else {
         outputs[sender_index]->path_line->setPalette(LINEEDIT_PALLETE);
     }
+}
 
+const QString DATA_ROOT = "outputs";
+const QString DATA_CHILD = "output";
+const QString DATA_CHILD_FILENAME = "filename";
+const QString DATA_CHILD_TYPE = "type";
+const QString DATA_CHILD_TYPE_UNKNOWN = "UNKNOWN";
+const QString DATA_CHILD_TYPE_IMAGE = "IMAGE";
+const QString DATA_CHILD_TYPE_AUDIO = "AUDIO";
+const QString DATA_CHILD_TYPE_VIDEO = "VIDEO";
+const QString DATA_CHILD_TYPE_OTHER = "OTHER";
+
+
+void STIMULATOR_OUTPUTS::loadFile(QString filepathname) {
+    QDomDocument doc;
+    QFile file(filepathname);
+    if (!file.open(QIODevice::ReadOnly) || !doc.setContent(&file))
+        return;
+
+    QDomNode root = doc.elementsByTagName(DATA_ROOT).item(0);
+    QDomNodeList xml_outputs = doc.elementsByTagName(DATA_CHILD);
+
+    for (int i = 0; i < outputs.size(); i++) {
+        QDomNode output = xml_outputs.item(i);
+        outputs[i]->path_line->setText(output.firstChildElement(DATA_CHILD_FILENAME).text());
+        QString type = output.firstChildElement(DATA_CHILD_TYPE).text();
+        if (type == DATA_CHILD_TYPE_IMAGE) {
+            outputs[i]->path_line->setReadOnly(false);
+            outputs[i]->path_line->setText(output.firstChildElement(DATA_CHILD_FILENAME).text());
+            outputs[i]->radio_image->setChecked(true);
+        } else if (type == DATA_CHILD_TYPE_AUDIO) {
+            outputs[i]->path_line->setReadOnly(false);
+            outputs[i]->path_line->setText(output.firstChildElement(DATA_CHILD_FILENAME).text());
+            outputs[i]->radio_audio->setChecked(true);
+        } else {
+            outputs[i]->path_line->setReadOnly(true);
+            outputs[i]->path_line->setText("");
+            outputs[i]->radio_led->setChecked(true);
+        }
+
+        if (outputs[i]->path_line->isReadOnly()) {
+            outputs[i]->path_line->setPalette(LINEEDIT_READONLY_PALLETE);
+        } else {
+            outputs[i]->path_line->setPalette(LINEEDIT_PALLETE);
+        }
+    }
+    file.close();
+
+}
+
+void STIMULATOR_OUTPUTS::saveFile(QString filepathname) {
+    //musime zobrazit vsechny prvky jinak v nich nebudou hodnoty... just QT thing
+    int backup = tabs->currentIndex();
+    tabs->setCurrentIndex(1);
+    tabs->setCurrentIndex(2);
+    tabs->setCurrentIndex(backup);
+    QFile file(filepathname);
+    
+    if (file.open(QIODevice::WriteOnly)) {
+        QXmlStreamWriter xml(&file);
+        xml.setAutoFormatting(true);
+        xml.writeStartDocument();
+        xml.writeStartElement(DATA_ROOT);
+        for (auto &output : outputs) {
+            xml.writeStartElement(DATA_CHILD);
+            if (output->radio_led->isChecked()) {
+                xml.writeTextElement(DATA_CHILD_TYPE,DATA_CHILD_TYPE_OTHER);
+            }
+            if (output->radio_audio->isChecked()){
+                xml.writeTextElement(DATA_CHILD_TYPE,DATA_CHILD_TYPE_AUDIO);
+                xml.writeTextElement(DATA_CHILD_FILENAME, output->path_line->text());
+            }
+            if (output->radio_image->isChecked()){
+                xml.writeTextElement(DATA_CHILD_TYPE,DATA_CHILD_TYPE_IMAGE);
+                xml.writeTextElement(DATA_CHILD_FILENAME, output->path_line->text());
+            }
+            xml.writeEndElement();
+        }
+
+        xml.writeEndElement();
+        xml.writeEndDocument();
+
+        file.close();
+    }
 
 }

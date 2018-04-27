@@ -38,6 +38,11 @@ private:
 
 private slots:
     void outputs_changed(bool output_enable);
+    
+    void loadFile(QString filepathname);
+
+    void saveFile(QString filepathname);
+
 
 };
 

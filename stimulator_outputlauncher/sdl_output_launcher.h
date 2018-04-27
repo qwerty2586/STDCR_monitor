@@ -2,6 +2,7 @@
 #define STIMULATOR_CONTROL_SDL_OUTPUT_LAUNCHER_H
 
 #include <QObject>
+#include <QtCore/QProcess>
 
 class SdlOutputLauncher : public QObject {
     Q_OBJECT
@@ -14,9 +15,7 @@ public slots:
 
 private:
     bool started = false;
-    int child_id = 0;
-
-
+    QProcess child;
 };
 
 #endif //STIMULATOR_CONTROL_SDL_OUTPUT_LAUNCHER_H

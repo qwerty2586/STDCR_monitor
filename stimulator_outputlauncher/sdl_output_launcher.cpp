@@ -1,39 +1,31 @@
-//
-// Created by qwerty on 4. 4. 2017.
-//
-
 #include "sdl_output_launcher.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <stdlib.h>
+#include <QDebug>
+#include <iostream>
+
 
 void SdlOutputLauncher::doStartSdlOutput(QString configfile) {
     if (started) return;
-    char* sdloutput_params = "\"~/SDL_output/SDL_output -x 600 -y 480 -w --config ~/output_test/config.xml\"";
-    char** arr = new char*[3];
-    arr[0] = "/usr/bin/sudo";
-    arr[1] = sdloutput_params;
-    arr[2] = NULL;
-    //arr = {"/usr/bin/sudo",sdloutput_params,NULL};
-    //const char** sudo_params = (const char*[]){"/usr/bin/sudo",sdloutput_params,NULL};
-    child_id = fork();
- //   const char* sdloutput_params = "\"~/SDL_output/SDL_output -x 600 -y 480 -w --config ~/output_test/config.xml\"";
-  //  const char** sudo_params = (const char*[]){"/usr/bin/sudo",sdloutput_params,NULL};
- //   child_id = fork();
-    if (child_id==0) {
-        setsid();
-        execv(arr[0],arr);
-        exit(0);
-    }
 
+    QString sudo = "/usr/bin/sudo";
+    QString working_dir = "/home/qwerty/SDL_output";
+    QString sudo_params = "./SDL_output -x 600 -y 480 -w --config output_test/config.xml";
 
+    child.setWorkingDirectory(working_dir);
+    child.start(sudo, sudo_params.split(" "));
+    this->started = true;
 
 
 }
 
 void SdlOutputLauncher::doStopSdlOutput() {
     if (!started) return;
-  //  kill(child_id,SIGKILL);
+
+    // tady je zapotrebi  killnout child process od sudo a ne sudo samotne protoze jinak z SDL_output vznikne orphan
+    QProcess killer;
+    QString sudo = "/usr/bin/sudo";
+    QString kill_command = "pkill SDL_output";  // pouzijeme systemovy zabijak
+    killer.start(sudo,kill_command.split(" "));
+    killer.waitForFinished();
+    started = false;
 
 }
