@@ -16,6 +16,7 @@
 #include <QStatusBar>
 #include <stimulator_outputlauncher/sdl_output_launcher.h>
 #include <QSerialPortInfo>
+#include <QtWidgets/QCheckBox>
 
 /**
  * Hlavní okno
@@ -50,7 +51,7 @@ private:
     QComboBox *portBaudCombo;
     QPushButton *portConnectDisconnectButton, *portRefreshButton;
     Fileserver *fileserver;
-    SdlOutputLauncher *sdlOutputLauncher;
+    SdlOutputLauncher sdlOutputLauncher;
     QStatusBar *statusBar;
 
     void resizeEvent(QResizeEvent *resizeEvent) override;

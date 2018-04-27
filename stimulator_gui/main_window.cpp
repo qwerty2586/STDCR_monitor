@@ -46,8 +46,10 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     windowLayout = new QVBoxLayout(this);
     this->setLayout(windowLayout);
 
+    
+
     statusBar = new QStatusBar(this);
-  //  statusBar->addWidget(new QLabel("hello"));
+    statusBar->addWidget(new QLabel("hello"));
     statusBar->setSizeGripEnabled(false);
     statusBar->show();
     statusBar->setMinimumWidth(this->width());
@@ -58,6 +60,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     changeExperiment(Experiment::NO_EXPERIMENT);
 
     //setStyleSheet("border: 1px solid red"); // debugging
+
+
 
 
 };
@@ -257,8 +261,10 @@ void MainWindow::onExperimentStateChanged(bool state) {
     experimentRunning = state;
     if (state) {
         startStopButton->setText(TEXT_STOP);
+        sdlOutputLauncher.doStartSdlOutput("");
     } else {
         startStopButton->setText(TEXT_START);
+        sdlOutputLauncher.doStopSdlOutput();
     }
 
 }

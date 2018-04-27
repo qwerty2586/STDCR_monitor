@@ -20,8 +20,10 @@ void QSaveLoadWidget::initItems() {
     list = new QListWidget();
     layout->addWidget(list, 1);
     QHBoxLayout *qhBoxLayout = new QHBoxLayout();
-    prefix_label = new QLabel(prefix);
-    qhBoxLayout->addWidget(prefix_label);
+    if (!prefix.isEmpty()) {
+        prefix_label = new QLabel(prefix);
+        qhBoxLayout->addWidget(prefix_label);
+    }
     name_edit = new QLineEdit();
     qhBoxLayout->addWidget(name_edit, 1); // roztahneme jmeno souboru
     suffix_label = new QLabel(suffix);
@@ -32,8 +34,8 @@ void QSaveLoadWidget::initItems() {
     qhBoxLayout->addWidget(save_button);
     delete_button = new QPushButton("DELETE");
     qhBoxLayout->addWidget(delete_button);
-    qhBoxLayout->setStretch(1, 2); // roztahneme pole s nazvem souboru
-    qhBoxLayout->setStretch(5, 0); // roztahneme pole s nazvem souboru
+    qhBoxLayout->setStretch(prefix.isEmpty()?0:1, 2); // roztahneme pole s nazvem souboru
+    qhBoxLayout->setStretch(prefix.isEmpty()?4:5, 0); // roztahneme pole s nazvem souboru
     qhBoxLayout->setStretchFactor(delete_button, 0);
     layout->addLayout(qhBoxLayout);
     refreshList();

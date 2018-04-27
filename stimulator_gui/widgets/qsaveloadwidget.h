@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QLabel>
 
 /**
  * Widget QSaveLoadWidget prinasi uzivatelske rozhrani pro vyber souboru
