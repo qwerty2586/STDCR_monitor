@@ -10,7 +10,7 @@ public:
 
 
 public slots:
-    void doStartSdlOutput(QString configfile);
+    void doStartSdlOutput(QString configfile = "");
     void doStopSdlOutput();
 
 private:
