@@ -126,12 +126,30 @@ void STIMULATOR_OUTPUTS::initItems() {
     settings.enabled->setChecked(Params::sdlEnabled());
 
     QHBoxLayout *fullscreenLayout = new QHBoxLayout();
+    QGroupBox *fullscreenGroup = new QGroupBox();
+    fullscreenGroup->setFlat(true);
+    fullscreenGroup->setStyleSheet("margin:0;padding:0;border:0;");
+    fullscreenGroup->setAlignment(Qt::AlignLeft);
     settings.fullscreen = new QRadioButton("FULLSCREEN");
     settings.windowed = new QRadioButton("WINDOW");
     fullscreenLayout->addWidget(settings.fullscreen);
     fullscreenLayout->addWidget(settings.windowed);
+    fullscreenGroup->setLayout(fullscreenLayout);
     if (Params::sdlFullscreen()) settings.fullscreen->setChecked(true);
     else settings.windowed->setChecked(true);
+
+    QHBoxLayout *hwLayout = new QHBoxLayout();
+    QGroupBox *hwGroup = new QGroupBox();
+    hwGroup->setFlat(true);
+    hwGroup->setStyleSheet("margin:0;padding:0;border:0;");
+    hwGroup->setAlignment(Qt::AlignLeft);
+    settings.hw = new QRadioButton("HW Renderer");
+    settings.sw = new QRadioButton("SW BlitSurface");
+    hwLayout->addWidget(settings.hw);
+    hwLayout->addWidget(settings.sw);
+    hwGroup->setLayout(hwLayout);
+    if (Params::sdlHWMode()) settings.hw->setChecked(true);
+    else settings.sw->setChecked(true);
 
     settings.width = new QSpinBox();
     settings.width->setRange(1,9999);
@@ -146,14 +164,17 @@ void STIMULATOR_OUTPUTS::initItems() {
     settingsLayout->addWidget(new QLabel("SDL OUTPUT"),0,0);
     settingsLayout->addWidget(settings.enabled,0,1);
     settingsLayout->addWidget(new QLabel("SCREEN MODE"),1,0);
-    settingsLayout->addLayout(fullscreenLayout,1,1);
+    settingsLayout->addWidget(fullscreenGroup,1,1);
     settingsLayout->addWidget(new QLabel("WIDTH"),2,0);
     settingsLayout->addWidget(settings.width);
     settingsLayout->addWidget(new QLabel("HEIGHT"),3,0);
     settingsLayout->addWidget(settings.height);
     settingsLayout->addWidget(new QLabel("DEBUG"),4,0);
     settingsLayout->addWidget(settings.debug);
-    settingsLayout->addWidget(settings.save,5,0,1,2);
+    settingsLayout->addWidget(new QLabel("RENDER MODE"),5,0);
+    settingsLayout->addWidget(hwGroup,5,1);
+    settingsLayout->addWidget(settings.save,6,0,1,2);
+
     connect(settings.save, SIGNAL(clicked()), this, SLOT(saveSettings()));
 
    //  save load
@@ -401,6 +422,7 @@ void STIMULATOR_OUTPUTS::saveSettings() {
     Params::setSdlDebug(settings.debug->isChecked());
     Params::setSdlWidth(settings.width->value());
     Params::setSdlHeight(settings.height->value());
+    Params::setSdlHWMode(settings.hw->isChecked());
 }
 
 void STIMULATOR_OUTPUTS::enterExperiment() {

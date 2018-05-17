@@ -68,6 +68,9 @@ namespace Params {
         const QString KEY_SDL_HEIGHT = "sdl_height";
         const int DEFAULT_SDL_HEIGHT = 600;
 
+        const QString KEY_SDL_HW = "sdl_hw";
+        const bool DEFAULT_SDL_HW = true;
+
     }
     void setSdlEnabled(bool enabled) {setValue(KEY_SDL_ENABLED,enabled);}
     bool sdlEnabled() { return value(KEY_SDL_ENABLED,DEFAULT_SDL_ENABLED).toBool();    }
@@ -83,6 +86,9 @@ namespace Params {
 
     void setSdlHeight(int height){setValue(KEY_SDL_HEIGHT,height);};
     int sdlHeight(){ return value(KEY_SDL_HEIGHT,DEFAULT_SDL_HEIGHT).toInt();};
+
+    void setSdlHWMode(bool hw) {setValue(KEY_SDL_HW,hw);};
+    bool sdlHWMode(){ return value(KEY_SDL_HW,DEFAULT_SDL_HW).toBool();};
 
 }
 

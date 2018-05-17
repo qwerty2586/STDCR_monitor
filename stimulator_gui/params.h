@@ -66,6 +66,9 @@ namespace Params {
 
     void setSdlHeight(int height);
     int sdlHeight();
+
+    void setSdlHWMode(bool hw);
+    bool sdlHWMode();
 }
 
 #endif //STDCR_MONITOR_PARAMS_H

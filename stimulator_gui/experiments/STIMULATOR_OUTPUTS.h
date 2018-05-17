@@ -48,6 +48,7 @@ private:
         QSpinBox *width,*height;
         QCheckBox *debug,*enabled;
         QRadioButton *fullscreen,*windowed;
+        QRadioButton *hw,*sw;
         QPushButton *save;
 
     };

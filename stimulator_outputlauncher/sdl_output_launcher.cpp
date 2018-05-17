@@ -37,6 +37,10 @@ void SdlOutputLauncher::doStartSdlOutput(QString configfile) {
         sudo_params.append("-t");
     }
 
+    if (!Params::sdlHWMode()) {
+        sudo_params.append("-s");
+    }
+
     // config file
     sudo_params.append("-c");
     if (configfile.isEmpty()) configfile = AUTOSAVE_FILE;
