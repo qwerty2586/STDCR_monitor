@@ -9,8 +9,12 @@
  * namespace StimulatorMessage shrnuje konstanty zprav pouzivanych v komunikacnim protokolu
  */
 namespace StimulatorMessage {
+    static constexpr char REFRESH_DISPLAY = 0x00;
+    
     static constexpr char LED_ENABLE = 0x01;
     static constexpr char LED_DISABLE = 0x02;
+    
+    static constexpr char LED_STATUS = 0x03;
 
 
     static constexpr char TIME_ON_LED[LEDS_COUNT] = {0x10, 0x12, 0x14, 0x16, 0x2C, 0x2E, 0x30, 0x32};
