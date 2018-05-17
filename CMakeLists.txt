@@ -64,7 +64,7 @@ set(SOURCE_FILES
         stimulator_log/log.cpp
 
         ${RESOURCES_RCC}
-        )
+        stimulator_gui/widgets/qclickablelabel.cpp stimulator_gui/widgets/qclickablelabel.h)
 
 set(SOURCE_FILES_WIN
 #        3rdparty/qextserialport/qextserialport.cpp

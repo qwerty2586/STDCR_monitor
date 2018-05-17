@@ -38,6 +38,11 @@ public:
 
     /// spojeni s komunikacni tridou
     Stimulator *port;
+    
+public slots:
+    virtual void enterExperiment() {} ;
+    virtual void leaveExperiment() {} ;
+
 signals:
 
     /// vysila signal o uspesnem spusteni ci ukonceni experimentu

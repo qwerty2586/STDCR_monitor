@@ -22,10 +22,7 @@ const QString TEXT_STOP = "STOP";
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     resize(MAIN_WIDTH, MAIN_HEIGHT);
-
-    windowLayout = NULL;
-    portConnected = false;
-    experimentRunning = false;
+    
     port = new Stimulator();
     connect(port, SIGNAL(connected(bool)), this, SLOT(onPortConnected(bool)));
 
@@ -47,9 +44,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     this->setLayout(windowLayout);
 
     
-
+    
     statusBar = new QStatusBar(this);
-    statusBar->addWidget(new QLabel("hello"));
+    statusBar->addWidget(new QLabel(""));
     statusBar->setSizeGripEnabled(false);
     statusBar->show();
     statusBar->setMinimumWidth(this->width());
@@ -77,7 +74,8 @@ void MainWindow::initItems() {
         menuButtons[i]->setStyleSheet("Text-align:left; padding: 3px 15px;");
         menuButtons[i]->setEnabled(experiments[i]->isImplemented());
 
-        QObject::connect(menuButtons[i], SIGNAL(released()), this, SLOT(menuButtonClick()));
+        connect(menuButtons[i], SIGNAL(released()), this, SLOT(menuButtonClick()));
+        connect(menuButtons[i],SIGNAL(released()),experiments[i],SLOT(enterExperiment()));
     }
 
     // experiment related
@@ -217,6 +215,7 @@ void MainWindow::changeExperiment(const int experiment) {
 
 
 void MainWindow::backClick() {
+    experiments[activeExperiment]->leaveExperiment();
     changeExperiment(Experiment::NO_EXPERIMENT);
 }
 

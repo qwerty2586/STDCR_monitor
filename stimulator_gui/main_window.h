@@ -37,7 +37,7 @@ public:
 
 private:
 
-    QVBoxLayout *windowLayout;
+    QVBoxLayout *windowLayout = Q_NULLPTR;
     std::vector<QPushButton *> menuButtons;
     QLabel *captionLabel, *experimentNameLabel;
     QPushButton *backButton, *startStopButton;
@@ -58,7 +58,7 @@ private:
 
 
     /// stavove indikatory
-    bool portConnected, experimentRunning;
+    bool portConnected = false, experimentRunning = false;
 
     /// komunikacni trida
     Stimulator *port;
