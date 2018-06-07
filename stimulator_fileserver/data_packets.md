@@ -56,7 +56,7 @@ LONG UPLOAD
 ## Popis operací
 
 Řetězce jsou ukončené nulovým bajtem.
-V případě použití zprávy s DOWNLOAD nebo UPLOAD přenosem tento přenos je zabezpečen MD5 hashem,
+V případě použití zprávy s DOWNLOAD nebo UPLOAD přenosem, tento přenos je zabezpečen MD5 hashem,
 který je součástí REQUEST nebo RESPONSE.
 
  HELLO
