@@ -41,7 +41,7 @@
 #define TYPE_RESPONSE   0x40
 // presun dat smerem do klieta
 #define TYPE_DOWNLOAD   0x80
-// resun dat smerem od klienta
+// presun dat smerem od klienta
 #define TYPE_UPLOAD     0xC0
 
 // prenosy jsou vzdy uvozeny prikazy GET PUT LS GET_PREVIEW v pripade GET a PUT jeste i responsem s delkou a hashem
@@ -92,7 +92,7 @@
 #define RESPONSE_MD_FAIL            0x02
 #define RESPONSE_LS_DIR_NOT_FOUND   0x03
 #define RESPONSE_DEL_FAIL           0x04
-#define RESPONSE_PUT_MD5_FAIL      0x05
+#define RESPONSE_PUT_MD5_FAIL       0x05
 #define RESPONSE_GET_FILE_NOT_FOUND 0x06
 
 // LS flagy

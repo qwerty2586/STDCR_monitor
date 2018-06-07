@@ -58,9 +58,6 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     //setStyleSheet("border: 1px solid red"); // debugging
 
-
-
-
 };
 
 void MainWindow::initItems() {

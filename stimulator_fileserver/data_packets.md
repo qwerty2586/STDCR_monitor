@@ -1,13 +1,24 @@
 
- # datovy protokol
+ # Datový protokol
  
-nasledujici dokument popisuje struktury datoveho protokolu.
-Kazdy paket ma na zacatku dva byty 
+Tento dokument popisuje struktury datového protokolu.
+Kazdý paket má na začátku dva byty
 ```
 [FULL_LENGTH_MESSAGE][COMMUNICATION_OP_CODE]
 ```
-Dale jsou popsany pakety o delkach 62. 
-Pokud je zapotrebi data rozdelit dela se to nasledujicim zpusobem.
+Dále jsou popsány pakety o délkách 62.
+
+ ## Typy paketů
+ - *TYPE_REQUEST* odesílán z klienta, zahájí operaci.
+ - *TYPE_RESPONSE* odpověď od serveru na REQUEST.
+ - *TYPE_DOWNLOAD* data odesílaná ze serveru na klienta
+ - *TYPE_UPLOAD* data odesílaná z klienta na server
+
+ UPLOAD, DOWNLOAD jsou doprovodná data v případě jistých operací které vyžadují větší přenos.
+ Jednotlivé zprávy se od sebě dělí zvýšením iterátoru ITER.
+
+ ## Rozdělení paketů
+Pokud je zapotřebí data rozdělit do více paketů, děje se to následujícím způsobem.
 
 
 LONG REQUEST
@@ -33,6 +44,7 @@ LONG DOWNLOAD
 [TYPE_DOWNLOAD+PART_LAST][ITER]{DATA3}
 ```
 
+
 LONG UPLOAD
 ```
 [TYPE_UPLOAD+PART_CONTINUE][ITER]{DATA1}
@@ -41,10 +53,9 @@ LONG UPLOAD
 ```
 
 
-## definice paketu
-Nasledujici definice nepopisuji jak se zpravy deli do paketu, je zapotrebi zkombinovat s definici nahore.
+## Popis operací
 
-
+Řetězce jsou ukončené nulovým bajtem.
 
  HELLO
  
@@ -155,4 +166,37 @@ or
  [OP_STOP+TYPE_RESPONSE][ITER][RESPONSE_OK]
  ```
  
+## Konstanty
+
+ ```
+FULL_LENGTH_MESSAGE         0x3E
+COMMUNICATION_OP_CODE       0xEF
+
+TYPE_REQUEST                0x00
+TYPE_RESPONSE               0x40
+TYPE_DOWNLOAD               0x80
+TYPE_UPLOAD                 0xC0
+
+PART_CONTINUE               0x00
+PART_LAST                   0x20
+
+OP_HELLO                    0x01
+OP_BYE                      0x02
+OP_MD                       0x03
+OP_LS                       0x04
+OP_GET                      0x05
+OP_PUT                      0x06
+OP_DEL                      0x07
+OP_START                    0x08
+OP_STOP                     0x09
+OP_GET_PREVIEW              0x10
+
+RESPONSE_OK                 0x00
+RESPONSE_MD_DIR_EXIST       0x01
+RESPONSE_MD_FAIL            0x02
+RESPONSE_LS_DIR_NOT_FOUND   0x03
+RESPONSE_DEL_FAIL           0x04
+RESPONSE_PUT_MD5_FAIL       0x05
+RESPONSE_GET_FILE_NOT_FOUND 0x06
+ ```
  
