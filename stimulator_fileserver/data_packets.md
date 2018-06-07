@@ -2,7 +2,7 @@
  # Datový protokol
  
 Tento dokument popisuje struktury datového protokolu.
-Kazdý paket má na začátku dva byty
+Každý paket má na začátku dva bajty.
 ```
 [FULL_LENGTH_MESSAGE][COMMUNICATION_OP_CODE]
 ```
@@ -11,8 +11,8 @@ Dále jsou popsány pakety o délkách 62.
  ## Typy paketů
  - *TYPE_REQUEST* odesílán z klienta, zahájí operaci.
  - *TYPE_RESPONSE* odpověď od serveru na REQUEST.
- - *TYPE_DOWNLOAD* data odesílaná ze serveru na klienta
- - *TYPE_UPLOAD* data odesílaná z klienta na server
+ - *TYPE_DOWNLOAD* data odesílaná ze serveru na klienta.
+ - *TYPE_UPLOAD* data odesílaná z klienta na server.
 
  UPLOAD, DOWNLOAD jsou doprovodná data v případě jistých operací které vyžadují větší přenos.
  Jednotlivé zprávy se od sebě dělí zvýšením iterátoru ITER.
@@ -56,6 +56,8 @@ LONG UPLOAD
 ## Popis operací
 
 Řetězce jsou ukončené nulovým bajtem.
+V případě použití zprávy s DOWNLOAD nebo UPLOAD přenosem tento přenos je zabezpečen MD5 hashem,
+který je součástí REQUEST nebo RESPONSE.
 
  HELLO
  
