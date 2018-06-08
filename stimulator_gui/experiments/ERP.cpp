@@ -341,11 +341,12 @@ void ERP::changeExperimentState(bool state) {
 
 
         }
-
         port->sendMessage(StimulatorMessage::LED_ENABLE);
+        port->sendMessage(StimulatorMessage::REFRESH_DISPLAY);
         emit experimentStateChanged(true);
     } else { //STOP
         port->sendMessage(StimulatorMessage::LED_DISABLE);
+        port->sendMessage(StimulatorMessage::REFRESH_DISPLAY);
         emit experimentStateChanged(false);
     }
 }
