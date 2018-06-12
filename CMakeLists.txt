@@ -21,6 +21,7 @@ set(CMAKE_CXX_STANDARD 11)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Xml REQUIRED)
+find_package(Qt5SerialPort REQUIRED)
 
 #find_package(Qt5 4.4.3 REQUIRED QtGui QtXml)
 
@@ -92,5 +93,4 @@ endif (LINUX)
 
 
 #add_subdirectory(stimulator_tests/qt_tests)
-qt5_use_modules(stimulator_control Core SerialPort Xml)
-target_link_libraries(stimulator_control Qt5::Widgets  Qt5::Core Qt5::Xml)
+target_link_libraries(stimulator_control Qt5::Widgets  Qt5::Core Qt5::Xml Qt5::SerialPort)
